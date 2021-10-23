@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "928943302055",
+    "project_id": "rush-76635",
+    "storage_bucket": "rush-76635.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928943302055:android:e79ffc0a3efccad9868282",
+        "android_client_info": {
+          "package_name": "com.example.rush"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "928943302055-ao185httvqkp4gmmgehoqisqoun0bpll.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBulSg-VuTFckXI3huDPLTFBRgny8YCMVo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "928943302055-ao185httvqkp4gmmgehoqisqoun0bpll.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
