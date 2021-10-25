@@ -91,6 +91,7 @@
         android:id="@+id/createClassButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="onClick"
         android:text="Create"
         app:backgroundTint="#276DBE"
         app:layout_constraintBottom_toBottomOf="parent"
