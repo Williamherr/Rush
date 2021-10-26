@@ -10,7 +10,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 
-
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
 
     @Override
@@ -27,30 +26,30 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                int id = item.getItemId();
-
-                switch (id) {
-                    case 2131231024: //Home
+                String itemString = item.toString();
+                switch (itemString) {
+                    case "Home": // Home
                         Log.d("navBar", "Home");
                         break;
-                    case 2131231023: //Groups
+                    case "Groups": // Groups
                         Log.d("navBar", "Groups");
                         break;
-                    case 2131231211: //Classes
+                    case "Classes": // Classes
                         Log.d("navBar", "Classes");
                         changeFragment();
                         break;
-                    case 2131231025: //Messages
+                    case "Messages": // Messages
                         Log.d("navBar", "Messages");
                         messageFragment();
                         break;
-                    case 2131231210: //Activity
+                    case "Activity": // Activity
                         Log.d("navBar", "Activity");
                         break;
                     default:
                         break;
 
                 }
+
                 return true;
             }
         });
@@ -64,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 .replace(R.id.containerView, new MessageFragment())
                 .commit();
     }
+
     public void changeFragment() {
         ClassesFragment fragment = new ClassesFragment();
         getSupportFragmentManager().beginTransaction()
