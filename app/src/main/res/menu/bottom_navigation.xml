@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="Home"
+        android:id="@+id/nav_home"
+        android:icon="@drawable/home"
+        ></item>
+    <item
+        android:title="Groups"
+        android:id="@+id/nav_groups"
+        android:icon="@drawable/group"
+     ></item>
+    <item
+        android:title="Classes"
+        android:id="@+id/nav_classes"
+        android:icon="@drawable/book"
+        ></item>
+    <item
+        android:title="Messages"
+        android:id="@+id/nav_messages"
+        android:icon="@drawable/messenger"
+        ></item>
+
+    <item
+        android:title="Activity"
+        android:id="@+id/nav_activity"
+        android:icon="@drawable/bell"
+        ></item>
+
+
+</menu>
