@@ -10,7 +10,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 
-public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                         break;
                     case "Classes": // Classes
                         Log.d("navBar", "Classes");
-                        changeFragment();
+                        classesFragment();
                         break;
                     case "Messages": // Messages
                         Log.d("navBar", "Messages");
@@ -64,18 +64,14 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 .commit();
     }
 
-    public void changeFragment() {
-        ClassesFragment fragment = new ClassesFragment();
+    public void classesFragment() {
+        setTitle("Classes");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, fragment).commit();
+                .replace(R.id.containerView, new ClassesFragment()).commit();
     }
 
-    @Override
-    public void changeFragment(int id) {
-        if (id == 1) {
-            ClassesFragment fragment = new ClassesFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.layout, fragment).commit();
-        }
+    public void creationFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new ClassCreationFragment()).commit();
     }
 }

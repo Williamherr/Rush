@@ -24,7 +24,6 @@ public class ClassCreationFragment extends Fragment {
     private DatabaseReference dbRef;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private OnFragmentInteractionListener listener;
     String userID;
     Button createButton;
     EditText className, instructorName, classDescription;
@@ -37,8 +36,11 @@ public class ClassCreationFragment extends Fragment {
         dbRef = database.getReference();
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        //Might need to check that userID is not NULL
-        //userID = user.getUid();
+        //Check if user is not logged in
+        if (user != null) {
+            userID = user.getUid();
+        }
+
 
     }
 
@@ -68,14 +70,14 @@ public class ClassCreationFragment extends Fragment {
 
                         ClassInfo tempClass = new ClassInfo(name, instructor, description);
 
-                      /*  To Do:
-                        Need user authorization to get userID
+                        if (userID != null) {
+                            //Write the new class to the database
+                            dbRef.child("Class").child(userID).setValue(tempClass);
 
-                        dbRef.child("Class").child(userID).setValue(tempClass);
-                        */
-
-                        if (listener != null) {
-                            listener.changeFragment(1);
+                            //Cast the current activity to MainActivity to call metho
+                            ((MainActivity) getActivity()).classesFragment();
+                            //Show success message to user
+                            Toast.makeText(getActivity(), "Class created!", Toast.LENGTH_SHORT).show();
                         }
 
 
@@ -91,27 +93,5 @@ public class ClassCreationFragment extends Fragment {
 
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Activity a = new Activity();
-
-        if (context instanceof Activity) {
-            a = (Activity) context;
-        }
-        try {
-            listener = (OnFragmentInteractionListener) a;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(a.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        listener = null;
-
-    }
 
 }
