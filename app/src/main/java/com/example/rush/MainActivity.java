@@ -1,25 +1,23 @@
 package com.example.rush;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
     }
 
-
+    @Override
+    public void changeFragment(int id) {
+        if (id == 1) {
+            ClassesFragment fragment = new ClassesFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.layout, fragment).commit();
+        }
+    }
 }

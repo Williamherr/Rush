@@ -1,5 +1,7 @@
 package com.example.rush;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -22,6 +24,7 @@ public class ClassCreationFragment extends Fragment {
     private DatabaseReference dbRef;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private OnFragmentInteractionListener listener;
     String userID;
     Button createButton;
     EditText className, instructorName, classDescription;
@@ -66,22 +69,49 @@ public class ClassCreationFragment extends Fragment {
                         ClassInfo tempClass = new ClassInfo(name, instructor, description);
 
                       /*  To Do:
-                        Need user authorization to get userID to prevent Null Pointer Exception
+                        Need user authorization to get userID
 
                         dbRef.child("Class").child(userID).setValue(tempClass);
                         */
 
+                        if (listener != null) {
+                            listener.changeFragment(1);
+                        }
+
 
                     }
                 } catch (NullPointerException e) {
-                    Toast.makeText(getActivity(), "Sorry something went wrong!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Sorry, something went wrong!", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
 
         return view;
+
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity a = new Activity();
+
+        if (context instanceof Activity) {
+            a = (Activity) context;
+        }
+        try {
+            listener = (OnFragmentInteractionListener) a;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(a.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+
+    }
 
 }
