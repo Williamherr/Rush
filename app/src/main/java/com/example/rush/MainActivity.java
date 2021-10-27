@@ -60,18 +60,19 @@ public class MainActivity extends AppCompatActivity {
     public void messageFragment() {
         setTitle("Messages");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new MessageFragment())
+                .replace(R.id.containerView, new MessageFragment()).addToBackStack(null)
                 .commit();
     }
 
     public void classesFragment() {
         setTitle("Classes");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new ClassesFragment()).commit();
+                .replace(R.id.containerView, new ClassesFragment()).addToBackStack(null).commit();
     }
 
     public void creationFragment() {
+        setTitle("Create Class");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new ClassCreationFragment()).commit();
+                .replace(R.id.containerView, new ClassCreationFragment()).addToBackStack(null).commit();
     }
 }

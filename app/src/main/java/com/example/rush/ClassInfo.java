@@ -4,6 +4,7 @@ public class ClassInfo {
     private String name;
     private String instructor;
     private String description;
+    //Add a structure to store Students that are in this class
 
     public ClassInfo(String name, String instructor, String description) {
         this.name = name;

@@ -74,7 +74,7 @@ public class ClassCreationFragment extends Fragment {
                             //Write the new class to the database
                             dbRef.child("Class").child(userID).setValue(tempClass);
 
-                            //Cast the current activity to MainActivity to call metho
+                            //Cast the current activity to MainActivity to call method
                             ((MainActivity) getActivity()).classesFragment();
                             //Show success message to user
                             Toast.makeText(getActivity(), "Class created!", Toast.LENGTH_SHORT).show();
