@@ -104,7 +104,7 @@ public class ClassesFragment extends Fragment {
                         Log.d("Name: ", tempClassInfo.getClassName() + "Instructor: " +
                                 tempClassInfo.getInstructor());
                     } else {
-                        noClasses.setText("No classes to display.");
+                        noClasses.setText(R.string.no_classes);
                     }
                 }
 
@@ -117,7 +117,7 @@ public class ClassesFragment extends Fragment {
         } else {
             /* User shouldn't be able to access this tab when logged out
                Mostly used for testing */
-            noClasses.setText("You are not logged in.");
+            noClasses.setText(R.string.not_logged_in);
         }
 
 
