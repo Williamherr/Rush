@@ -9,10 +9,9 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/classesText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="This will show the list of classes"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
