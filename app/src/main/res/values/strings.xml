@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">Rush</string>
+    <!-- Message Fragment -->
+    <string name="MessageFragment">Messages</string>
+    <string name="UserProfileImageDes">This image is the user\'s profile picture</string>
+    <string name="NameExample">First Last</string>
+    <string name="FakeTextExample">Lorem ipsum dolor sit ametdsa dsadw</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="messagePlaceHolder">Reply</string>
+
 </resources>
