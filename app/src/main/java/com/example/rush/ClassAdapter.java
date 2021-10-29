@@ -20,7 +20,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ViewHolder> 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_classes,
+        View v = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.class_items,
                 parent, false);
         return new ViewHolder(v);
     }
