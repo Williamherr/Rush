@@ -15,9 +15,9 @@ import com.google.android.material.navigation.NavigationBarView;
 
 
 
-public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener {
+public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener {
 
-    private String uid = "";
+    private String uid;
 
 
     @Override
@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 switch (itemString) {
                     case "Home": // Home
                         Log.d("navBar", "Home");
+                        HomeFragment();
                         break;
                     case "Groups": // Groups
                         Log.d("navBar", "Groups");
@@ -88,7 +89,12 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerView, new ClassCreationFragment()).addToBackStack(null).commit();
     }
-
+    public void HomeFragment() {
+        setTitle("Rush");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new HomeFragment()).addToBackStack(null)
+                .commit();
+    }
 
 
 
@@ -99,6 +105,17 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                     .replace(R.id.containerView, new PrivateChatFragment(otherUserName,otherUserId,messageKey))
                     .addToBackStack(null)
                     .commit();
+
+    }
+
+    @Override
+    public void gotoHomeFragment(String uid) {
+        this.uid = uid;
+        HomeFragment();
+    }
+
+    @Override
+    public void goToAccountCreationFragment() {
 
     }
 }
