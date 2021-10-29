@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-=======
 import android.view.View;
 
 import com.example.rush.messages.MessageFragment;
