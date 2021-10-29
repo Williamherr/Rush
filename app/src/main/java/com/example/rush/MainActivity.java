@@ -12,12 +12,21 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+=======
+import android.view.View;
+
+import com.example.rush.messages.MessageFragment;
+import com.example.rush.messages.PrivateChatFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 
-public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
+
+public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener {
+
+    private String uid = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,30 +71,30 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                int id = item.getItemId();
-
-                switch (id) {
-                    case 2131231024: //Home
+                String itemString = item.toString();
+                switch (itemString) {
+                    case "Home": // Home
                         Log.d("navBar", "Home");
                         break;
-                    case 2131231023: //Groups
+                    case "Groups": // Groups
                         Log.d("navBar", "Groups");
                         break;
-                    case 2131231211: //Classes
+                    case "Classes": // Classes
                         Log.d("navBar", "Classes");
-                        changeFragment();
+                        classesFragment();
                         break;
-                    case 2131231025: //Messages
+                    case "Messages": // Messages
                         Log.d("navBar", "Messages");
                         messageFragment();
                         break;
-                    case 2131231210: //Activity
+                    case "Activity": // Activity
                         Log.d("navBar", "Activity");
                         break;
                     default:
                         break;
 
                 }
+
                 return true;
             }
         });
@@ -96,21 +105,32 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     public void messageFragment() {
         setTitle("Messages");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new MessageFragment())
+                .replace(R.id.containerView, new MessageFragment()).addToBackStack(null)
                 .commit();
     }
-    public void changeFragment() {
-        ClassesFragment fragment = new ClassesFragment();
+
+    public void classesFragment() {
+        setTitle("Classes");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, fragment).commit();
+                .replace(R.id.containerView, new ClassesFragment()).addToBackStack(null).commit();
     }
 
+    public void creationFragment() {
+        setTitle("Create Class");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new ClassCreationFragment()).addToBackStack(null).commit();
+    }
+
+
+
+
     @Override
-    public void changeFragment(int id) {
-        if (id == 1) {
-            ClassesFragment fragment = new ClassesFragment();
+    public void goToPrivateChatFragment(String otherUserName, String otherUserId, String messageKey) {
+            setTitle("Chat");
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.layout, fragment).commit();
-        }
+                    .replace(R.id.containerView, new PrivateChatFragment(otherUserName,otherUserId,messageKey))
+                    .addToBackStack(null)
+                    .commit();
+
     }
 }

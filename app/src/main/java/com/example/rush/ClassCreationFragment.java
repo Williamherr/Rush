@@ -1,11 +1,8 @@
 package com.example.rush;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,29 +13,27 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ClassCreationFragment extends Fragment {
-    private FirebaseDatabase database;
-    private DatabaseReference dbRef;
+    private FirebaseFirestore database;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private OnFragmentInteractionListener listener;
     String userID;
     Button createButton;
-    EditText className, instructorName, classDescription;
+    EditText classField, instructorName, classDescription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        database = FirebaseDatabase.getInstance();
-        dbRef = database.getReference();
+        database = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        //Might need to check that userID is not NULL
-        //userID = user.getUid();
+        //Check if user is not logged in
+        if (user != null) {
+            userID = user.getUid();
+        }
+
 
     }
 
@@ -50,32 +45,32 @@ public class ClassCreationFragment extends Fragment {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                className = (EditText) view.findViewById(R.id.classNameField);
+                classField = (EditText) view.findViewById(R.id.classNameField);
                 instructorName = (EditText) view.findViewById(R.id.instructorField);
                 classDescription = (EditText) view.findViewById(R.id.classDescriptionField);
 
                 try {
-                    if (className.getText().toString().isEmpty() || instructorName.getText().toString().isEmpty()
+                    if (classField.getText().toString().isEmpty() || instructorName.getText().toString().isEmpty()
                             || classDescription.getText().toString().isEmpty()) {
                         //Shows a message if any of the fields are empty
                         Toast.makeText(getActivity(), "Field(s) cannot be left blank.",
                                 Toast.LENGTH_SHORT).show();
                     } else {
                         //Gets the name, instructor, and descriptions as Strings
-                        String name = className.getText().toString();
+                        String className = classField.getText().toString();
                         String instructor = instructorName.getText().toString();
                         String description = classDescription.getText().toString();
 
-                        ClassInfo tempClass = new ClassInfo(name, instructor, description);
+                        if (userID != null) {
+                            ClassInfo tempClass = new ClassInfo(className, instructor, description, userID);
+                            //Write the new class to the database
+                            database.collection("classes").document()
+                                    .set(tempClass);
 
-                      /*  To Do:
-                        Need user authorization to get userID
-
-                        dbRef.child("Class").child(userID).setValue(tempClass);
-                        */
-
-                        if (listener != null) {
-                            listener.changeFragment(1);
+                            //Cast the current activity to MainActivity to call method
+                            ((MainActivity) getActivity()).classesFragment();
+                            //Show success message to user
+                            Toast.makeText(getActivity(), "Class created!", Toast.LENGTH_SHORT).show();
                         }
 
 
@@ -91,27 +86,5 @@ public class ClassCreationFragment extends Fragment {
 
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Activity a = new Activity();
-
-        if (context instanceof Activity) {
-            a = (Activity) context;
-        }
-        try {
-            listener = (OnFragmentInteractionListener) a;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(a.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        listener = null;
-
-    }
 
 }

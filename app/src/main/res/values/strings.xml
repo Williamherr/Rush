@@ -1,5 +1,19 @@
 <resources>
     <string name="app_name">Rush</string>
+    <!-- Message Fragment -->
+    <string name="MessageFragment">Messages</string>
+    <string name="UserProfileImageDes">This image is the user\'s profile picture</string>
+    <string name="NameExample">First Last</string>
+    <string name="FakeTextExample">Lorem ipsum dolor sit ametdsa dsadw</string>
     <!-- TODO: Remove or change this placeholder text -->
+    <string name="messagePlaceHolder">Reply</string>
+
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_classes">No classes to display</string>
+    <string name="not_logged_in">You are not logged in</string>
+    <string name="class_description">Class Description</string>
+    <string name="class_name">Class Name</string>
+    <string name="create">Create</string>
+
 </resources>
