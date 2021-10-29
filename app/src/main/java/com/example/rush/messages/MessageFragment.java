@@ -22,6 +22,8 @@ import com.example.rush.messages.model.PrivateMessageList;
 import com.example.rush.messages.model.Messages;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -49,7 +51,7 @@ public class MessageFragment extends Fragment {
     MessageFragmentListener mListener;
     MessageAdapter adapter;
 
-    private String  uid = "LNQBoSfSxveCmlpa9jo1vdDzjrE3";
+    private String uid;
     private String otherUserName,otherPersonId, chatId = "";
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference reference = db.collection("users");
@@ -67,6 +69,14 @@ public class MessageFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         PrivateMessageList = new ArrayList<>();
         showRecyclerList();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // User is signed in
+            uid = user.getUid();
+        } else {
+            // No user is signed in
+            uid = "LNQBoSfSxveCmlpa9jo1vdDzjrE3";
+        }
 
         return view;
     }
@@ -138,7 +148,9 @@ public class MessageFragment extends Fragment {
                 return null;
             }
         });
+
     }
+
 
     /*
 

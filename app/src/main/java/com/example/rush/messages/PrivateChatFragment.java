@@ -24,6 +24,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -55,7 +57,7 @@ public class PrivateChatFragment extends Fragment {
     String TAG = "PrivateChatFragment";
     String userName, getOtherUserId = "";
 
-    String uid = "LNQBoSfSxveCmlpa9jo1vdDzjrE3";
+    String uid;
 
     public PrivateChatFragment(String otherUserName, String otherUserId, String messageKey) {
         // Required empty public constructor
@@ -73,7 +75,7 @@ public class PrivateChatFragment extends Fragment {
     ImageButton sendMessageButton;
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
     final CollectionReference messageRef = db.collection("chat-messages").document("private-messages").collection("all-private-messages");
-    String s = "String";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +88,23 @@ public class PrivateChatFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_private_chat, container, false);
         Log.d(TAG,"Private Chat Fragment");
-        userName = "William Herr";
+
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // User is signed in
+            Log.d(TAG,"database");
+            uid = user.getUid();
+            userName = user.getDisplayName();
+            Log.d(TAG,user.getDisplayName());
+
+        } else {
+            // No user is signed in
+            Log.d(TAG,"Hard Code");
+            uid = "LNQBoSfSxveCmlpa9jo1vdDzjrE3";
+            userName = "William Herr";
+        }
+
         messages = new ArrayList<>();
         recyclerView = view.findViewById(R.id.messagesRecyclerView);
         layoutManager = new LinearLayoutManager(getContext());
@@ -94,6 +112,7 @@ public class PrivateChatFragment extends Fragment {
 
         textview = view.findViewById(R.id.messageTextView);
         sendMessageButton = view.findViewById(R.id.messageSendButton);
+
 
 
 
@@ -162,7 +181,7 @@ public class PrivateChatFragment extends Fragment {
                     Log.w(TAG, "listen:error", e);
                     return;
                 }
-
+                messages = new ArrayList<>();
                 for (QueryDocumentSnapshot doc : value) {
                     if (doc.get("message") != null) {
                         String message = doc.getString("message");
@@ -212,7 +231,6 @@ public class PrivateChatFragment extends Fragment {
             String user = singleMessagesList.get(position).getName();
 
             if (!(user.equals(userName))) {
-                Log.d(TAG, "otherUserId");
                 holder.receiveUserProfileImage.setVisibility(View.VISIBLE);
                 holder.receiveUserMessage.setVisibility(View.VISIBLE);
                 holder.userProfileImage.setVisibility(View.INVISIBLE);
@@ -220,7 +238,6 @@ public class PrivateChatFragment extends Fragment {
                 holder.receiveUserMessage.setText(singleMessagesList.get(position).getMessage());
 
             } else {
-                Log.d(TAG,"user");
                 holder.receiveUserProfileImage.setVisibility(View.INVISIBLE);
                 holder.receiveUserMessage.setVisibility(View.INVISIBLE);
                 holder.userProfileImage.setVisibility(View.VISIBLE);
