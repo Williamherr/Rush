@@ -1,10 +1,8 @@
 package com.example.rush;
 
 import android.view.LayoutInflater;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,12 +28,9 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ClassInfo classObj = classList.get(position);
-        String totalText = "";
-        totalText += "Class Name: \n" + classObj.getClassName() + "\n" +
-                "Instructor: \n" + classObj.getInstructor()+ "\n" +
-                "Description: \n" + classObj.getDescription();
-        holder.info.setText(totalText);
-       // holder.description.setText(classObj.getDescription());
+        holder.className.setText("Class: " + classObj.getClassName());
+        holder.instructorName.setText("Instructor: " + classObj.getInstructor());
+        holder.classDescription.setText("Class Description: " + classObj.getDescription());
     }
 
     @Override
@@ -50,12 +45,16 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ViewHolder> 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final View view;
-        public final TextView info;
+        public final TextView className;
+        public final TextView instructorName;
+        public final TextView classDescription;
 
         public ViewHolder(View view) {
             super(view);
             this.view = view;
-            info = view.findViewById(R.id.classesText);
+            className = view.findViewById(R.id.classNameText);
+            instructorName = view.findViewById(R.id.classInstructorName);
+            classDescription = view.findViewById(R.id.classDescriptionText);
         }
 
     }

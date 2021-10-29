@@ -61,7 +61,6 @@ public class ClassCreationFragment extends Fragment {
                         String instructor = instructorName.getText().toString();
                         String description = classDescription.getText().toString();
 
-
                         if (userID != null) {
                             ClassInfo tempClass = new ClassInfo(className, instructor, description, userID);
                             //Write the new class to the database
