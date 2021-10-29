@@ -3,11 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/borders.xml" value="0.2703125" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/colors.xml" value="0.2703125" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fab_open.xml" value="0.22916666666666666" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_class_creation.xml" value="0.264" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_classes.xml" value="0.2" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_classes.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_create_class.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_login.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/menu/bottom_navigation.xml" value="0.536" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/menu/fab_open.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

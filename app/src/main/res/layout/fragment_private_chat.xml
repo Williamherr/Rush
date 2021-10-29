@@ -13,34 +13,35 @@
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="64dp"
         android:background="#dbdbdb"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messagesRecyclerView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messagesRecyclerView"
-        android:layout_width="409dp"
-        android:layout_height="667dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+
+        app:layout_constraintBottom_toTopOf="@+id/messageTextView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/messageTextView"
         android:layout_width="299dp"
         android:layout_height="64dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
         android:autofillHints="@string/messagePlaceHolder"
         android:background="@null"
-        android:ems="10"
         android:hint="@string/messagePlaceHolder"
-
         android:inputType="text"
+        android:padding="20dp"
         android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -53,7 +54,7 @@
         android:background="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/messageTextView"
         app:srcCompat="@drawable/send" />
 

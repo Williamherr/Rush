@@ -3,11 +3,11 @@ package com.example.rush.messages;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,15 +19,33 @@ import android.widget.TextView;
 
 import com.example.rush.R;
 import com.example.rush.messages.model.Messages;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.core.OrderBy;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 
 public class PrivateChatFragment extends Fragment {
@@ -37,6 +55,7 @@ public class PrivateChatFragment extends Fragment {
     String TAG = "PrivateChatFragment";
     String userName, getOtherUserId = "";
 
+    String uid = "LNQBoSfSxveCmlpa9jo1vdDzjrE3";
 
     public PrivateChatFragment(String otherUserName, String otherUserId, String messageKey) {
         // Required empty public constructor
@@ -52,6 +71,9 @@ public class PrivateChatFragment extends Fragment {
     ArrayList<Messages> messages;
     EditText textview;
     ImageButton sendMessageButton;
+    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    final CollectionReference messageRef = db.collection("chat-messages").document("private-messages").collection("all-private-messages");
+    String s = "String";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,59 +87,97 @@ public class PrivateChatFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_private_chat, container, false);
         Log.d(TAG,"Private Chat Fragment");
         userName = "William Herr";
-        otherUserId = "LNQBoSfSxveCmlpa9jo1vdDzjrE3";
         messages = new ArrayList<>();
         recyclerView = view.findViewById(R.id.messagesRecyclerView);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final CollectionReference messageRef = db.collection("chat-messages").document("private-messages").collection("all-private-messages");
+
         textview = view.findViewById(R.id.messageTextView);
         sendMessageButton = view.findViewById(R.id.messageSendButton);
 
-        textview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG,"tag");
-            }
-        });
+
+
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG,"TAG");
-                textview.getText();
+                if (textview.getText().toString().trim().equals("") ){
+                    return;
+                }
+                Map<String,Object> data = new HashMap<>();
+                data.put("message",  textview.getText().toString());
+                Timestamp time = Timestamp.now();
+                data.put("time", time);
+                data.put("uid",uid);
+                data.put("name",userName);
+
+
                 textview.setText("");
+                Task task = messageRef.document(messageKey).collection("messages")
+                        .add(data);
+
+
+                // Update the user's messages id
+             /*   task.continueWithTask(new Continuation() {
+                    @Override
+                    public Task then(@NonNull  Task task) throws Exception {
+
+                        Task t = db.collection("usersss").document("LNQBoSfSxveCmlpa9jo1vdDzjrE3")
+
+                                .update("messages",FieldValue.arrayUnion(st.get(0)))
+
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Log.d(TAG, "DocumentSnapshot written with ID: " + unused);
+                                        Log.d(TAG, data.toString());
+                                    }
+                                });
+
+                        return t;
+                    }
+
+
+              });*/
+
+
+
             }
         });
 
 
 
 
-        Task task = messageRef.document(messageKey).collection("messages")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                String name, uid, message;
-                                com.google.firebase.Timestamp time;
-                                name = document.getData().get("name").toString();
-                                uid = document.getData().get("uid").toString();
-                                message = document.getData().get("message").toString();
-                                time = (Timestamp) document.getData().get("time");
 
-                                messages.add(new Messages(name,uid,message,time));
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
 
-                        adapter = new MessageAdapter(messages,userName);
-                        recyclerView.setAdapter(adapter);
+
+
+
+        messageRef.document(messageKey).collection("messages")
+                .orderBy("time", Query.Direction.ASCENDING)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable  QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "listen:error", e);
+                    return;
+                }
+
+                for (QueryDocumentSnapshot doc : value) {
+                    if (doc.get("message") != null) {
+                        String message = doc.getString("message");
+                        String name = doc.getString("name");
+                        Timestamp time = doc.getTimestamp("time");
+                        String uid = doc.getString("uid");
+
+                        messages.add(new Messages(name, uid, message, time));
+
                     }
-                });
+                }
+                adapter = new MessageAdapter(messages,userName);
+                recyclerView.setAdapter(adapter);
+            }
+        });
 
 
 

@@ -28,8 +28,10 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
@@ -45,7 +47,7 @@ public class MessageFragment extends Fragment {
     public MessageFragment() {
         // Required empty public constructor
     }
-    ArrayList<PrivateMessageList> PrivateMessageList = new ArrayList<>();
+    ArrayList<PrivateMessageList> PrivateMessageList;
 
     LinearLayoutManager layoutManager;
     MessageFragmentListener mListener;
@@ -57,7 +59,7 @@ public class MessageFragment extends Fragment {
     private final CollectionReference reference = db.collection("users");
     private final CollectionReference messageRef = db.collection("chat-messages").document("private-messages").collection("all-private-messages");
     RecyclerView recyclerView;
-
+    final String TAG = "MessageFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,7 +69,7 @@ public class MessageFragment extends Fragment {
         recyclerView = view.findViewById(R.id.RecyclerView);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-
+        PrivateMessageList = new ArrayList<>();
         showRecyclerList();
 
         return view;
@@ -88,7 +90,7 @@ public class MessageFragment extends Fragment {
 
             @Override
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                Log.d("TAG","transaction");
+                Log.d(TAG,"transaction");
                 DocumentSnapshot snapshot = transaction.get(reference.document(uid));
                 ArrayList<String> allData = (ArrayList<String>) snapshot.getData().get("messages");
 
@@ -97,7 +99,6 @@ public class MessageFragment extends Fragment {
                     DocumentSnapshot messageSnapShot = transaction.get(messageRef.document(id));
                     ArrayList<String> idList = (ArrayList<String>) messageSnapShot.getData().get("uid");
                     chatId = id;
-
 
 
                     if (idList.contains(uid)) {
@@ -112,37 +113,30 @@ public class MessageFragment extends Fragment {
                     DocumentSnapshot nameSnap  =  transaction.get(messageRef.document(id).collection("members").document(otherPersonId));
                     otherUserName = (String) nameSnap.getData().get("name");
 
-                    Task task = ref.limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                            if (task.isSuccessful()) {
-
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                    String message = document.get("message").toString();
-                                    com.google.firebase.Timestamp time = (Timestamp) document.get("time");
-                                    String messageUid = document.get("uid").toString();
-                                    String currentName = document.get("name").toString();
-                                    PrivateMessageList.add(new PrivateMessageList(otherUserName,otherPersonId,new Messages(currentName,messageUid,message,time), chatId));
+                    ref.limit(1).orderBy("time", Query.Direction.DESCENDING)
+                            .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(  QuerySnapshot value, FirebaseFirestoreException e) {
+                                    if (e != null) {
+                                        Log.w(TAG, "listen:error", e);
+                                        return;
+                                    }
+                                    Log.w(TAG, "listen:error");
+                                    for (QueryDocumentSnapshot doc : value) {
+                                        if (doc.get("message") != null) {
+                                            String message = doc.getString("message");
+                                            String name = doc.getString("name");
+                                            Timestamp time = doc.getTimestamp("time");
+                                            String uid = doc.getString("uid");
+                                            PrivateMessageList.add(new PrivateMessageList(otherUserName,otherPersonId,new Messages(name,uid,message,time), chatId));
+                                        }
+                                    }
+                                    adapter = new MessageAdapter(PrivateMessageList);
+                                    recyclerView.setAdapter(adapter);
                                 }
-                                adapter = new MessageAdapter(PrivateMessageList);
-                                recyclerView.setAdapter(adapter);
+                            });
 
-                            }
-                        }
-                    });
-                    try {
-                        // Block on a task and get the result synchronously. This is generally done
-                        // when executing a task inside a separately managed background thread. Doing this
-                        // on the main (UI) thread can cause your application to become unresponsive.
-                        Tasks.await(task);
-                    }  catch (InterruptedException e) {
-                        // An interrupt occurred while waiting for the task to complete.
-                        // ...
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
                 }
 
                 return null;

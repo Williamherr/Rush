@@ -1,18 +1,25 @@
 package com.example.rush;
 
 public class ClassInfo {
-    private String name;
+    private String className;
     private String instructor;
     private String description;
+    private String createdBy;
+    //Add a structure to store Students that are in this class
 
-    public ClassInfo(String name, String instructor, String description) {
-        this.name = name;
+    public ClassInfo(String className, String instructor, String description, String createdBy) {
+        this.className = className;
         this.instructor = instructor;
         this.description = description;
+        this.createdBy = createdBy;
+    }
+
+    public ClassInfo() {
+
     }
 
     public String getClassName() {
-        return name;
+        return className;
     }
 
     public String getInstructor() {
@@ -21,5 +28,9 @@ public class ClassInfo {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
     }
 }
