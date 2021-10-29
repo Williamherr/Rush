@@ -21,10 +21,6 @@ import com.example.rush.messages.model.PrivateMessageList;
 
 import com.example.rush.messages.model.Messages;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -38,7 +34,7 @@ import com.google.firebase.firestore.Transaction;
 
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+
 
 
 public class MessageFragment extends Fragment {
@@ -76,7 +72,7 @@ public class MessageFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mListener = (MessageFragmentListener) context;
     }

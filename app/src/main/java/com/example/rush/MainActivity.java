@@ -13,14 +13,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 
-<<<<<<< HEAD
 
-public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, MessageFragment.MessageFragmentListener {
+
+public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener {
 
     private String uid = "";
-=======
-public class MainActivity extends AppCompatActivity {
->>>>>>> 4c1b33d4f776cb10500f955b3966970ea072a38c
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,24 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void bottomNavigation() {
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationBar);
-        bottomNav.setVisibility(View.VISIBLE);
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
 
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-<<<<<<< HEAD
-                int id = item.getItemId();
-
-                Log.d("navBar", String.valueOf(id));
-                switch (id) {
-                    case 2131231041: //Home
-                        Log.d("navBar", "Home");
-                        break;
-                    case 2131231040: //Groups
-                        Log.d("navBar", "Groups");
-                        break;
-                    case 2131231039: //Classes
-=======
                 String itemString = item.toString();
                 switch (itemString) {
                     case "Home": // Home
@@ -59,23 +43,14 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("navBar", "Groups");
                         break;
                     case "Classes": // Classes
->>>>>>> 4c1b33d4f776cb10500f955b3966970ea072a38c
                         Log.d("navBar", "Classes");
                         classesFragment();
                         break;
-<<<<<<< HEAD
-                    case 2131231042: //Messages
-                        Log.d("navBar", "Messages");
-                        messageFragment();
-                        break;
-                    case 2131231038: //Activity
-=======
                     case "Messages": // Messages
                         Log.d("navBar", "Messages");
                         messageFragment();
                         break;
                     case "Activity": // Activity
->>>>>>> 4c1b33d4f776cb10500f955b3966970ea072a38c
                         Log.d("navBar", "Activity");
                         break;
                     default:
