@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 
 import com.example.rush.messages.MessageFragment;
@@ -18,13 +19,14 @@ import com.google.android.material.navigation.NavigationBarView;
 public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener {
 
     private String uid;
-
+    BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        bottomNav = findViewById(R.id.bottomNavigationBar);
+        bottomNav.setVisibility(View.INVISIBLE);
         //Navigation bar
         bottomNavigation();
 
@@ -34,7 +36,8 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
 
 
     public void bottomNavigation() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationBar);
+
+
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
 
             @Override
@@ -111,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     @Override
     public void gotoHomeFragment(String uid) {
         this.uid = uid;
+        bottomNav.setVisibility(View.VISIBLE);
         HomeFragment();
     }
 
