@@ -1,5 +1,6 @@
 package com.example.rush;
 
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +29,9 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ClassInfo classObj = classList.get(position);
-        holder.className.setText("Class: " + classObj.getClassName());
-        holder.instructorName.setText("Instructor: " + classObj.getInstructor());
-        holder.classDescription.setText("Class Description: " + classObj.getDescription());
+        holder.className.setText(String.format("Class: %s", classObj.getClassName()));
+        holder.instructorName.setText(String.format("Instructor: %s", classObj.getInstructor()));
+        holder.classDescription.setText(String.format("Class Description: %s", classObj.getDescription()));
     }
 
     @Override
@@ -45,9 +46,9 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ViewHolder> 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final View view;
-        public final TextView className;
-        public final TextView instructorName;
-        public final TextView classDescription;
+        public TextView className;
+        public TextView instructorName;
+        public TextView classDescription;
 
         public ViewHolder(View view) {
             super(view);
