@@ -23,10 +23,17 @@
         ></item>
 
     <item
-        android:title="Activity"
-        android:id="@+id/nav_activity"
+        android:title="Notifications"
+        android:id="@+id/nav_notification"
         android:icon="@drawable/bell"
         ></item>
+<!--    <item-->
+<!--        android:title="Activity"-->
+<!--        android:id="@+id/nav_activity"-->
+<!--        android:icon="@drawable/bell"-->
+<!--        ></item>-->
+
+
 
 
 
