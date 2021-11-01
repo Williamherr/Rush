@@ -94,11 +94,12 @@ public class LoginFragment extends Fragment {
         String email = inputEmail.getText().toString();
         String password = inputPassword.getText().toString();
         if(email.replaceAll("\\s", "").isEmpty()){
-            Toast.makeText(getActivity(), "Email address cannot be empty", Toast.LENGTH_SHORT);
+            Toast.makeText(getActivity(), "Email address cannot be empty", Toast.LENGTH_SHORT)
+            .show();
             return false;
         }
         if(password.isEmpty()){
-            Toast.makeText(getActivity(), "Password cannot be empty", Toast.LENGTH_SHORT);
+            Toast.makeText(getActivity(), "Password cannot be empty", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -125,7 +126,8 @@ public class LoginFragment extends Fragment {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(getActivity(), "Wrong Email or Password", Toast.LENGTH_SHORT);
+                            Toast.makeText(getActivity(), "Wrong Email or Password", Toast.LENGTH_SHORT)
+                            .show();
                         }
                     }
                 });

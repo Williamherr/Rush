@@ -61,11 +61,11 @@ public class NotificationFragment extends Fragment {
                     String notificationMessage = inputNotificationMessage.getText().toString();
                     mAuth = FirebaseAuth.getInstance();
                     FirebaseUser user = mAuth.getCurrentUser();
-                    if (  user.getDisplayName() == null) {
+                    if (user.getDisplayName() == null) {
                         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName("Fake Name").build();
                         user.updateProfile(profileUpdates);
                     }
-                    Log.d(TAG,user.getUid());
+                    Log.d(TAG, user.getUid());
                     addNotification(notificationMessage, user.getEmail().toString());
                 }
             }
@@ -74,20 +74,21 @@ public class NotificationFragment extends Fragment {
 
 
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         cListener = (NotificationFragmentListener) context;
     }
 
-    public interface NotificationFragmentListener{
+    public interface NotificationFragmentListener {
         void gotoHomeFragment(String uid);
     }
 
-    public Boolean validate(){
+    public Boolean validate() {
         String notificationMessage = inputNotificationMessage.getText().toString();
-        if(notificationMessage.replaceAll("\\s", "").isEmpty()){
-            Toast.makeText(getActivity(), "Notification Message cannot be empty", Toast.LENGTH_SHORT);
+        if (notificationMessage.replaceAll("\\s", "").isEmpty()) {
+            Toast.makeText(getActivity(), "Notification Message cannot be empty", Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -101,16 +102,15 @@ public class NotificationFragment extends Fragment {
                         .setContentTitle("Notifications from email " + userEmail)
                         .setContentText(notificationMessage);//set Content of Notification
 
-        Intent notificationIntent = new Intent(getContext(),MainActivity.class);
+        Intent notificationIntent = new Intent(getContext(), MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(getContext(), 0, notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(contentIntent);
 
         // Add as notification
-        NotificationManager manager = ( NotificationManager ) getActivity().getSystemService( getActivity().NOTIFICATION_SERVICE );
+        NotificationManager manager = (NotificationManager) getActivity().getSystemService(getActivity().NOTIFICATION_SERVICE);
         manager.notify(0, builder.build());
     }
-
 
 
 }
