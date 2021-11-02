@@ -16,7 +16,8 @@ import com.google.android.material.navigation.NavigationBarView;
 
 
 
-public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener {
+public class MainActivity extends AppCompatActivity implements
+        MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener, NotificationFragment.NotificationFragmentListener {
 
     private String uid;
     BottomNavigationView bottomNav;
@@ -62,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                     case "Activity": // Activity
                         Log.d("navBar", "Activity");
                         break;
+                    case "Notifications": // Notifications
+                        Log.d("navBar", "Notifications");
+                        notificationFragment();
+                        break;
                     default:
                         break;
 
@@ -96,6 +101,13 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         setTitle("Rush");
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerView, new HomeFragment()).addToBackStack(null)
+                .commit();
+    }
+
+    public void notificationFragment() {
+        setTitle("Notification");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new NotificationFragment()).addToBackStack(null)
                 .commit();
     }
 

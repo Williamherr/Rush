@@ -38,8 +38,6 @@ public class ClassesFragment extends Fragment {
     private FirebaseFirestore database;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private TextView noClasses;
-    private RecyclerView classView;
     private RecyclerView.Adapter adapter;
     private ArrayList<ClassInfo> listOfClasses = new ArrayList<>();
     String userID;
@@ -77,7 +75,6 @@ public class ClassesFragment extends Fragment {
         fabButton = view.findViewById(R.id.classOptionsButton);
         fabButton2 = view.findViewById(R.id.classDeleteButton);
         fabButton3 = view.findViewById(R.id.classEditButton);
-        noClasses = view.findViewById(R.id.noClassesText);
         fabOpen = AnimationUtils.loadAnimation
                 (getActivity(), R.anim.fab_open);
         fabClose = AnimationUtils.loadAnimation
@@ -140,10 +137,6 @@ public class ClassesFragment extends Fragment {
                     });
 
 
-        } else {
-            /* User shouldn't be able to access this tab when logged out
-               Mostly used for testing */
-            noClasses.setText(R.string.not_logged_in);
         }
 
 
