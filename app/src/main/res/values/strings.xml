@@ -5,6 +5,8 @@
     <string name="UserProfileImageDes">This image is the user\'s profile picture</string>
     <string name="NameExample">First Last</string>
     <string name="FakeTextExample">Lorem ipsum dolor sit ametdsa dsadw</string>
+    <!-- Private Message Fragment -->
+    <string name="MessageReportSuccess">Message has been reported</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="messagePlaceHolder">Reply</string>
 
@@ -16,4 +18,9 @@
     <string name="class_name">Class Name</string>
     <string name="create">Create</string>
 
+    <string name="sendMessageDes">Sends the message to the database</string>
+    <!-- Menu -->
+    <string name="edit">Edit</string>
+    <string name="report">Report</string>
+    <string name="delete">Delete</string>
 </resources>
