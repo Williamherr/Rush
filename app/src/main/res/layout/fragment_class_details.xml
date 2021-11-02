@@ -8,10 +8,9 @@
     tools:context=".ClassDetailsFragment">
 
     <TextView
-        android:id="@+id/detailsTesting"
+        android:id="@+id/descriptionOfClassText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Testing Detail Page"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
