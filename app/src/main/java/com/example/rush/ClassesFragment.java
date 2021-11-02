@@ -1,5 +1,7 @@
 package com.example.rush;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +10,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,12 +41,23 @@ public class ClassesFragment extends Fragment {
     FloatingActionButton fabButton, fabButton2, fabButton3;
     Animation fabOpen, fabClose;
     boolean isOpen = false;
+    ClassDetailFragmentListener listener;
     private FirebaseFirestore database;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private RecyclerView.Adapter adapter;
     private ArrayList<ClassInfo> listOfClasses = new ArrayList<>();
     String userID;
+
+    public interface ClassDetailFragmentListener {
+        void goToClassDetails(String name, String instructor, String description);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        listener = (ClassesFragment.ClassDetailFragmentListener) context;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -118,16 +135,11 @@ public class ClassesFragment extends Fragment {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     Log.d("Success", document.getId() + " => " + document.getData());
                                     //Cast the QueryDocumentSnapshot into a ClassInfo obj
-                                    try {
-                                        ClassInfo obj = document.toObject(ClassInfo.class);
-                                        //Keep track of all classes created by this user
-                                        listOfClasses.add(obj);
-                                        adapter = new ClassAdapter(listOfClasses);
-                                        recycle.setAdapter(adapter);
-                                    } catch (NullPointerException e) {
-                                        Toast.makeText(getActivity(), "Sorry, something went wrong!"
-                                                , Toast.LENGTH_SHORT).show();
-                                    }
+                                    ClassInfo obj = document.toObject(ClassInfo.class);
+                                    //Keep track of all classes created by this user
+                                    listOfClasses.add(obj);
+                                    adapter = new ClassesFragment.ClassAdapter(listOfClasses);
+                                    recycle.setAdapter(adapter);
 
                                 }
                             } else {
@@ -157,6 +169,86 @@ public class ClassesFragment extends Fragment {
             fabButton3.startAnimation(fabOpen);
             fabButton3.setClickable(true);
             isOpen = true;
+        }
+    }
+
+    public class ClassAdapter extends RecyclerView.Adapter<com.example.rush.ClassesFragment.ClassAdapter.ViewHolder> {
+        private ArrayList<ClassInfo> classList;
+
+        public ClassAdapter(ArrayList<ClassInfo> classList) {
+            this.classList = classList;
+        }
+
+        @NonNull
+        @Override
+        public com.example.rush.ClassesFragment.ClassAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View v = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.class_items,
+                    parent, false);
+            return new com.example.rush.ClassesFragment.ClassAdapter.ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull com.example.rush.ClassesFragment.ClassAdapter.ViewHolder holder, int position) {
+            ClassInfo classObj = classList.get(position);
+            SpannableString[] stringSpanners = new SpannableString[]{
+                    new SpannableString("Class Name"), new SpannableString("Instructor"),
+                    new SpannableString("Description")
+            };
+
+        /*
+                Use SpannableStrings to set only the first word in the TextViews bold
+         */
+            stringSpanners[0].setSpan(new StyleSpan(Typeface.BOLD), 0,
+                    stringSpanners[0].length(), 0);
+            stringSpanners[0].setSpan(new UnderlineSpan(), 0, stringSpanners[0].length(), 0);
+            stringSpanners[0].setSpan(new RelativeSizeSpan(1.2f), 0, stringSpanners[0].length(), 0);
+            stringSpanners[1].setSpan(new StyleSpan(Typeface.BOLD), 0,
+                    stringSpanners[1].length(), 0);
+            stringSpanners[1].setSpan(new UnderlineSpan(), 0, stringSpanners[1].length(), 0);
+            stringSpanners[1].setSpan(new RelativeSizeSpan(1.2f), 0, stringSpanners[1].length(), 0);
+            stringSpanners[2].setSpan(new StyleSpan(Typeface.BOLD), 0,
+                    stringSpanners[2].length(), 0);
+            stringSpanners[2].setSpan(new UnderlineSpan(), 0, stringSpanners[2].length(), 0);
+            stringSpanners[2].setSpan(new RelativeSizeSpan(1.2f), 0, stringSpanners[2].length(), 0);
+
+            holder.className.setText(stringSpanners[0]);
+            holder.className.append("\n" + classObj.getClassName());
+            holder.instructorName.setText(stringSpanners[1]);
+            holder.instructorName.append("\n" + classObj.getInstructor());
+            holder.classDescription.setText(stringSpanners[2]);
+            holder.classDescription.append("\n" + classObj.getDescription());
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.goToClassDetails(classObj.getClassName(), classObj.getInstructor(),
+                            classObj.getDescription());
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            if (classList != null) {
+                return classList.size();
+            } else {
+                return 0;
+            }
+        }
+
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public final View view;
+            public TextView className;
+            public TextView instructorName;
+            public TextView classDescription;
+
+            public ViewHolder(View view) {
+                super(view);
+                this.view = view;
+                className = view.findViewById(R.id.classNameText);
+                instructorName = view.findViewById(R.id.classInstructorName);
+                classDescription = view.findViewById(R.id.classDescriptionText);
+            }
         }
     }
 

@@ -3,7 +3,9 @@ package com.example.rush;
 
 import android.os.Bundle;
 import android.content.Intent;
+
 import androidx.fragment.app.Fragment;
+
 import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,12 +14,16 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
 import androidx.drawerlayout.widget.DrawerLayout;
+
 import android.content.Context;
 import android.widget.Toast;
 import android.text.*;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +34,6 @@ import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.*;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
-
 
 
 public class LoginFragment extends Fragment {
@@ -79,33 +84,35 @@ public class LoginFragment extends Fragment {
 
 
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         cListener = (CreateFragmentListener) context;
     }
 
-    public interface CreateFragmentListener{
+    public interface CreateFragmentListener {
         void goToAccountCreationFragment();
+
         void gotoHomeFragment(String uid);
     }
 
-    public Boolean validate(){
+    public Boolean validate() {
         String email = inputEmail.getText().toString();
         String password = inputPassword.getText().toString();
-        if(email.replaceAll("\\s", "").isEmpty()){
+        if (email.replaceAll("\\s", "").isEmpty()) {
             Toast.makeText(getActivity(), "Email address cannot be empty", Toast.LENGTH_SHORT)
-            .show();
+                    .show();
             return false;
         }
-        if(password.isEmpty()){
+        if (password.isEmpty()) {
             Toast.makeText(getActivity(), "Password cannot be empty", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
 
-    public void signIn(String email, String password){
+    public void signIn(String email, String password) {
 
 
         mAuth.signInWithEmailAndPassword(email, password)
@@ -116,18 +123,18 @@ public class LoginFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            if (  user.getDisplayName() == null) {
+                            if (user.getDisplayName() == null) {
                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName("Fake Name").build();
                                 user.updateProfile(profileUpdates);
                             }
                             cListener.gotoHomeFragment(user.getUid());
-                            Log.d(TAG,user.getUid());
+                            Log.d(TAG, user.getUid());
 
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(getActivity(), "Wrong Email or Password", Toast.LENGTH_SHORT)
-                            .show();
+                                    .show();
                         }
                     }
                 });
