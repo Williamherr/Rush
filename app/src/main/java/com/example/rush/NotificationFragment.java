@@ -30,9 +30,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class NotificationFragment extends Fragment {
-    NotificationFragmentListener cListener;
+    NotificationFragmentListener mListener;
     private EditText inputNotificationMessage;
-    private Button btnPushNotification;
+    private Button btnPushNotification,btnAddPhoto;
     private FirebaseAuth mAuth;
     final String TAG = "NotificationFragment";
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -55,6 +55,8 @@ public class NotificationFragment extends Fragment {
 
 
         btnPushNotification = (Button) view.findViewById(R.id.notification);
+        btnAddPhoto = (Button) view.findViewById(R.id.buttonAddPhoto);
+
         btnPushNotification.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 if (validate()) {
@@ -70,6 +72,10 @@ public class NotificationFragment extends Fragment {
                 }
             }
         });
+
+        btnAddPhoto.setOnClickListener(v -> {
+            mListener.addNewPhotoFragment();
+        });
         return view;
 
 
@@ -78,11 +84,11 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        cListener = (NotificationFragmentListener) context;
+        mListener = (NotificationFragmentListener) context;
     }
 
-    public interface NotificationFragmentListener {
-        void gotoHomeFragment(String uid);
+    public interface NotificationFragmentListener{
+        void addNewPhotoFragment();
     }
 
     public Boolean validate() {
