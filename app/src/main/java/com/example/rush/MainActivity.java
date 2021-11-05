@@ -17,7 +17,8 @@ import com.google.android.material.navigation.NavigationBarView;
 
 
 public class MainActivity extends AppCompatActivity implements
-        MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener, NotificationFragment.NotificationFragmentListener {
+        MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener,
+        NotificationFragment.NotificationFragmentListener, AddPhotoFragment.UploadFragmentListener {
 
     private String uid;
     BottomNavigationView bottomNav;
@@ -111,6 +112,20 @@ public class MainActivity extends AppCompatActivity implements
                 .commit();
     }
 
+    /*
+    *
+    * This function add a new photo feature using the Notification to call this feature for testing.
+    * I will integrate this feature into another page,
+    * such as create account that let the user could upload the image
+    * */
+    @Override
+    public void addNewPhotoFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new AddPhotoFragment(), "UploadFragment")
+                .addToBackStack(null)
+                .commit();
+    }
+
 
 
     @Override
@@ -133,5 +148,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void goToAccountCreationFragment() {
 
+    }
+
+    @Override
+    public void backFragment() {
+        getSupportFragmentManager().popBackStack();
     }
 }

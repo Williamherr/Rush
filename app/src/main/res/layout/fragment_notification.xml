@@ -34,12 +34,23 @@
         android:id="@+id/notification"
         android:layout_width="216dp"
         android:layout_height="58dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginLeft="96dp"
-        android:layout_marginTop="432dp"
-        android:text="Push Notification"
+        android:layout_marginStart="92dp"
+        android:layout_marginLeft="92dp"
+        android:layout_marginTop="364dp"
         android:onClick="onClick"
+        android:text="Push Notification"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonAddPhoto"
+        android:layout_width="210dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:text="Add Photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.457"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notification" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
