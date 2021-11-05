@@ -18,8 +18,7 @@ import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity implements
         MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener,
-        NotificationFragment.NotificationFragmentListener, AddPhotoFragment.UploadFragmentListener,
-        NotificationFragment.NotificationFragmentListener, ClassesFragment.ClassDetailFragmentListener
+        NotificationFragment.NotificationFragmentListener, AddPhotoFragment.UploadFragmentListener, ClassesFragment.ClassDetailFragmentListener
 {
 
     private String uid;
