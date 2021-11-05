@@ -9,12 +9,18 @@ public class Messages {
     private String uid;
     private String message;
     private com.google.firebase.Timestamp time;
+    private String id;
 
-    public Messages(String name, String uid, String message, com.google.firebase.Timestamp time) {
+    public Messages(String name, String uid,String id, String message, com.google.firebase.Timestamp time) {
         this.name = name;
+        this.id = id;
         this.uid = uid;
         this.message = message;
         this.time = time;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getName() {

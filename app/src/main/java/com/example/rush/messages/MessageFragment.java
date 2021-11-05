@@ -135,7 +135,7 @@ public class MessageFragment extends Fragment {
                                             String name = doc.getString("name");
                                             Timestamp time = doc.getTimestamp("time");
                                             String uid = doc.getString("uid");
-                                            PrivateMessageList.add(new PrivateMessageList(otherUserName,otherPersonId,new Messages(name,uid,message,time), chatId));
+                                            PrivateMessageList.add(new PrivateMessageList(otherUserName,otherPersonId,new Messages(name,uid, doc.getId(), message,time), chatId));
                                         }
                                     }
                                     adapter = new MessageAdapter(PrivateMessageList);

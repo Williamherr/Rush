@@ -1,5 +1,7 @@
 package com.example.rush;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +10,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,14 +41,23 @@ public class ClassesFragment extends Fragment {
     FloatingActionButton fabButton, fabButton2, fabButton3;
     Animation fabOpen, fabClose;
     boolean isOpen = false;
+    ClassDetailFragmentListener listener;
     private FirebaseFirestore database;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private TextView noClasses;
-    private RecyclerView classView;
     private RecyclerView.Adapter adapter;
     private ArrayList<ClassInfo> listOfClasses = new ArrayList<>();
     String userID;
+
+    public interface ClassDetailFragmentListener {
+        void goToClassDetails(String name, String instructor, String description);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        listener = (ClassesFragment.ClassDetailFragmentListener) context;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,7 +92,6 @@ public class ClassesFragment extends Fragment {
         fabButton = view.findViewById(R.id.classOptionsButton);
         fabButton2 = view.findViewById(R.id.classDeleteButton);
         fabButton3 = view.findViewById(R.id.classEditButton);
-        noClasses = view.findViewById(R.id.noClassesText);
         fabOpen = AnimationUtils.loadAnimation
                 (getActivity(), R.anim.fab_open);
         fabClose = AnimationUtils.loadAnimation
@@ -121,16 +135,11 @@ public class ClassesFragment extends Fragment {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     Log.d("Success", document.getId() + " => " + document.getData());
                                     //Cast the QueryDocumentSnapshot into a ClassInfo obj
-                                    try {
-                                        ClassInfo obj = document.toObject(ClassInfo.class);
-                                        //Keep track of all classes created by this user
-                                        listOfClasses.add(obj);
-                                        adapter = new ClassAdapter(listOfClasses);
-                                        recycle.setAdapter(adapter);
-                                    } catch (NullPointerException e) {
-                                        Toast.makeText(getActivity(), "Sorry, something went wrong!"
-                                                , Toast.LENGTH_SHORT).show();
-                                    }
+                                    ClassInfo obj = document.toObject(ClassInfo.class);
+                                    //Keep track of all classes created by this user
+                                    listOfClasses.add(obj);
+                                    adapter = new ClassesFragment.ClassAdapter(listOfClasses);
+                                    recycle.setAdapter(adapter);
 
                                 }
                             } else {
@@ -140,10 +149,6 @@ public class ClassesFragment extends Fragment {
                     });
 
 
-        } else {
-            /* User shouldn't be able to access this tab when logged out
-               Mostly used for testing */
-            noClasses.setText(R.string.not_logged_in);
         }
 
 
@@ -164,6 +169,70 @@ public class ClassesFragment extends Fragment {
             fabButton3.startAnimation(fabOpen);
             fabButton3.setClickable(true);
             isOpen = true;
+        }
+    }
+    /*
+           ClassAdapter for the RecyclerView to list all classes users has created/joined
+     */
+
+    public class ClassAdapter extends RecyclerView.Adapter<com.example.rush.ClassesFragment.ClassAdapter.ViewHolder> {
+        private ArrayList<ClassInfo> classList;
+
+        public ClassAdapter(ArrayList<ClassInfo> classList) {
+            this.classList = classList;
+        }
+
+        @NonNull
+        @Override
+        public com.example.rush.ClassesFragment.ClassAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View v = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.class_items,
+                    parent, false);
+            return new com.example.rush.ClassesFragment.ClassAdapter.ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull com.example.rush.ClassesFragment.ClassAdapter.ViewHolder holder, int position) {
+            ClassInfo classObj = classList.get(position);
+            SpannableString stringSpanner = new SpannableString(classObj.getClassName());
+            stringSpanner.setSpan(new StyleSpan(Typeface.BOLD), 0, stringSpanner.length(), 0);
+            String twoChars = classObj.getClassName().substring(0,2).toUpperCase();
+
+
+            holder.className.setText(stringSpanner);
+            holder.classDescription.setText(classObj.getDescription());
+            holder.identifier.setText(twoChars);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.goToClassDetails(classObj.getClassName(), classObj.getInstructor(),
+                            classObj.getDescription());
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            if (classList != null) {
+                return classList.size();
+            } else {
+                return 0;
+            }
+        }
+
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public final View view;
+            public TextView className;
+            public TextView identifier;
+            public TextView classDescription;
+
+            public ViewHolder(View view) {
+                super(view);
+                this.view = view;
+                className = view.findViewById(R.id.classNameText);
+                classDescription = view.findViewById(R.id.classDescriptionText);
+                identifier = view.findViewById(R.id.classIdentifier);
+            }
         }
     }
 

@@ -18,7 +18,9 @@ import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity implements
         MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener,
-        NotificationFragment.NotificationFragmentListener, AddPhotoFragment.UploadFragmentListener {
+        NotificationFragment.NotificationFragmentListener, AddPhotoFragment.UploadFragmentListener,
+        NotificationFragment.NotificationFragmentListener, ClassesFragment.ClassDetailFragmentListener
+{
 
     private String uid;
     BottomNavigationView bottomNav;
@@ -153,5 +155,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void backFragment() {
         getSupportFragmentManager().popBackStack();
+    }
+    
+    public void goToClassDetails(String name, String instructor, String description) {
+        setTitle(name);
+        getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
+                new ClassDetailsFragment(name, instructor, description)).addToBackStack(null).commit();
     }
 }

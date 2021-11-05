@@ -7,11 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".ClassCreationFragment" >
 
+
     <EditText
         android:id="@+id/instructorField"
         android:layout_width="308dp"
         android:layout_height="71dp"
         android:layout_marginTop="8dp"
+        android:maxLength="100"
         android:ems="10"
         android:gravity="start|top"
         android:hint="Instructor"
@@ -26,6 +28,7 @@
         android:layout_width="308dp"
         android:layout_height="71dp"
         android:layout_marginTop="12dp"
+        android:maxLength="200"
         android:ems="10"
         android:gravity="start|top"
         android:hint="@string/class_description"
@@ -40,6 +43,7 @@
         android:layout_width="308dp"
         android:layout_height="71dp"
         android:layout_marginTop="136dp"
+        android:maxLength="100"
         android:ems="10"
         android:gravity="start|top"
         android:hint="@string/class_name"
