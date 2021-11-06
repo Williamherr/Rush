@@ -18,6 +18,9 @@ public class Messages {
         this.message = message;
         this.time = time;
     }
+    public Messages(){
+
+    }
 
     public String getId() {
         return id;
