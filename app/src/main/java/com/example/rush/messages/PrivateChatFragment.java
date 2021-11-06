@@ -1,5 +1,6 @@
 package com.example.rush.messages;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -27,12 +29,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rush.LoginFragment;
 import com.example.rush.R;
 import com.example.rush.messages.model.Messages;
+import com.example.rush.messages.model.PrivateMessageList;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -61,6 +65,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -86,7 +91,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
     MessageAdapter adapter;
-    ArrayList<Messages> messages;
+    ArrayList<Messages> messages, searchList, listOfMessages;
     EditText textview;
     ImageButton sendMessageButton;
     RecyclerView.SmoothScroller smoothScroller;
@@ -96,6 +101,10 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     int position;
     boolean scrollToBottom = true;
     Messages reportMessage;
+
+    public PrivateChatFragment() {
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,26 +118,28 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_private_chat, container, false);
         position = 0;
-        Log.d(TAG,"Private Chat Fragment");
-
+        Log.d(TAG, "Private Chat Fragment");
+        setHasOptionsMenu(true);
 
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // User is signed in
-            Log.d(TAG,"database");
+            Log.d(TAG, "database");
             uid = user.getUid();
             userName = user.getDisplayName();
-            Log.d(TAG,user.getDisplayName());
+            Log.d(TAG, user.getDisplayName());
 
         } else {
             // No user is signed in
-            Log.d(TAG,"Hard Code");
+            Log.d(TAG, "Hard Code");
             uid = "LNQBoSfSxveCmlpa9jo1vdDzjrE3";
             userName = "William Herr";
         }
 
         messages = new ArrayList<>();
+        listOfMessages = new ArrayList<>();
+        searchList = new ArrayList<>();
         recyclerView = view.findViewById(R.id.messagesRecyclerView);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -140,7 +151,8 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
 
         smoothScroller = new
                 LinearSmoothScroller(getContext()) {
-                    @Override protected int getVerticalSnapPreference() {
+                    @Override
+                    protected int getVerticalSnapPreference() {
                         return LinearSmoothScroller.SNAP_TO_START;
                     }
                 };
@@ -149,36 +161,81 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         messageRef.document(messageKey).collection("messages")
                 .orderBy("time", Query.Direction.ASCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable  QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "listen:error", e);
-                    return;
-                }
-                messages = new ArrayList<>();
-                for (QueryDocumentSnapshot doc : value) {
-                    if (doc.get("message") != null) {
-                        String message = doc.getString("message");
-                        String name = doc.getString("name");
-                        Timestamp time = doc.getTimestamp("time");
-                        String uid = doc.getString("uid");
-                        messages.add(new Messages(name, uid,doc.getId(), message, time));
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "listen:error", e);
+                            return;
+                        }
+                        messages = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : value) {
+                            if (doc.get("message") != null) {
+                                String message = doc.getString("message");
+                                String name = doc.getString("name");
+                                Timestamp time = doc.getTimestamp("time");
+                                String uid = doc.getString("uid");
+                                Messages tempMess = new Messages(name, uid, doc.getId(), message, time);
+                                messages.add(tempMess);
+                                listOfMessages.add(tempMess);
 
+                            }
+                        }
+                        showRecycler();
                     }
-                }
-                showRecycler();
-            }
-        });
+                });
 
 
-
-        return  view;
+        return view;
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.search_menu, menu);
+        try {
+            SearchManager searchManager =
+                    (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+            SearchView searchView =
+                    (SearchView) menu.findItem(R.id.search_icon).getActionView();
+            searchView.setSearchableInfo(
+                    searchManager.getSearchableInfo(getActivity().getComponentName()));
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    for (int i = 0; i < listOfMessages.size(); i++) {
+                        //Convert the search term and message to lowercase
+                        if (listOfMessages.get(i).getMessage().toLowerCase(Locale.ROOT)
+                                .contains(s.toLowerCase(Locale.ROOT))) {
+                            searchList.add(listOfMessages.get(i));
+                        }
+                    }
+                    //Change the adapter's dataset to the list of search results
+                    messages.clear();
+                    messages.addAll(searchList);
+                    searchList.clear();
+                    adapter.notifyDataSetChanged();
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    // do your search on change or save the last string or...
+                    return false;
+                }
+            });
+
+
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Sorry, something went wrong!", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
     public void showRecycler() {
-        adapter = new MessageAdapter(messages,userName,this);
+        adapter = new MessageAdapter(messages, userName, this);
         recyclerView.setAdapter(adapter);
         // Changes the position of the recycler view
-        if (scrollToBottom == true){
+        if (scrollToBottom == true) {
             //Scroll to the bottom if the page is onloaded
             layoutManager.scrollToPosition(adapter.getItemCount() - 1);
         } else {
@@ -189,7 +246,6 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
 
 
     }
-
 
 
     @Override
@@ -231,28 +287,29 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     }
 
     // Updates messages
-    public void updateMessages(Messages message){
-        Map<String,Object> data = new HashMap<>();
+    public void updateMessages(Messages message) {
+        Map<String, Object> data = new HashMap<>();
         data.put("message", textview.getText().toString());
         messageRef.document(messageKey).collection("messages").document(message.getId())
                 .update(data);
         textview.setText("");
     }
+
     // Add messages to the Database
-    public void addMessages(){
+    public void addMessages() {
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"TAG");
-                if (textview.getText().toString().trim().equals("") ){
+                Log.d(TAG, "TAG");
+                if (textview.getText().toString().trim().equals("")) {
                     return;
                 }
-                Map<String,Object> data = new HashMap<>();
-                data.put("message",  textview.getText().toString());
+                Map<String, Object> data = new HashMap<>();
+                data.put("message", textview.getText().toString());
                 Timestamp time = Timestamp.now();
                 data.put("time", time);
-                data.put("uid",uid);
-                data.put("name",userName);
+                data.put("uid", uid);
+                data.put("name", userName);
 
 
                 textview.setText("");
@@ -263,29 +320,30 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
             }
         });
     }
+
     @RequiresApi(api = Build.VERSION_CODES.R)
     public void reportMessages(String report) {
         Messages message = this.reportMessage;
 
-        Map <String,Object> data = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
         ArrayList<Map> user = new ArrayList<>();
         ArrayList<Map> reportedUser = new ArrayList<>();
 
-        user.add(Map.of("name",userName,"uid",uid));
-        reportedUser.add(Map.of("name",message.getName(),"uid",message.getUid()));
+        user.add(Map.of("name", userName, "uid", uid));
+        reportedUser.add(Map.of("name", message.getName(), "uid", message.getUid()));
 
         data.put("message", message.getMessage());
-        data.put("reason",report);
+        data.put("reason", report);
         data.put("reportedUser", reportedUser);
-        data.put("user",user);
-        data.put("mid",message.getId() );
+        data.put("user", user);
+        data.put("mid", message.getId());
 
         db.collection("chat-messages").document("private-messages").collection("reports")
                 .add(data);
         Toast.makeText(getContext(), getContext().getString(R.string.MessageReportSuccess), Toast.LENGTH_SHORT).show();
     }
 
-    void showDialog( ) {
+    void showDialog() {
         // Create the fragment and show it as a dialog.
         DialogFragment newFragment = ReportDialogFragment.newInstance(this);
         newFragment.show(getParentFragmentManager(), "dialog");
@@ -299,6 +357,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         this.reportMessage = message;
 
     }
+
     // Get report details from reportDialogFragment
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
@@ -307,12 +366,12 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         reportMessages(report);
     }
 
-    public void showKeyboard(){
+    public void showKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
-    public void closeKeyboard(){
+    public void closeKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
