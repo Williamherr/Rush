@@ -63,6 +63,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -91,7 +92,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
     MessageAdapter adapter;
-    ArrayList<Messages> messages, searchList, listOfMessages;
+    ArrayList<Messages> messages, searchList;
     EditText textview;
     ImageButton sendMessageButton;
     RecyclerView.SmoothScroller smoothScroller;
@@ -138,7 +139,6 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         }
 
         messages = new ArrayList<>();
-        listOfMessages = new ArrayList<>();
         searchList = new ArrayList<>();
         recyclerView = view.findViewById(R.id.messagesRecyclerView);
         layoutManager = new LinearLayoutManager(getContext());
@@ -174,9 +174,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                                 String name = doc.getString("name");
                                 Timestamp time = doc.getTimestamp("time");
                                 String uid = doc.getString("uid");
-                                Messages tempMess = new Messages(name, uid, doc.getId(), message, time);
-                                messages.add(tempMess);
-                                listOfMessages.add(tempMess);
+                                messages.add(new Messages(name, uid, doc.getId(), message, time));
 
                             }
                         }
@@ -202,24 +200,12 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
-                    for (int i = 0; i < listOfMessages.size(); i++) {
-                        //Convert the search term and message to lowercase
-                        if (listOfMessages.get(i).getMessage().toLowerCase(Locale.ROOT)
-                                .contains(s.toLowerCase(Locale.ROOT))) {
-                            searchList.add(listOfMessages.get(i));
-                        }
-                    }
-                    //Change the adapter's dataset to the list of search results
-                    messages.clear();
-                    messages.addAll(searchList);
-                    searchList.clear();
-                    adapter.notifyDataSetChanged();
                     return true;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String s) {
-                    // do your search on change or save the last string or...
+                    filter(s);
                     return false;
                 }
             });
@@ -231,11 +217,29 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
 
     }
 
+    private void filter(String text) {
+        ArrayList<Messages> filteredList = new ArrayList<>();
+
+        for (Messages item : messages) {
+            if (item.getMessage().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))) {
+                filteredList.add(item);
+            }
+        }
+        if (filteredList.isEmpty()) {
+            adapter.filterList(messages);
+            Toast.makeText(getActivity(), "No messages found", Toast.LENGTH_SHORT).show();
+        } else {
+            adapter.filterList(filteredList);
+        }
+
+
+    }
+
     public void showRecycler() {
         adapter = new MessageAdapter(messages, userName, this);
         recyclerView.setAdapter(adapter);
         // Changes the position of the recycler view
-        if (scrollToBottom == true) {
+        if (scrollToBottom) {
             //Scroll to the bottom if the page is onloaded
             layoutManager.scrollToPosition(adapter.getItemCount() - 1);
         } else {
