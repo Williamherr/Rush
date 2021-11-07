@@ -226,7 +226,8 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
             }
         }
         if (filteredList.isEmpty()) {
-            Toast.makeText(getActivity(), "No messages found..", Toast.LENGTH_SHORT).show();
+            adapter.filterList(messages);
+            Toast.makeText(getActivity(), "No messages found", Toast.LENGTH_SHORT).show();
         } else {
             adapter.filterList(filteredList);
         }
