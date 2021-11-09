@@ -28,17 +28,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
     final CollectionReference messageRef = db.collection("chat-messages").document("private-messages").collection("all-private-messages");
     IMessageAdapterListener mListener;
 
-    public MessageAdapter(ArrayList<Messages> singleMessagesList, String userName,IMessageAdapterListener mListener ) {
+    public MessageAdapter(ArrayList<Messages> singleMessagesList, String userName, IMessageAdapterListener mListener) {
         this.singleMessagesList = singleMessagesList;
         this.userName = userName;
         this.mListener = mListener;
+    }
+
+    public void filterList(ArrayList<Messages> listFilter) {
+        singleMessagesList = listFilter;
+
+        //Let the adapter know the data set has changed
+        notifyDataSetChanged();
     }
 
 
     public MessageAdapter.ViewMessageHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.user_messages_sent,viewGroup,false);
+                .inflate(R.layout.user_messages_sent, viewGroup, false);
 
         MessageAdapter.ViewMessageHolder holder = new MessageAdapter.ViewMessageHolder(view);
 
@@ -53,13 +60,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
         holder.messageMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopup(v,0,singleMessagesList.get(position),position);
+                showPopup(v, 0, singleMessagesList.get(position), position);
             }
         });
         holder.leftMessageMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopup(v,1,singleMessagesList.get(position),position);
+                showPopup(v, 1, singleMessagesList.get(position), position);
             }
         });
         if (!(user.equals(userName))) {
@@ -78,8 +85,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
         }
 
 
-
-
     }
 
     @Override
@@ -87,7 +92,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
         return singleMessagesList.size();
     }
 
-    public class ViewMessageHolder extends RecyclerView.ViewHolder  {
+    public class ViewMessageHolder extends RecyclerView.ViewHolder {
 
         private ImageView userProfileImage;
         private TextView receiveUserMessage;
@@ -108,21 +113,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
             message.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    trigger(messageMenuButton.getVisibility(),messageMenuButton);
+                    trigger(messageMenuButton.getVisibility(), messageMenuButton);
                 }
             });
             receiveUserMessage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    trigger(leftMessageMenuButton.getVisibility(),leftMessageMenuButton);
+                    trigger(leftMessageMenuButton.getVisibility(), leftMessageMenuButton);
                 }
             });
 
 
         }
 
-        public void trigger(int inv,ImageButton menuButton) {
-            switch(inv){
+        public void trigger(int inv, ImageButton menuButton) {
+            switch (inv) {
                 case 0:
                     menuButton.setVisibility(View.INVISIBLE);
                     break;
@@ -139,14 +144,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
     }
 
 
-
-    public void showPopup(View v, int id,Messages message, int position) {
+    public void showPopup(View v, int id, Messages message, int position) {
         PopupMenu popup = new PopupMenu(v.getContext(), v);
 
-        if (id ==  0) {
+        if (id == 0) {
             popup.inflate(R.menu.message_menu);
-        }
-        else {
+        } else {
             popup.inflate(R.menu.left_message_menu);
         }
 
@@ -154,11 +157,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Log.d(TAG,item.toString());
+                Log.d(TAG, item.toString());
 
-                switch ( item.toString()) {
+                switch (item.toString()) {
                     case "Edit":
-                        mListener.update(message,position);
+                        mListener.update(message, position);
                         break;
                     case "Report":
                         Log.d(TAG, "onMenuItemClick: Report ");
@@ -181,7 +184,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
 
     public interface IMessageAdapterListener {
         void update(Messages message, int position);
+
         void delete(Messages message);
+
         void report(Messages message);
     }
 }
