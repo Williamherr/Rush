@@ -1,10 +1,8 @@
-package com.example.rush.messages;
+package com.example.rush.messages.Adapters;
 
-import android.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -181,7 +179,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
         popup.show();
     }
 
-    interface IMessageAdapterListener {
+    public interface IMessageAdapterListener {
         void update(Messages message, int position);
         void delete(Messages message);
         void report(Messages message);

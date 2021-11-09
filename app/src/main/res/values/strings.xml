@@ -7,6 +7,8 @@
     <string name="FakeTextExample">Lorem ipsum dolor sit ametdsa dsadw</string>
     <!-- Private Message Fragment -->
     <string name="MessageReportSuccess">Message has been reported</string>
+    <string name="toUser">Type a name or email</string>
+    <string name="to">To</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="messagePlaceHolder">Reply</string>
 

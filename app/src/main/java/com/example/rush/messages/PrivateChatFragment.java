@@ -19,26 +19,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.rush.LoginFragment;
 import com.example.rush.R;
+import com.example.rush.messages.Adapters.MessageAdapter;
 import com.example.rush.messages.model.Messages;
-import com.example.rush.messages.model.PrivateMessageList;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -46,30 +37,17 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.firestore.core.OrderBy;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 
 
 public class PrivateChatFragment extends Fragment implements MessageAdapter.IMessageAdapterListener, ReportDialogFragment.IreturnReport {
@@ -95,7 +73,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     EditText textview;
     ImageButton sendMessageButton;
     RecyclerView.SmoothScroller smoothScroller;
-    Parcelable recyclerViewState;
+
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
     final CollectionReference messageRef = db.collection("chat-messages").document("private-messages").collection("all-private-messages");
     int position;
@@ -125,16 +103,12 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // User is signed in
-            Log.d(TAG, "database");
             uid = user.getUid();
             userName = user.getDisplayName();
-            Log.d(TAG, user.getDisplayName());
+
 
         } else {
             // No user is signed in
-            Log.d(TAG, "Hard Code");
-            uid = "LNQBoSfSxveCmlpa9jo1vdDzjrE3";
-            userName = "William Herr";
         }
 
         messages = new ArrayList<>();
@@ -167,6 +141,8 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                             Log.w(TAG, "listen:error", e);
                             return;
                         }
+                        Map<String, Object> datas;
+                        int i = 0;
                         messages = new ArrayList<>();
                         for (QueryDocumentSnapshot doc : value) {
                             if (doc.get("message") != null) {
@@ -177,9 +153,18 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                                 Messages tempMess = new Messages(name, uid, doc.getId(), message, time);
                                 messages.add(tempMess);
                                 listOfMessages.add(tempMess);
-
+                                if (i == value.size() - 1) {
+                                    datas = new HashMap<>();
+                                    datas.put("recentMessage",message);
+                                    datas.put("time", time);
+                                    messageRef.document(messageKey).update(datas);
+                                }
                             }
+                            i++;
                         }
+
+
+
                         showRecycler();
                     }
                 });
@@ -277,6 +262,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         showKeyboard();
         Log.d(TAG, "update: pos" + position);
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.R)
             @Override
             public void onClick(View v) {
                 updateMessages(message);
@@ -286,12 +272,16 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         });
     }
 
+
     // Updates messages
+    @RequiresApi(api = Build.VERSION_CODES.R)
     public void updateMessages(Messages message) {
         Map<String, Object> data = new HashMap<>();
         data.put("message", textview.getText().toString());
         messageRef.document(messageKey).collection("messages").document(message.getId())
                 .update(data);
+
+
         textview.setText("");
     }
 

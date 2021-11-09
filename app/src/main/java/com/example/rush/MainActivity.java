@@ -8,21 +8,25 @@ import android.view.MenuItem;
 import android.view.View;
 
 
+import com.example.rush.messages.CreatePrivateMessages;
 import com.example.rush.messages.MessageFragment;
 import com.example.rush.messages.PrivateChatFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-
+import java.net.Authenticator;
 
 
 public class MainActivity extends AppCompatActivity implements
         MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener,
         NotificationFragment.NotificationFragmentListener, AddPhotoFragment.UploadFragmentListener, ClassesFragment.ClassDetailFragmentListener
 {
-
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private String uid;
-    BottomNavigationView bottomNav;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,10 @@ public class MainActivity extends AppCompatActivity implements
         bottomNav.setVisibility(View.INVISIBLE);
         //Navigation bar
         bottomNavigation();
+
+        if (user != null) {
+            bottomNav.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -137,6 +145,14 @@ public class MainActivity extends AppCompatActivity implements
                     .addToBackStack(null)
                     .commit();
 
+    }
+    @Override
+    public void createNewMessages() {
+        setTitle("New Messages");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new CreatePrivateMessages())
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override

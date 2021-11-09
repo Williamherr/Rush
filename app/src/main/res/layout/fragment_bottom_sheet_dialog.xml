@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".messages.bottomSheetDialogFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/newMessages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground"
+        >
+
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_plus"
+            android:scaleType="fitCenter" />
+        <TextView
+            android:layout_marginLeft="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="Add"
+
+            android:padding="5dp"
+            android:text="New Messages"
+            android:textSize="35sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/deleteMessages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground"
+        >
+
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_delete"
+            android:scaleType="fitCenter" />
+        <TextView
+
+            android:layout_marginLeft="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="Add"
+            android:padding="5dp"
+            android:text="Delete Messages"
+            android:textSize="35sp" />
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>
