@@ -154,7 +154,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
 //                                Messages tempMess = new Messages(name, uid, doc.getId(), message, time);
 //                                messages.add(tempMess);
 //                                listOfMessages.add(tempMess);
-                                
+
                                 if (i == value.size() - 1) {
                                     datas = new HashMap<>();
                                     datas.put("recentMessage",message);

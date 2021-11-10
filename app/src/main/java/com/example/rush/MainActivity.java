@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements
         setTitle("New Messages");
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerView, new CreatePrivateMessages())
+                .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
                 .addToBackStack(null)
                 .commit();
     }

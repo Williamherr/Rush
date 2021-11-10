@@ -16,7 +16,6 @@
         android:clickable="true"
         android:background="?android:attr/selectableItemBackground"
         >
-
         <ImageView
             android:layout_gravity="center"
             android:layout_width="42dp"
@@ -33,7 +32,6 @@
             android:padding="5dp"
             android:text="New Messages"
             android:textSize="35sp" />
-
     </LinearLayout>
 
     <LinearLayout

@@ -28,6 +28,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
     final CollectionReference messageRef = db.collection("chat-messages").document("private-messages").collection("all-private-messages");
     IMessageAdapterListener mListener;
 
+
     public MessageAdapter(ArrayList<Messages> singleMessagesList, String userName, IMessageAdapterListener mListener) {
         this.singleMessagesList = singleMessagesList;
         this.userName = userName;
@@ -69,6 +70,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
                 showPopup(v, 1, singleMessagesList.get(position), position);
             }
         });
+
         if (!(user.equals(userName))) {
             holder.receiveUserMessage.setVisibility(View.VISIBLE);
             holder.userProfileImage.setVisibility(View.VISIBLE);
@@ -81,7 +83,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
             holder.userProfileImage.setVisibility(View.INVISIBLE);
             holder.message.setVisibility(View.VISIBLE);
             holder.message.setText(singleMessagesList.get(position).getMessage());
-
         }
 
 
