@@ -24,14 +24,15 @@
             android:adjustViewBounds="true"
             android:background="@drawable/ic_plus"
             android:scaleType="fitCenter" />
+
         <TextView
-            android:layout_marginLeft="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:contentDescription="Add"
 
             android:padding="5dp"
-            android:text="New Messages"
+            android:text="New Classes"
             android:textSize="35sp" />
 
     </LinearLayout>
@@ -54,14 +55,15 @@
             android:adjustViewBounds="true"
             android:background="@drawable/ic_delete"
             android:scaleType="fitCenter" />
+
         <TextView
 
-            android:layout_marginLeft="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:contentDescription="Add"
             android:padding="5dp"
-            android:text="Delete Messages"
+            android:text="Delete Classes"
             android:textSize="35sp" />
 
     </LinearLayout>

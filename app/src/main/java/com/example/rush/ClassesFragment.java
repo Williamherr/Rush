@@ -11,20 +11,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.SpannableString;
-import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,9 +35,7 @@ import java.util.ArrayList;
 
 public class ClassesFragment extends Fragment {
 
-    FloatingActionButton fabButton, fabButton2, fabButton3;
-    Animation fabOpen, fabClose;
-    boolean isOpen = false;
+    FloatingActionButton fabButton;
     ClassDetailFragmentListener listener;
     private FirebaseFirestore database;
     private FirebaseAuth mAuth;
@@ -85,41 +80,14 @@ public class ClassesFragment extends Fragment {
         recycle.setLayoutManager(manager);
         recycle.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
-        /*
-            This section is used for the FloatingActionButton menu for creating/joining a class
-            and deleting classes
-         */
+        //Button for opening the bottom dialog
         fabButton = view.findViewById(R.id.classOptionsButton);
-        fabButton2 = view.findViewById(R.id.classDeleteButton);
-        fabButton3 = view.findViewById(R.id.classEditButton);
-        fabOpen = AnimationUtils.loadAnimation
-                (getActivity(), R.anim.fab_open);
-        fabClose = AnimationUtils.loadAnimation
-                (getActivity(), R.anim.fab_close);
-        /*
-            The below sets up the onClickListener for each button
-         */
 
         fabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                animateFab();
-
-            }
-        });
-        fabButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                animateFab();
-            }
-        });
-        fabButton3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                animateFab();
-                //Switch to classCreationFragment
-                ((MainActivity) getActivity()).creationFragment();
-
+                //Show the bottom dialog when user clicks on button
+                showDialog();
             }
         });
         //Check if user is not null
@@ -155,22 +123,24 @@ public class ClassesFragment extends Fragment {
         return view;
     }
 
-    //This method is used to animate the floating action buttons when user clicks on it
-    private void animateFab() {
-        if (isOpen) {
-            fabButton2.startAnimation(fabClose);
-            fabButton2.setClickable(false);
-            fabButton3.startAnimation(fabClose);
-            fabButton3.setClickable(false);
-            isOpen = false;
-        } else {
-            fabButton2.startAnimation(fabOpen);
-            fabButton2.setClickable(true);
-            fabButton3.startAnimation(fabOpen);
-            fabButton3.setClickable(true);
-            isOpen = true;
-        }
+    private void showDialog() {
+        BottomSheetDialog bottom = new BottomSheetDialog(getActivity());
+        bottom.setContentView(R.layout.fragment_classes_bottom_dialog);
+        LinearLayout newClasses = bottom.findViewById(R.id.newClasses);
+        LinearLayout deleteClasses = bottom.findViewById(R.id.deleteClasses);
+
+        newClasses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Take the user to the class creation page
+                ((MainActivity)getActivity()).creationFragment();
+                bottom.dismiss();
+            }
+        });
+
+        bottom.show();
     }
+
     /*
            ClassAdapter for the RecyclerView to list all classes users has created/joined
      */
@@ -195,7 +165,7 @@ public class ClassesFragment extends Fragment {
             ClassInfo classObj = classList.get(position);
             SpannableString stringSpanner = new SpannableString(classObj.getClassName());
             stringSpanner.setSpan(new StyleSpan(Typeface.BOLD), 0, stringSpanner.length(), 0);
-            String twoChars = classObj.getClassName().substring(0,2).toUpperCase();
+            String twoChars = classObj.getClassName().substring(0, 2).toUpperCase();
 
 
             holder.className.setText(stringSpanner);

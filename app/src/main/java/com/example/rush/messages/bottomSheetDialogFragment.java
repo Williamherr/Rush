@@ -2,12 +2,7 @@ package com.example.rush.messages;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -45,10 +40,10 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_bottom_sheet_dialog, container, false);
-        newMessages  = view.findViewById(R.id.newMessages);
+        newMessages  = view.findViewById(R.id.newClasses);
         newMessages.setOnClickListener(this);
         newMessageId = newMessages.getId();
-        deleteMessages  = view.findViewById(R.id.deleteMessages);
+        deleteMessages  = view.findViewById(R.id.deleteClasses);
         deleteMessages.setOnClickListener(this);
         deleteMessageId = deleteMessages.getId();
 
