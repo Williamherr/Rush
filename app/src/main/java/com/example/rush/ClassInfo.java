@@ -5,6 +5,7 @@ public class ClassInfo {
     private String instructor;
     private String description;
     private String createdBy;
+    private String docID;
     //Add a structure to store Students that are in this class
 
     public ClassInfo(String className, String instructor, String description, String createdBy) {
@@ -16,6 +17,14 @@ public class ClassInfo {
 
     public ClassInfo() {
 
+    }
+
+    public void setDocID(String docID) {
+        this.docID = docID;
+    }
+
+    public String getDocID() {
+        return docID;
     }
 
     public String getClassName() {

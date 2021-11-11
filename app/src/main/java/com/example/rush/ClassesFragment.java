@@ -1,6 +1,8 @@
 package com.example.rush;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -34,6 +36,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public class ClassesFragment extends Fragment {
@@ -108,6 +112,48 @@ public class ClassesFragment extends Fragment {
                 cancelBtn.hide();
             }
         });
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setCancelable(true);
+                builder.setTitle("Warning!");
+                builder.setMessage("Classes cannot be recovered once deleted! Are you sure you want to delete?");
+                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        for (int j = 0; j < classesToDelete.size(); j++) {
+                            //Remove each deleted class from the list of classes
+                            listOfClasses.remove(classesToDelete.get(j));
+                            database.collection("classes")
+                                    .document(classesToDelete.get(j).getDocID()).delete()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.d("Success", "DocumentSnapshot successfully deleted!");
+                                            dialogInterface.dismiss();
+                                            adapter.setDeletionStatus(false);
+                                            recycle.setAdapter(adapter);
+                                            fabButton.show();
+                                            deleteBtn.hide();
+                                            cancelBtn.hide();
+
+                                        }
+                                    });
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        Log.d("Dismiss", "Cancel button was hit");
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
         //Check if user is not null
         if (userID != null) {
             //Runs a query for any classes created by the current user
@@ -122,9 +168,16 @@ public class ClassesFragment extends Fragment {
                                     Log.d("Success", document.getId() + " => " + document.getData());
                                     //Cast the QueryDocumentSnapshot into a ClassInfo obj
                                     ClassInfo obj = document.toObject(ClassInfo.class);
+                                    obj.setDocID(document.getId());
                                     //Keep track of all classes created by this user
                                     listOfClasses.add(obj);
                                     adapter = new ClassesFragment.ClassAdapter(listOfClasses);
+                                    //Order the classes in alphabetical order
+                                    Collections.sort(listOfClasses, new Comparator<ClassInfo>() {
+                                        public int compare(ClassInfo d1, ClassInfo d2) {
+                                            return d1.getClassName().compareTo(d2.getClassName());
+                                        }
+                                    });
                                     recycle.setAdapter(adapter);
 
                                 }
