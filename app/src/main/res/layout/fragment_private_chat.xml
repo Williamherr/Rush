@@ -33,8 +33,8 @@
 
     <EditText
         android:id="@+id/messageTextView"
-        android:layout_width="313dp"
-        android:layout_height="63dp"
+        android:layout_width="283dp"
+        android:layout_height="65dp"
         android:autofillHints="@string/messagePlaceHolder"
         android:background="@null"
         android:hint="@string/messagePlaceHolder"
@@ -47,15 +47,28 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/messageSendButton"
-        android:layout_width="99dp"
+        android:id="@+id/attachment"
+        android:layout_width="39dp"
         android:layout_height="62dp"
-        android:contentDescription="@string/sendMessageDes"
+        android:layout_marginStart="12dp"
         android:background="@null"
+        android:contentDescription="@string/sendMessageDes"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.012"
+        app:layout_constraintStart_toEndOf="@+id/messageTextView"
+        app:srcCompat="@drawable/ic_attachment" />
+
+    <ImageButton
+        android:id="@+id/messageSendButton"
+        android:layout_width="76dp"
+        android:layout_height="62dp"
+        android:background="@null"
+        android:contentDescription="@string/sendMessageDes"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/messageTextView"
+        app:layout_constraintStart_toEndOf="@+id/attachment"
         app:srcCompat="@drawable/send" />
 
 
