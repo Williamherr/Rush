@@ -74,7 +74,7 @@ public class ClassCreationFragment extends Fragment {
                 classDescription.setText("");
             }
         });
-        
+
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
