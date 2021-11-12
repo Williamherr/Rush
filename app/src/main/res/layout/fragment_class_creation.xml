@@ -5,63 +5,90 @@
     android:id="@+id/create_class_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ClassCreationFragment" >
+    tools:context=".ClassCreationFragment">
 
-
-    <EditText
-        android:id="@+id/instructorField"
-        android:layout_width="308dp"
-        android:layout_height="71dp"
-        android:layout_marginTop="8dp"
-        android:maxLength="100"
-        android:ems="10"
-        android:gravity="start|top"
-        android:hint="Instructor"
-        android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/classNameField" />
-
-    <EditText
-        android:id="@+id/classDescriptionField"
-        android:layout_width="308dp"
-        android:layout_height="71dp"
-        android:layout_marginTop="12dp"
-        android:maxLength="200"
-        android:ems="10"
-        android:gravity="start|top"
-        android:hint="@string/class_description"
-        android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/instructorField" />
-
-    <EditText
-        android:id="@+id/classNameField"
-        android:layout_width="308dp"
-        android:layout_height="71dp"
-        android:layout_marginTop="136dp"
-        android:maxLength="100"
-        android:ems="10"
-        android:gravity="start|top"
-        android:hint="@string/class_name"
-        android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/createClassButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Widget.Material3.FloatingActionButton.Primary"
+        android:layout_width="122dp"
+        android:layout_height="63dp"
+        android:layout_marginBottom="60dp"
         android:text="@string/create"
         app:backgroundTint="#276DBE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/classDescriptionField" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ClassName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="45dp"
+        android:hint="Enter Class Name"
+        app:endIconCheckable="true"
+        app:endIconDrawable="@android:drawable/ic_delete"
+        app:endIconMode="custom"
+
+        app:endIconTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/InstructorName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ClassDescription"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+        android:hint="Class Description"
+        app:endIconCheckable="true"
+        app:endIconDrawable="@android:drawable/ic_delete"
+
+        app:endIconMode="custom"
+        app:endIconTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/createClassButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/Description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/InstructorName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="45dp"
+        android:hint="Instructor Name"
+        app:endIconCheckable="true"
+        app:endIconDrawable="@android:drawable/ic_delete"
+
+        app:endIconMode="custom"
+        app:endIconTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/ClassDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/Instructor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
