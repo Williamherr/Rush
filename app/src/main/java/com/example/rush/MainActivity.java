@@ -73,10 +73,6 @@ public class MainActivity extends AppCompatActivity implements
                     case "Activity": // Activity
                         Log.d("navBar", "Activity");
                         break;
-                    case "Notifications": // Notifications
-                        Log.d("navBar", "Notifications");
-                        notificationFragment();
-                        break;
                     default:
                         break;
 
@@ -111,13 +107,6 @@ public class MainActivity extends AppCompatActivity implements
         setTitle("Rush");
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerView, new HomeFragment()).addToBackStack(null)
-                .commit();
-    }
-
-    public void notificationFragment() {
-        setTitle("Notification");
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new NotificationFragment()).addToBackStack(null)
                 .commit();
     }
 
