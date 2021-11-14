@@ -157,6 +157,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void createNotifications() {
+        setTitle("Notification");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new NotificationFragment()).addToBackStack(null)
+                .commit();
+    }
+
+    @Override
     public void gotoHomeFragment(String uid) {
         this.uid = uid;
         bottomNav.setVisibility(View.VISIBLE);
