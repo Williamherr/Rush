@@ -50,7 +50,6 @@ public class NotificationFragment extends Fragment {
 
 
         btnPushNotification = (Button) view.findViewById(R.id.notification);
-        btnAddPhoto = (Button) view.findViewById(R.id.buttonAddPhoto);
 
         btnPushNotification.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
