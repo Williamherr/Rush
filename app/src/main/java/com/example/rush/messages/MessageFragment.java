@@ -350,6 +350,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     }
     // sets the adapter and shows the recycler view
     void showRecycler() {
+        // Sorts allMessageList by firebase.time
         Collections.sort(allMessageList, new Comparator<MessageList>() {
             @Override
             public int compare(MessageList m1, MessageList m2) {
@@ -357,9 +358,9 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                     Timestamp time1 = m1.getMessages().getTime();
                     Timestamp time2 = m2.getMessages().getTime();
                     if (time1.compareTo(time2) > 0 ) {
-                        return 1;
-                    } else if (time1.compareTo(time2) < 0 ){
                         return -1;
+                    } else if (time1.compareTo(time2) < 0 ){
+                        return 1;
                     } else {
                         return time1.compareTo(time2);
                     }
@@ -370,7 +371,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
             }
         });
 
-        Collections.reverse(allMessageList);
+
         adapter = new AllPrivateMessageAdapter(allMessageList,this);
         recyclerView.setAdapter(adapter);
     }
