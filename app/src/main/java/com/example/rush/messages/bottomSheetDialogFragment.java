@@ -14,7 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class bottomSheetDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener {
 
     private static IBottomSheetDialog iListener;
-    private LinearLayout newMessages, deleteMessages;
+    private LinearLayout newMessages, deleteMessages, urgent;
     private LinearLayout notificationMessages;
 
     private String TAG = "BottomSheetDialogFragment";
@@ -43,9 +43,11 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_bottom_sheet_dialog, container, false);
+        //New Messages
         newMessages  = view.findViewById(R.id.newClasses);
         newMessages.setOnClickListener(this);
         newMessageId = newMessages.getId();
+        //Delete Messages
         deleteMessages  = view.findViewById(R.id.deleteClasses);
         deleteMessages.setOnClickListener(this);
         deleteMessageId = deleteMessages.getId();
@@ -53,6 +55,10 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
         notificationMessages  = view.findViewById(R.id.notificationClasses);
         notificationMessages.setOnClickListener(this);
         notificationMessageId = notificationMessages.getId();
+        //Urgent messages
+        urgent  = view.findViewById(R.id.urgent);
+        urgent.setOnClickListener(this);
+
 
         return view;
     }
@@ -67,6 +73,10 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
             getDialog().dismiss();
         } else if (view.getId() == notificationMessageId) {
             iListener.sheetClicked("notification");
+            getDialog().dismiss();
+        }
+        else if (view.getId() == R.id.urgent) {
+            iListener.sheetClicked("urgent");
             getDialog().dismiss();
         }
     }

@@ -2,11 +2,9 @@ package com.example.rush;
 
 
 import android.os.Bundle;
-import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
 
-import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.content.Context;
 import android.widget.Toast;
-import android.text.*;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,8 +25,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.Transaction;
-import com.google.firebase.firestore.*;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -94,7 +87,7 @@ public class LoginFragment extends Fragment {
     public interface CreateFragmentListener {
         void goToAccountCreationFragment();
 
-        void gotoHomeFragment(String uid);
+        void gotoHomeFragment(FirebaseUser uid);
     }
 
     public Boolean validate() {
@@ -127,7 +120,7 @@ public class LoginFragment extends Fragment {
                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName("Fake Name").build();
                                 user.updateProfile(profileUpdates);
                             }
-                            cListener.gotoHomeFragment(user.getUid());
+                            cListener.gotoHomeFragment(user);
                             Log.d(TAG, user.getUid());
 
                         } else {

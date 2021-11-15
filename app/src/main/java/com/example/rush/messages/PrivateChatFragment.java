@@ -169,10 +169,16 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                                 String name = doc.getString("name");
                                 Timestamp time = doc.getTimestamp("time");
                                 String uid = doc.getString("uid");
+                                String img;
 
-//                                Messages tempMess = new Messages(name, uid, doc.getId(), message, time);
-//                                messages.add(tempMess);
-//                                listOfMessages.add(tempMess);
+                                try {
+                                    img = doc.getString("img");
+                                }
+                                catch (Exception exception) {
+                                    Log.d(TAG, "onEvent: "  + exception);
+                                    img = "";
+                                }
+
 
                                 if (i == value.size() - 1) {
                                     datas = new HashMap<>();
@@ -180,7 +186,8 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                                     datas.put("time", time);
                                     messageRef.document(messageKey).update(datas);
                                 }
-                                messages.add(new Messages(name, uid, doc.getId(), message, time));
+                                Log.d(TAG, "Doc ID:  " + doc.getId());
+                                messages.add(new Messages(name, uid, doc.getId(), message, time, img));
                             }
                             i++;
                         }
@@ -340,8 +347,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
 
 
                 textview.setText("");
-                Task task = messageRef.document(messageKey).collection("messages")
-                        .add(data);
+                messageRef.document(messageKey).collection("messages").add(data);
                 closeKeyboard();
 
             }

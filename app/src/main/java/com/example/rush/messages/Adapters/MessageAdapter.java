@@ -1,5 +1,9 @@
 package com.example.rush.messages.Adapters;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -17,16 +21,18 @@ import com.example.rush.messages.model.Messages;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import static androidx.core.app.ActivityCompat.startActivityForResult;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMessageHolder> {
 
     private ArrayList<Messages> singleMessagesList = new ArrayList<>();
     private String userName;
     String TAG = "PrivateChatAdapter";
-    final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    final CollectionReference messageRef = db.collection("chat-messages").document("private-messages").collection("all-private-messages");
     IMessageAdapterListener mListener;
+    private final int PICK_IMAGE_REQUEST = 22;
 
 
     public MessageAdapter(ArrayList<Messages> singleMessagesList, String userName, IMessageAdapterListener mListener) {
@@ -58,6 +64,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
     public void onBindViewHolder(MessageAdapter.ViewMessageHolder holder, int position) {
         String user = singleMessagesList.get(position).getName();
         String id = singleMessagesList.get(position).getId();
+        String img  = singleMessagesList.get(position).getImg();
+        Log.d("img", "IMAGE: " + img);
+        if (img == null || img.equals("")) {
+            Log.d("img", "IMAGE : " + img);
+        }
+
         holder.messageMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,6 +194,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
 
         popup.show();
     }
+
+
 
     public interface IMessageAdapterListener {
         void update(Messages message, int position);

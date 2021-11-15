@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.rush.R;
 
@@ -78,7 +79,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
     FloatingActionButton fabButton;
     ExtendedFloatingActionButton deleteFAB;
-
+    Button cancel, markAsUrgent;
 
     ArrayList<PrivateMessageList> PrivateMessageList;
 
@@ -112,8 +113,10 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         recyclerView.setLayoutManager(layoutManager);
         PrivateMessageList = new ArrayList<>();
         allMessageList = new ArrayList<>();
-
+        cancel = view.findViewById(R.id.cancel);
+        markAsUrgent = view.findViewById(R.id.markAsUrgent);
          user = FirebaseAuth.getInstance().getCurrentUser();
+
         if (user != null) {
             // User is signed in
             uid = user.getUid();
@@ -151,6 +154,15 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                 showRecycler();
             }
         });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                markAsUrgent.setVisibility(View.INVISIBLE);
+                cancel.setVisibility(View.INVISIBLE);
+                fabButton.show();
+                showRecycler();
+            }
+        });
 
         showRecyclerList();
 
@@ -181,6 +193,17 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         } else if (string == "notification") {
             mListener.createNotifications();
         }
+        else if (string == "urgent") {
+            markAsUrgent();
+        }
+    }
+    public void markAsUrgent() {
+        fabButton.hide();
+        markAsUrgent.setVisibility(View.VISIBLE);
+        cancel.setVisibility(View.VISIBLE);
+        deleteMessages = new ArrayList<>();
+        adapter = new AllPrivateMessageAdapter(allMessageList, true,this);
+        recyclerView.setAdapter(adapter);
     }
 
 

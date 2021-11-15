@@ -31,18 +31,20 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
     FirebaseAuth auth = FirebaseAuth.getInstance();
     FirebaseUser user;
     final String TAG = "AllPrivateMessageAdapter";
-
+    String uid;
 
     public AllPrivateMessageAdapter(ArrayList<MessageList> singleMessagesList, IMessageFragmentInterface mListener) {
         this.mListener = mListener;
         this.messagesList = singleMessagesList;
         user = auth.getCurrentUser();
+        uid = user.getUid();
     }
     public AllPrivateMessageAdapter(ArrayList<MessageList> singleMessagesList, boolean isDelete, IMessageFragmentInterface mListener) {
         this.mListener = mListener;
         this.isDelete = isDelete;
         this.messagesList = singleMessagesList;
         user = auth.getCurrentUser();
+        uid = user.getUid();
     }
 
 
@@ -64,15 +66,17 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
     @SuppressLint("LongLogTag")
     @Override
     public void onBindViewHolder( ViewMessageHolder holder, int position) {
-        String uid = user.getDisplayName();
+
         String otherUserName = "";
         String otherUserId = "";
-
+        Log.d(TAG, "onBindViewHolder: " + uid);
         Members allMembers = messagesList.get(position).getMembers();
         for (int i = 0; i < allMembers.getAllMembers().size(); i++) {
-            if (!(uid.equals(allMembers.getMember(i).getName()))) {
+            if (!(uid.equals(allMembers.getMember(i).getUid()))) {
                 otherUserName = allMembers.getMember(i).getName();
                 otherUserId = allMembers.getMember(i).getUid();
+            } else {
+                otherUserName = user.getDisplayName();
             }
         }
 

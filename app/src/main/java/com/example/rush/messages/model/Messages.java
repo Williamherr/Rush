@@ -10,6 +10,7 @@ public class Messages {
     private String message;
     private com.google.firebase.Timestamp time;
     private String id;
+    private String img;
 
     public Messages(String name, String uid,String id, String message, com.google.firebase.Timestamp time) {
         this.name = name;
@@ -18,8 +19,30 @@ public class Messages {
         this.message = message;
         this.time = time;
     }
+
+    public Messages(String name, String uid,String id, String message, com.google.firebase.Timestamp time,String img) {
+        this.name = name;
+        this.id = id;
+        this.uid = uid;
+        this.message = message;
+        this.time = time;
+        this.img = img;
+    }
+
     public Messages(){
 
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
     public String getId() {

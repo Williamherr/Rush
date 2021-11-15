@@ -2,7 +2,6 @@ package com.example.rush;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,14 +16,10 @@ import android.view.inputmethod.InputMethodManager;
 import com.example.rush.messages.CreatePrivateMessages;
 import com.example.rush.messages.MessageFragment;
 import com.example.rush.messages.PrivateChatFragment;
-import com.example.rush.messages.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.net.Authenticator;
 
 
 public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener,ClassesFragment.ClassDetailFragmentListener,
@@ -48,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         bottomNavigation();
 
         if (user != null) {
-            gotoHomeFragment(uid);
+            gotoHomeFragment(user);
         }
 
 
@@ -108,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 return true;
 
             case R.id.sign_out:
+                Log.d("TAG", "Sign out ");
                 FirebaseAuth.getInstance().signOut();
                 signout();
 
@@ -150,8 +146,9 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     // Goes Back to the home page when the user has login
     // This will show the navigation bar
     @Override
-    public void gotoHomeFragment(String uid) {
-        this.uid = uid;
+    public void gotoHomeFragment(FirebaseUser user) {
+        this.user = user;
+        Log.d("TAG", "gotoHomeFragment: " + user);
         bottomNav.setVisibility(View.VISIBLE);
         HomeFragment();
 
@@ -159,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     // Goes to the Home Fragment
     public void HomeFragment() {
         setTitle("Rush");
+        Log.d("TAG", "Sign out " + user);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerView, new HomeFragment())
                 .commit();
@@ -167,13 +165,14 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     public void signout() {
         if (user != null){
             setTitle("Rush");
+            Log.d("TAG", "Sign out ");
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("finish", true);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
             startActivity(intent);
             finish();
         } else {
-
+            Log.d("TAG", "null ");
         }
     }
 
