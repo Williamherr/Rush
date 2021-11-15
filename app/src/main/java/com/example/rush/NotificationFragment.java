@@ -15,13 +15,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -30,7 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class NotificationFragment extends Fragment {
-    NotificationFragmentListener mListener;
     private EditText inputNotificationMessage;
     private Button btnPushNotification,btnAddPhoto;
     private FirebaseAuth mAuth;
@@ -73,9 +68,6 @@ public class NotificationFragment extends Fragment {
             }
         });
 
-        btnAddPhoto.setOnClickListener(v -> {
-            mListener.addNewPhotoFragment();
-        });
         return view;
 
 
@@ -84,12 +76,9 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mListener = (NotificationFragmentListener) context;
     }
 
-    public interface NotificationFragmentListener{
-        void addNewPhotoFragment();
-    }
+
 
     public Boolean validate() {
         String notificationMessage = inputNotificationMessage.getText().toString();

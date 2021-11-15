@@ -22,7 +22,7 @@ import java.net.Authenticator;
 
 public class MainActivity extends AppCompatActivity implements
         MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener,
-        NotificationFragment.NotificationFragmentListener, AddPhotoFragment.UploadFragmentListener, ClassesFragment.ClassDetailFragmentListener
+        PrivateChatFragment.PrivateChatFragmentListener, AddPhotoFragment.UploadFragmentListener, ClassesFragment.ClassDetailFragmentListener
 {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private String uid;
@@ -73,10 +73,6 @@ public class MainActivity extends AppCompatActivity implements
                     case "Activity": // Activity
                         Log.d("navBar", "Activity");
                         break;
-                    case "Notifications": // Notifications
-                        Log.d("navBar", "Notifications");
-                        notificationFragment();
-                        break;
                     default:
                         break;
 
@@ -114,28 +110,6 @@ public class MainActivity extends AppCompatActivity implements
                 .commit();
     }
 
-    public void notificationFragment() {
-        setTitle("Notification");
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new NotificationFragment()).addToBackStack(null)
-                .commit();
-    }
-
-    /*
-    *
-    * This function add a new photo feature using the Notification to call this feature for testing.
-    * I will integrate this feature into another page,
-    * such as create account that let the user could upload the image
-    * */
-    @Override
-    public void addNewPhotoFragment() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new AddPhotoFragment(), "UploadFragment")
-                .addToBackStack(null)
-                .commit();
-    }
-
-
 
     @Override
     public void goToPrivateChatFragment(String otherUserName, String otherUserId, String messageKey) {
@@ -153,6 +127,14 @@ public class MainActivity extends AppCompatActivity implements
                 .replace(R.id.containerView, new CreatePrivateMessages())
                 .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
                 .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void createNotifications() {
+        setTitle("Notification");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new NotificationFragment()).addToBackStack(null)
                 .commit();
     }
 
@@ -177,5 +159,13 @@ public class MainActivity extends AppCompatActivity implements
         setTitle(name);
         getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
                 new ClassDetailsFragment(name, instructor, description)).addToBackStack(null).commit();
+    }
+
+    @Override
+    public void addNewPhotoFragment() {
+        getSupportFragmentManager().beginTransaction()
+        .replace(R.id.containerView, new AddPhotoFragment(), "UploadFragment")
+        .addToBackStack(null)
+        .commit();
     }
 }

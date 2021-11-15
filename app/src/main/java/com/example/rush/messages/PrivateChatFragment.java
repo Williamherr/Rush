@@ -28,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.rush.NotificationFragment;
 import com.example.rush.R;
 import com.example.rush.messages.Adapters.MessageAdapter;
 import com.example.rush.messages.model.Messages;
@@ -74,6 +75,8 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     ArrayList<Messages> messages, searchList;
     EditText textview;
     ImageButton sendMessageButton;
+    //Attachment Photo for private message
+    ImageButton attachmentButton;
     RecyclerView.SmoothScroller smoothScroller;
 
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -121,6 +124,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
 
         textview = view.findViewById(R.id.messageTextView);
         sendMessageButton = view.findViewById(R.id.messageSendButton);
+        attachmentButton = view.findViewById(R.id.attachmentButton);
 
         addMessages();
 
@@ -278,6 +282,18 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                 addMessages();
             }
         });
+
+        attachmentButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.R)
+            @Override
+            public void onClick(View v) {
+//                updateMessages(message);
+//                closeKeyboard();
+//                addMessages();
+                Toast.makeText(getActivity(), "Please select an image", Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
 
@@ -302,6 +318,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                 if (textview.getText().toString().trim().equals("")) {
                     return;
                 }
+
                 Map<String, Object> data = new HashMap<>();
                 data.put("message", textview.getText().toString());
                 Timestamp time = Timestamp.now();
@@ -317,6 +334,45 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
 
             }
         });
+
+        //add attachment photo for this message
+        attachmentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "TAG");
+                if (textview.getText().toString().trim().equals("")) {
+                    return;
+                }
+                Toast.makeText(getActivity(), "attachmentButton clicked", Toast.LENGTH_SHORT).show();
+                //call the upload photo fragment
+                mListener.addNewPhotoFragment();
+//                Map<String, Object> data = new HashMap<>();
+//                data.put("message", textview.getText().toString());
+//                Timestamp time = Timestamp.now();
+//                data.put("time", time);
+//                data.put("uid", uid);
+//                data.put("name", userName);
+//
+//
+//                textview.setText("");
+//                Task task = messageRef.document(messageKey).collection("messages")
+//                        .add(data);
+//                closeKeyboard();
+
+            }
+        });
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mListener = (PrivateChatFragmentListener) context;
+    }
+
+    PrivateChatFragmentListener mListener;
+
+    public interface PrivateChatFragmentListener{
+        void addNewPhotoFragment();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.R)
