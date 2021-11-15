@@ -1,5 +1,6 @@
 package com.example.rush.messages;
 
+import android.app.Notification;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,7 +56,12 @@ import com.google.firebase.firestore.WriteBatch;
 import com.google.type.DateTime;
 
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -313,9 +319,11 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                                       }
 
                                       String message = (String) doc.get("recentMessage");
+                                      Timestamp time = (Timestamp) doc.get("time");
                                       members = new Members();
                                       recentMessage = new Messages();
                                       recentMessage.setMessage(message);
+                                      recentMessage.setTime(time);
 
                                       ArrayList<Map<String, Object>> users = (ArrayList<Map<String, Object>>) doc.get("members");
 
@@ -342,9 +350,32 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     }
     // sets the adapter and shows the recycler view
     void showRecycler() {
+        // Sorts allMessageList by firebase.time
+        Collections.sort(allMessageList, new Comparator<MessageList>() {
+            @Override
+            public int compare(MessageList m1, MessageList m2) {
+                try {
+                    Timestamp time1 = m1.getMessages().getTime();
+                    Timestamp time2 = m2.getMessages().getTime();
+                    if (time1.compareTo(time2) > 0 ) {
+                        return -1;
+                    } else if (time1.compareTo(time2) < 0 ){
+                        return 1;
+                    } else {
+                        return time1.compareTo(time2);
+                    }
+
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
+
+
         adapter = new AllPrivateMessageAdapter(allMessageList,this);
         recyclerView.setAdapter(adapter);
     }
+
 
 
 
