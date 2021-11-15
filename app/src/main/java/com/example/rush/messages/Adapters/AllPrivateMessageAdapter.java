@@ -78,7 +78,6 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
 
         String messageKey = messagesList.get(position).getKey();
         String recentMessage = messagesList.get(position).getMessages().getMessage();
-        Log.d(TAG, "MessageIsChecked: " + recentMessage);
 
         holder.name.setText(otherUserName);
         holder.message.setText(recentMessage);
