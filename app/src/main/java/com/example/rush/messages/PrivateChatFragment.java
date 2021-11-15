@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Parcelable;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -194,6 +195,10 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.search_menu, menu);
+        //Get the device's screen width
+        DisplayMetrics metrics = new DisplayMetrics();
+        (getActivity()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
         try {
             SearchManager searchManager =
                     (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
@@ -201,6 +206,9 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                     (SearchView) menu.findItem(R.id.search_icon).getActionView();
             searchView.setSearchableInfo(
                     searchManager.getSearchableInfo(getActivity().getComponentName()));
+            //Set the search bar maxWidth to around 75% of the device's screen width
+            searchView.setMaxWidth((int)(width * 0.75));
+            searchView.setQueryHint("Search messages");
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
