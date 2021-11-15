@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -157,7 +158,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
 
                                 if (i == value.size() - 1) {
                                     datas = new HashMap<>();
-                                    datas.put("recentMessage",message);
+                                    datas.put("recentMessage", message);
                                     datas.put("time", time);
                                     messageRef.document(messageKey).update(datas);
                                 }
