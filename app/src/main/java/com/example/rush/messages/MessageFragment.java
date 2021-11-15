@@ -172,7 +172,8 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
             deleteMessages = new ArrayList<>();
             adapter = new AllPrivateMessageAdapter(allMessageList, true,this);
             recyclerView.setAdapter(adapter);
-
+        } else if (string == "notification") {
+            mListener.createNotifications();
         }
     }
 
@@ -272,7 +273,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     public interface MessageFragmentListener {
         void goToPrivateChatFragment(String otherUserName,String otherUserId, String messageKey);
         void createNewMessages(CreatePrivateMessages.iCreatePrivateMessages iListener);
-
+        void createNotifications();
     }
 
     void showDialog() {

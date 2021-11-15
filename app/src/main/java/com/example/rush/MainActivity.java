@@ -3,6 +3,7 @@ package com.example.rush;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 
 import com.example.rush.messages.CreatePrivateMessages;
@@ -25,9 +27,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.net.Authenticator;
 
 
-public class MainActivity extends AppCompatActivity implements
-        MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener,
-        NotificationFragment.NotificationFragmentListener, AddPhotoFragment.UploadFragmentListener, ClassesFragment.ClassDetailFragmentListener
+public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener,ClassesFragment.ClassDetailFragmentListener,
+        PrivateChatFragment.PrivateChatFragmentListener,   AddPhotoFragment.UploadFragmentListener
+
+//NotificationFragment.NotificationFragmentListener,
 
 {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements
         if (user != null) {
             gotoHomeFragment(uid);
         }
+
+
 
     }
 
@@ -80,10 +85,6 @@ public class MainActivity extends AppCompatActivity implements
                     case "Activity": // Activity
                         Log.d("navBar", "Activity");
                         break;
-                    case "Notifications": // Notifications
-                        Log.d("navBar", "Notifications");
-                        notificationFragment();
-                        break;
                     default:
                         break;
 
@@ -100,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                if (isKeyboardOpen())
+                    closeKeyboard();
                 getSupportFragmentManager().popBackStack();
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 return true;
@@ -118,6 +121,25 @@ public class MainActivity extends AppCompatActivity implements
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.actionbar_menu, menu);
         return true;
+    }
+    public boolean isKeyboardOpen() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        if (imm.isAcceptingText()) {
+           return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void showKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    public void closeKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
        /*
@@ -179,6 +201,9 @@ public class MainActivity extends AppCompatActivity implements
                 .addToBackStack(null)
                 .commit();
     }
+
+
+
     // Allow users to create a new message
     @Override
     public void createNewMessages(CreatePrivateMessages.iCreatePrivateMessages iListener) {
@@ -208,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+
     public void notificationFragment() {
         setTitle("Notification");
         getSupportFragmentManager().beginTransaction()
@@ -231,8 +257,13 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-
-
+    @Override
+    public void createNotifications() {
+        setTitle("Notification");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new NotificationFragment()).addToBackStack(null)
+                .commit();
+    }
 
 
 
@@ -251,6 +282,11 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
                 new ClassDetailsFragment(name, instructor, description)).addToBackStack(null).commit();
     }
+
+
+
+
+
 
 
 

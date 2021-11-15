@@ -2,12 +2,7 @@ package com.example.rush.messages;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -20,8 +15,11 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
 
     private static IBottomSheetDialog iListener;
     private LinearLayout newMessages, deleteMessages;
+    private LinearLayout notificationMessages;
+
     private String TAG = "BottomSheetDialogFragment";
     private int newMessageId, deleteMessageId;
+    private int notificationMessageId;
     public bottomSheetDialogFragment() {
         // Required empty public constructor
     }
@@ -45,12 +43,16 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_bottom_sheet_dialog, container, false);
-        newMessages  = view.findViewById(R.id.newMessages);
+        newMessages  = view.findViewById(R.id.newClasses);
         newMessages.setOnClickListener(this);
         newMessageId = newMessages.getId();
-        deleteMessages  = view.findViewById(R.id.deleteMessages);
+        deleteMessages  = view.findViewById(R.id.deleteClasses);
         deleteMessages.setOnClickListener(this);
         deleteMessageId = deleteMessages.getId();
+        //add important Notifications
+        notificationMessages  = view.findViewById(R.id.notificationClasses);
+        notificationMessages.setOnClickListener(this);
+        notificationMessageId = notificationMessages.getId();
 
         return view;
     }
@@ -62,6 +64,9 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
             getDialog().dismiss();
         } else if (view.getId() == deleteMessageId) {
             iListener.sheetClicked("delete");
+            getDialog().dismiss();
+        } else if (view.getId() == notificationMessageId) {
+            iListener.sheetClicked("notification");
             getDialog().dismiss();
         }
     }

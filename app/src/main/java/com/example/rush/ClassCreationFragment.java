@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,9 +23,10 @@ public class ClassCreationFragment extends Fragment {
     private FirebaseFirestore database;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    TextInputLayout classInput, instructorInput, descriptionInput;
+    TextInputEditText classField, instructorName, classDescription;
     String userID;
     Button createButton;
-    EditText classField, instructorName, classDescription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,13 +47,37 @@ public class ClassCreationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_class_creation, container, false);
         createButton = (Button) view.findViewById(R.id.createClassButton);
+        classInput = view.findViewById(R.id.ClassName);
+        instructorInput = view.findViewById(R.id.InstructorName);
+        descriptionInput = view.findViewById(R.id.ClassDescription);
+        classField = view.findViewById(R.id.Name);
+        instructorName = view.findViewById(R.id.Instructor);
+        classDescription = view.findViewById(R.id.Description);
+        /*
+            Erase any text input when the icon is clicked
+         */
+        classInput.setEndIconOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                classField.setText("");
+            }
+        });
+        instructorInput.setEndIconOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                instructorName.setText("");
+            }
+        });
+        descriptionInput.setEndIconOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                classDescription.setText("");
+            }
+        });
+
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                classField = (EditText) view.findViewById(R.id.classNameField);
-                instructorName = (EditText) view.findViewById(R.id.instructorField);
-                classDescription = (EditText) view.findViewById(R.id.classDescriptionField);
-
                 try {
                     if (classField.getText().toString().isEmpty() || instructorName.getText().toString().isEmpty()
                             || classDescription.getText().toString().isEmpty()) {

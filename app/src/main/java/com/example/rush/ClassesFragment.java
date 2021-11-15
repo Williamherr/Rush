@@ -1,6 +1,8 @@
 package com.example.rush;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -11,20 +13,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.SpannableString;
-import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,20 +36,23 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public class ClassesFragment extends Fragment {
 
-    FloatingActionButton fabButton, fabButton2, fabButton3;
-    Animation fabOpen, fabClose;
-    boolean isOpen = false;
-    ClassDetailFragmentListener listener;
+    private FloatingActionButton fabButton;
+    private ExtendedFloatingActionButton deleteBtn, cancelBtn;
+    private ClassDetailFragmentListener listener;
+    private String userID;
     private FirebaseFirestore database;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private RecyclerView.Adapter adapter;
+    private ClassAdapter adapter;
+    private RecyclerView recycle;
     private ArrayList<ClassInfo> listOfClasses = new ArrayList<>();
-    String userID;
+    private ArrayList<ClassInfo> classesToDelete = new ArrayList<>();
 
     public interface ClassDetailFragmentListener {
         void goToClassDetails(String name, String instructor, String description);
@@ -80,46 +85,73 @@ public class ClassesFragment extends Fragment {
         /*
             This section initializes the RecyclerView to show the user's classes
          */
-        RecyclerView recycle = (RecyclerView) view.findViewById(R.id.classes);
+        recycle = (RecyclerView) view.findViewById(R.id.classes);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
         recycle.setLayoutManager(manager);
         recycle.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
-        /*
-            This section is used for the FloatingActionButton menu for creating/joining a class
-            and deleting classes
-         */
+        //Button for opening the bottom dialog
         fabButton = view.findViewById(R.id.classOptionsButton);
-        fabButton2 = view.findViewById(R.id.classDeleteButton);
-        fabButton3 = view.findViewById(R.id.classEditButton);
-        fabOpen = AnimationUtils.loadAnimation
-                (getActivity(), R.anim.fab_open);
-        fabClose = AnimationUtils.loadAnimation
-                (getActivity(), R.anim.fab_close);
-        /*
-            The below sets up the onClickListener for each button
-         */
+        deleteBtn = view.findViewById(R.id.deleteButton);
+        cancelBtn = view.findViewById(R.id.cancelDelete);
 
         fabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                animateFab();
-
+                //Show the bottom dialog when user clicks on button
+                showDialog();
             }
         });
-        fabButton2.setOnClickListener(new View.OnClickListener() {
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                animateFab();
+                adapter.setDeletionStatus(false);
+                recycle.setAdapter(adapter);
+                fabButton.show();
+                deleteBtn.hide();
+                cancelBtn.hide();
             }
         });
-        fabButton3.setOnClickListener(new View.OnClickListener() {
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                animateFab();
-                //Switch to classCreationFragment
-                ((MainActivity) getActivity()).creationFragment();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setCancelable(true);
+                builder.setTitle("Warning!");
+                builder.setMessage("Classes cannot be recovered once deleted! Are you sure you want to delete?");
+                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        for (int j = 0; j < classesToDelete.size(); j++) {
+                            //Remove each deleted class from the list of classes
+                            listOfClasses.remove(classesToDelete.get(j));
+                            database.collection("classes")
+                                    .document(classesToDelete.get(j).getDocID()).delete()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.d("Success", "DocumentSnapshot successfully deleted!");
+                                            dialogInterface.dismiss();
+                                            adapter.setDeletionStatus(false);
+                                            recycle.setAdapter(adapter);
+                                            fabButton.show();
+                                            deleteBtn.hide();
+                                            cancelBtn.hide();
 
+                                        }
+                                    });
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        Log.d("Dismiss", "Cancel button was hit");
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
         //Check if user is not null
@@ -136,9 +168,16 @@ public class ClassesFragment extends Fragment {
                                     Log.d("Success", document.getId() + " => " + document.getData());
                                     //Cast the QueryDocumentSnapshot into a ClassInfo obj
                                     ClassInfo obj = document.toObject(ClassInfo.class);
+                                    obj.setDocID(document.getId());
                                     //Keep track of all classes created by this user
                                     listOfClasses.add(obj);
                                     adapter = new ClassesFragment.ClassAdapter(listOfClasses);
+                                    //Order the classes in alphabetical order
+                                    Collections.sort(listOfClasses, new Comparator<ClassInfo>() {
+                                        public int compare(ClassInfo d1, ClassInfo d2) {
+                                            return d1.getClassName().compareTo(d2.getClassName());
+                                        }
+                                    });
                                     recycle.setAdapter(adapter);
 
                                 }
@@ -155,31 +194,50 @@ public class ClassesFragment extends Fragment {
         return view;
     }
 
-    //This method is used to animate the floating action buttons when user clicks on it
-    private void animateFab() {
-        if (isOpen) {
-            fabButton2.startAnimation(fabClose);
-            fabButton2.setClickable(false);
-            fabButton3.startAnimation(fabClose);
-            fabButton3.setClickable(false);
-            isOpen = false;
-        } else {
-            fabButton2.startAnimation(fabOpen);
-            fabButton2.setClickable(true);
-            fabButton3.startAnimation(fabOpen);
-            fabButton3.setClickable(true);
-            isOpen = true;
-        }
+    private void showDialog() {
+        BottomSheetDialog bottom = new BottomSheetDialog(getActivity());
+        bottom.setContentView(R.layout.fragment_classes_bottom_dialog);
+        LinearLayout newClasses = bottom.findViewById(R.id.newClasses);
+        LinearLayout deleteClasses = bottom.findViewById(R.id.deleteClasses);
+
+        newClasses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Take the user to the class creation page
+                ((MainActivity) getActivity()).creationFragment();
+                bottom.dismiss();
+            }
+        });
+        deleteClasses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adapter.setDeletionStatus(true);
+                recycle.setAdapter(adapter);
+                fabButton.hide();
+                deleteBtn.show();
+                cancelBtn.show();
+                bottom.dismiss();
+
+            }
+        });
+
+        bottom.show();
     }
+
     /*
            ClassAdapter for the RecyclerView to list all classes users has created/joined
      */
 
     public class ClassAdapter extends RecyclerView.Adapter<com.example.rush.ClassesFragment.ClassAdapter.ViewHolder> {
         private ArrayList<ClassInfo> classList;
+        private boolean isDeleting;
 
         public ClassAdapter(ArrayList<ClassInfo> classList) {
             this.classList = classList;
+        }
+
+        public void setDeletionStatus(boolean b) {
+            isDeleting = b;
         }
 
         @NonNull
@@ -195,9 +253,31 @@ public class ClassesFragment extends Fragment {
             ClassInfo classObj = classList.get(position);
             SpannableString stringSpanner = new SpannableString(classObj.getClassName());
             stringSpanner.setSpan(new StyleSpan(Typeface.BOLD), 0, stringSpanner.length(), 0);
-            String twoChars = classObj.getClassName().substring(0,2).toUpperCase();
+            String twoChars = classObj.getClassName().substring(0, 2).toUpperCase();
 
-
+            if (isDeleting) {
+                holder.box.setVisibility(View.VISIBLE);
+            } else {
+                holder.box.setVisibility(View.GONE);
+            }
+            /*
+                Get any classes that have been selected for deletion
+             */
+            holder.box.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    boolean isChecked = holder.box.isChecked();
+                    if (isChecked) {
+                        classesToDelete.add(classObj);
+                        //Loop is for testing purposes
+                        for (int i = 0; i < classesToDelete.size(); i++) {
+                            Log.d("Debug", classesToDelete.get(i).getClassName());
+                        }
+                    } else {
+                        classesToDelete.remove(classObj);
+                    }
+                }
+            });
             holder.className.setText(stringSpanner);
             holder.classDescription.setText(classObj.getDescription());
             holder.identifier.setText(twoChars);
@@ -225,6 +305,7 @@ public class ClassesFragment extends Fragment {
             public TextView className;
             public TextView identifier;
             public TextView classDescription;
+            public CheckBox box;
 
             public ViewHolder(View view) {
                 super(view);
@@ -232,6 +313,7 @@ public class ClassesFragment extends Fragment {
                 className = view.findViewById(R.id.classNameText);
                 classDescription = view.findViewById(R.id.classDescriptionText);
                 identifier = view.findViewById(R.id.classIdentifier);
+                box = view.findViewById(R.id.deleteBox);
             }
         }
     }
