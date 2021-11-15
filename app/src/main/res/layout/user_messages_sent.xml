@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/userProfileImage"
-        android:layout_width="47dp"
-        android:layout_height="43dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_marginStart="12dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="4dp"
@@ -74,6 +74,7 @@
         app:layout_constraintStart_toEndOf="@+id/receiveUserMessage"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_more_vert_24" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

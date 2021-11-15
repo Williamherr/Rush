@@ -2,8 +2,12 @@ package com.example.rush;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -11,6 +15,7 @@ import android.view.View;
 import com.example.rush.messages.CreatePrivateMessages;
 import com.example.rush.messages.MessageFragment;
 import com.example.rush.messages.PrivateChatFragment;
+import com.example.rush.messages.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +28,7 @@ import java.net.Authenticator;
 public class MainActivity extends AppCompatActivity implements
         MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener,
         NotificationFragment.NotificationFragmentListener, AddPhotoFragment.UploadFragmentListener, ClassesFragment.ClassDetailFragmentListener
+
 {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private String uid;
@@ -34,11 +40,12 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         bottomNav = findViewById(R.id.bottomNavigationBar);
         bottomNav.setVisibility(View.INVISIBLE);
+
         //Navigation bar
         bottomNavigation();
 
         if (user != null) {
-            bottomNav.setVisibility(View.VISIBLE);
+            gotoHomeFragment(uid);
         }
 
     }
@@ -50,9 +57,9 @@ public class MainActivity extends AppCompatActivity implements
 
 
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 String itemString = item.toString();
                 switch (itemString) {
                     case "Home": // Home
@@ -88,18 +95,110 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    // Actionbar Menu select
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getSupportFragmentManager().popBackStack();
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                return true;
 
+            case R.id.sign_out:
+                FirebaseAuth.getInstance().signOut();
+                signout();
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actionbar_menu, menu);
+        return true;
+    }
+
+       /*
+
+    Home Section
+
+     */
+    // Goes Back to the home page when the user has login
+    // This will show the navigation bar
+    @Override
+    public void gotoHomeFragment(String uid) {
+        this.uid = uid;
+        bottomNav.setVisibility(View.VISIBLE);
+        HomeFragment();
+
+    }
+    // Goes to the Home Fragment
+    public void HomeFragment() {
+        setTitle("Rush");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new HomeFragment())
+                .commit();
+    }
+
+    public void signout() {
+        if (user != null){
+            setTitle("Rush");
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("finish", true);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
+            startActivity(intent);
+            finish();
+        } else {
+
+        }
+    }
+
+
+    /*
+
+    Message Section (Private Messages)
+
+     */
+
+    // Goes to the message fragment and shows a list of messages.
     public void messageFragment() {
         setTitle("Messages");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new MessageFragment()).addToBackStack(null)
+                .replace(R.id.containerView, new MessageFragment())
                 .commit();
     }
+    // Shows a private conversations between two users
+    @Override
+    public void goToPrivateChatFragment(String otherUserName, String otherUserId, String messageKey) {
+        setTitle("Chat");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new PrivateChatFragment(otherUserName,otherUserId,messageKey))
+                .addToBackStack(null)
+                .commit();
+    }
+    // Allow users to create a new message
+    @Override
+    public void createNewMessages(CreatePrivateMessages.iCreatePrivateMessages iListener) {
+        setTitle("New Messages");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new CreatePrivateMessages(iListener))
+                .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
+                .addToBackStack(null)
+                .commit();
+    }
+
+
+
 
     public void classesFragment() {
         setTitle("Classes");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new ClassesFragment()).addToBackStack(null).commit();
+                .replace(R.id.containerView, new ClassesFragment())
+                .commit();
     }
 
     public void creationFragment() {
@@ -107,17 +206,12 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerView, new ClassCreationFragment()).addToBackStack(null).commit();
     }
-    public void HomeFragment() {
-        setTitle("Rush");
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new HomeFragment()).addToBackStack(null)
-                .commit();
-    }
+
 
     public void notificationFragment() {
         setTitle("Notification");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new NotificationFragment()).addToBackStack(null)
+                .replace(R.id.containerView, new NotificationFragment())
                 .commit();
     }
 
@@ -137,31 +231,10 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-    @Override
-    public void goToPrivateChatFragment(String otherUserName, String otherUserId, String messageKey) {
-            setTitle("Chat");
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.containerView, new PrivateChatFragment(otherUserName,otherUserId,messageKey))
-                    .addToBackStack(null)
-                    .commit();
 
-    }
-    @Override
-    public void createNewMessages() {
-        setTitle("New Messages");
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new CreatePrivateMessages())
-                .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
-                .addToBackStack(null)
-                .commit();
-    }
 
-    @Override
-    public void gotoHomeFragment(String uid) {
-        this.uid = uid;
-        bottomNav.setVisibility(View.VISIBLE);
-        HomeFragment();
-    }
+
+
 
     @Override
     public void goToAccountCreationFragment() {
@@ -178,4 +251,8 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
                 new ClassDetailsFragment(name, instructor, description)).addToBackStack(null).commit();
     }
+
+
+
 }
+

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.example.rush.R;
@@ -30,6 +31,7 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
     FirebaseAuth auth = FirebaseAuth.getInstance();
     FirebaseUser user;
     final String TAG = "AllPrivateMessageAdapter";
+
 
     public AllPrivateMessageAdapter(ArrayList<MessageList> singleMessagesList, IMessageFragmentInterface mListener) {
         this.mListener = mListener;
@@ -82,15 +84,12 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
         holder.message.setText(recentMessage);
 
         if (isDelete) {
-            Boolean isChecked = false;
-
-            if (holder.checkBox.isChecked()) {
-                isChecked = true;
-                Log.d(TAG, "MessageIsChecked: " + messageKey);
-            }
-            else {
-                isChecked = false;
-            }
+            holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                  mListener.deleteMessages(b,messagesList.get(position));
+                }
+            });
 
 
         } else {
@@ -100,6 +99,7 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
                 @Override
                 public void onClick(View v) {
                     mListener.goToPrivateChatFrag(finalOtherUserName, finalOtherUserId,messageKey);
+
                 }
             });
         }
@@ -122,11 +122,12 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
             message = (TextView) view.findViewById(R.id.message);
             if (isDelete) {
                 checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+
             }
         }
     }
     public interface IMessageFragmentInterface{
-        void deleteMessages(Boolean isChecked, String messsageKey);
+        void deleteMessages(Boolean isChecked, MessageList messsageKey);
         void goToPrivateChatFrag(String otherUserName, String otherUID, String messageKey);
     }
 }

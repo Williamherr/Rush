@@ -1,5 +1,6 @@
 package com.example.rush.messages;
 
+import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Build;
@@ -8,6 +9,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -59,6 +63,11 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     String uid;
     String Report;
 
+    public PrivateChatFragment() {
+
+    }
+
+
     public PrivateChatFragment(String otherUserName, String otherUserId, String messageKey) {
         // Required empty public constructor
         this.otherUserId = otherUserId;
@@ -81,9 +90,6 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     boolean scrollToBottom = true;
     Messages reportMessage;
 
-    public PrivateChatFragment() {
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -132,6 +138,15 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                 };
 
 
+
+        getChat();
+
+
+        return view;
+    }
+
+
+    public void getChat() {
         messageRef.document(messageKey).collection("messages")
                 .orderBy("time", Query.Direction.ASCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -169,9 +184,6 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                         showRecycler();
                     }
                 });
-
-
-        return view;
     }
 
     @Override
@@ -289,6 +301,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                 .update(data);
 
 
+
         textview.setText("");
     }
 
@@ -375,28 +388,6 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
 
 }
 
-// Update the user's messages id
-             /*   task.continueWithTask(new Continuation() {
-                    @Override
-                    public Task then(@NonNull  Task task) throws Exception {
-
-                        Task t = db.collection("usersss").document("LNQBoSfSxveCmlpa9jo1vdDzjrE3")
-
-                                .update("messages",FieldValue.arrayUnion(st.get(0)))
-
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        Log.d(TAG, "DocumentSnapshot written with ID: " + unused);
-                                        Log.d(TAG, data.toString());
-                                    }
-                                });
-
-                        return t;
-                    }
-
-
-              });*/
 
 
 

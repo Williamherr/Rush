@@ -20,6 +20,16 @@ public class Members {
         return members;
     }
 
+    public String getOtherMember(String uid) {
+
+        for (int i = 0; i < members.size(); i++) {
+            if (!uid.equals(members.get(i).getUid())) {
+                return members.get(i).getUid();
+            }
+        }
+        return uid;
+    }
+
     public Member getMember(int index) {
         return members.get(index);
     }

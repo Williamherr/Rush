@@ -1,11 +1,14 @@
 package com.example.rush.messages;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.WorkerThread;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +21,7 @@ import android.view.ViewGroup;
 
 import com.example.rush.R;
 
+
 import com.example.rush.messages.Adapters.AllPrivateMessageAdapter;
 import com.example.rush.messages.model.Members;
 import com.example.rush.messages.model.Member;
@@ -25,6 +29,8 @@ import com.example.rush.messages.model.MessageList;
 import com.example.rush.messages.model.Messages;
 import com.example.rush.messages.model.PrivateMessageList;
 
+import com.example.rush.messages.model.User;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -38,20 +44,27 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.type.DateTime;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 
-public class MessageFragment extends Fragment implements bottomSheetDialogFragment.IBottomSheetDialog, AllPrivateMessageAdapter.IMessageFragmentInterface {
+public class MessageFragment extends Fragment implements bottomSheetDialogFragment.IBottomSheetDialog, AllPrivateMessageAdapter.IMessageFragmentInterface,CreatePrivateMessages.iCreatePrivateMessages {
 
     public MessageFragment() {
         // Required empty public constructor
@@ -59,7 +72,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
     FloatingActionButton fabButton;
     ExtendedFloatingActionButton deleteFAB;
-    boolean isDelete = false;
+
 
     ArrayList<PrivateMessageList> PrivateMessageList;
 
@@ -68,7 +81,6 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     MessageFragmentListener mListener;
     AllPrivateMessageAdapter adapter;
     private String uid;
-    private String otherUserName,otherPersonId, chatId = "";
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference reference = db.collection("users");
     private final CollectionReference messageRef = db.collection("chat-messages").document("private-messages").collection("all-private-messages");
@@ -79,7 +91,10 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     Members members;
     private ArrayList<MessageList> allMessageList;
     private Messages recentMessage;
+    FirebaseUser user;
+    private ArrayList<MessageList> deleteMessages;
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -92,7 +107,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         PrivateMessageList = new ArrayList<>();
         allMessageList = new ArrayList<>();
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // User is signed in
             uid = user.getUid();
@@ -126,13 +141,18 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
             public void onClick(View view) {
                 deleteFAB.hide();
                 fabButton.show();
+                deleteMessages(deleteMessages);
+                showRecycler();
             }
         });
 
         showRecyclerList();
 
+
+
         return view;
     }
+
 
 
     @Override
@@ -145,30 +165,114 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     @Override
     public void sheetClicked(String string) {
         if (string == "new") {
-            mListener.createNewMessages();
+            mListener.createNewMessages(this);
         } else if (string == "delete") {
             fabButton.hide();
             deleteFAB.show();
+            deleteMessages = new ArrayList<>();
             adapter = new AllPrivateMessageAdapter(allMessageList, true,this);
             recyclerView.setAdapter(adapter);
+
         }
     }
 
-
-
-    @Override
-    public void deleteMessages(Boolean isChecked, String messsageKey) {
-
-    }
 
     @Override
     public void goToPrivateChatFrag(String otherUserName, String otherUID, String messageKey) {
         mListener.goToPrivateChatFragment(otherUserName, otherUID, messageKey);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    @Override
+    public void createNewMessages(User otherUser) {
+        // Update the user's messages id
+
+        Map<String,Object> data = new HashMap<>();
+
+        ArrayList<Map<String,Object>> members = new ArrayList<>();
+        members.add(Map.of("uid",uid,"name",user.getDisplayName()));
+        members.add(Map.of("uid",otherUser.getId(),"name",otherUser.getName()));
+        data.put("members", members);
+        data.put("time", Timestamp.now());
+        data.put("recentMessage", "");
+
+        String newDoc = messageRef.document().getId();
+        messageRef.document(newDoc).set(data);
+
+        db.collection("users").document(otherUser.getId()).update("messages", FieldValue.arrayUnion(newDoc));
+        db.collection("users").document(uid).update("messages", FieldValue.arrayUnion(newDoc));
+
+
+        mListener.goToPrivateChatFragment(otherUser.getName(),otherUser.getId(),newDoc);
+    }
+
+
+    /*
+
+         Delete Message Section
+
+     */
+    // Deletes the Message Collection in all-private-messages
+    private void deleteCollection(final CollectionReference collection, Executor executor) {
+        Tasks.call(executor, () -> {
+            int batchSize = 10;
+            Query query = collection.orderBy(FieldPath.documentId()).limit(batchSize);
+            List<DocumentSnapshot> deleted = deleteQueryBatch(query);
+
+            while (deleted.size() >= batchSize) {
+                DocumentSnapshot last = deleted.get(deleted.size() - 1);
+                query = collection.orderBy(FieldPath.documentId()).startAfter(last.getId()).limit(batchSize);
+
+                deleted = deleteQueryBatch(query);
+            }
+
+            return null;
+        });
+    }
+    //The batch + query for the deleteCollection
+    @WorkerThread
+    private List<DocumentSnapshot> deleteQueryBatch(final Query query) throws Exception {
+        QuerySnapshot querySnapshot = Tasks.await(query.get());
+
+        WriteBatch batch = query.getFirestore().batch();
+        for (DocumentSnapshot snapshot : querySnapshot) {
+            batch.delete(snapshot.getReference());
+        }
+        Tasks.await(batch.commit());
+
+        return querySnapshot.getDocuments();
+    }
+
+    // Delete the message id inside the user and other user class
+    public void  deleteMessages(ArrayList<MessageList> list) {
+
+        for (int i = 0; i < list.size(); i++){
+            String mid = list.get(i).getKey();
+            String otherUID = list.get(i).getMembers().getOtherMember(uid);
+            Log.d(TAG, "deleteMessages: " + otherUID);
+            db.collection("users").document(uid).update("messages", FieldValue.arrayRemove(mid));
+            db.collection("users").document(otherUID).update("messages", FieldValue.arrayRemove(mid));
+            deleteCollection(messageRef.document(mid).collection("messages"), Executors.newSingleThreadExecutor());
+            messageRef.document(mid).delete();
+
+        }
+
+
+    }
+
+    @Override
+    public void deleteMessages(Boolean isChecked, MessageList messageList) {
+        if (isChecked) {
+            deleteMessages.add(messageList);
+        }else {
+            deleteMessages.remove(messageList);
+        }
+    }
+
     public interface MessageFragmentListener {
         void goToPrivateChatFragment(String otherUserName,String otherUserId, String messageKey);
-        void createNewMessages();
+        void createNewMessages(CreatePrivateMessages.iCreatePrivateMessages iListener);
+
     }
 
     void showDialog() {
@@ -177,146 +281,70 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         BottomSheetDialogFragment bottom =  bottomSheetDialogFragment.newInstance(this);
         bottom.show(getParentFragmentManager(), "dialog");
     }
+
+
+    // Initial the values for the recycler view / List of users
+    public void showRecyclerList(){
+
+            // Finds the user
+           db.collection("users").document(uid)
+                    .get().addOnSuccessListener( new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                         allMessageList = new ArrayList<>();
+                          mid = (ArrayList<String>) documentSnapshot.getData().get("messages");
+
+                          // Loops through each message id found
+                          for (String id : mid) {
+
+                              // Finds the document for the id
+                              messageRef.document(id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                  @Override
+                                  public void onEvent(@Nullable  DocumentSnapshot doc, @Nullable  FirebaseFirestoreException error) {
+                                      Log.d(TAG, "onSuccess: " + id);
+                                      // Checks to see if the document already exist in the arraylist
+                                      for (int i = 0; i < allMessageList.size(); i++) {
+                                          if (id == allMessageList.get(i).getKey()) {
+                                              Log.d(TAG, "onEvent: " + id);
+                                              allMessageList.remove(i);
+                                          }
+                                      }
+
+                                      String message = (String) doc.get("recentMessage");
+                                      members = new Members();
+                                      recentMessage = new Messages();
+                                      recentMessage.setMessage(message);
+
+                                      ArrayList<Map<String, Object>> users = (ArrayList<Map<String, Object>>) doc.get("members");
+
+                                      // Initializing variable for user list view
+                                      try {
+                                          for (Map<String, Object> member : users) {
+                                              Member mem = new Member(member.get("name").toString(), member.get("uid").toString());
+                                              members.addMembers(mem);
+                                          }
+
+                                          messageList = new MessageList(members, recentMessage, id);
+                                          allMessageList.add(messageList);
+                                      }
+                                      catch (Exception e) {
+                                      }
+
+                                      showRecycler();
+
+                                  }
+                              });
+                          }
+                      }
+                  });
+    }
+    // sets the adapter and shows the recycler view
     void showRecycler() {
         adapter = new AllPrivateMessageAdapter(allMessageList,this);
         recyclerView.setAdapter(adapter);
     }
 
-    public void showRecyclerList(){
-
-        messageRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable  FirebaseFirestoreException error) {
-
-            Task task1 = db.collection("users").document(uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    mid = (ArrayList<String>) documentSnapshot.getData().get("messages");
-                }
-            });
-
-          Task task2 = Tasks.whenAllSuccess(task1);
-          task2.addOnSuccessListener(new OnSuccessListener() {
-              @Override
-              public void onSuccess(Object o) {
-
-                          allMessageList = new ArrayList<>();
-                          for (String id : mid) {
-
-                              Task messageTask = messageRef.document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                  @Override
-                                  public void onSuccess(DocumentSnapshot doc) {
-
-                                      members = new Members();
-
-                                      ArrayList<Map<String, Object>> users = (ArrayList<Map<String, Object>>) doc.get("members");
-
-                                      String message = (String) doc.get("recentMessage");
-
-                                      recentMessage = new Messages();
-                                      recentMessage.setMessage(message);
-
-                                      if (!users.equals(null)){
-                                          for (Map<String,Object> member : users ) {
-                                              Member mem = new Member(member.get("name").toString(),member.get("uid").toString());
-                                              Log.d(TAG, "Member name: " + mem.getName());
-                                              Log.d(TAG, "Member uid: " + mem.getUid());
-                                              members.addMembers(mem);
-                                          }
-
-                                          messageList = new MessageList(members,recentMessage,id);
-                                          allMessageList.add(messageList);
-                                      }
-
-                                  }
-                              });
-
-
-                              Task recyclerTask = Tasks.whenAllSuccess(messageTask);
-                              recyclerTask.addOnSuccessListener(new OnSuccessListener<Object>() {
-                                  @Override
-                                  public void onSuccess(Object o) {
-                                      showRecycler();
-
-                                  }
-                              });
-
-                          }
-                      }
-                  });
-                      }
-                  });
-
-
-//
-//        Task t1 = db.runTransaction(new Transaction.Function<Void>() {
-//
-//            @Override
-//            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-//                Log.d(TAG,"transaction");
-//                DocumentSnapshot userDoc = transaction.get(reference.document(uid));
-//                ArrayList<String> allMessageId = (ArrayList<String>) userDoc.getData().get("messages");
-//
-//                for (String id: allMessageId) {
-//                    CollectionReference ref = messageRef.document(id).collection("messages");
-//                    DocumentSnapshot messageSnapShot = transaction.get(messageRef.document(id));
-//                    ArrayList<String> idList = (ArrayList<String>) messageSnapShot.getData().get("uid");
-//                    chatId = id;
-//
-//
-//                    if (idList.contains(uid)) {
-//                        int index = idList.indexOf(uid);
-//                        if (index == 0) {
-//                            otherPersonId = idList.get(1);
-//                        } else {
-//                            otherPersonId = idList.get(0);
-//                        }
-//                    }
-//
-//                    DocumentSnapshot nameSnap  =  transaction.get(messageRef.document(id).collection("members").document(otherPersonId));
-//                    otherUserName = (String) nameSnap.getData().get("name");
-//
-//
-//                    ref.limit(1).orderBy("time", Query.Direction.DESCENDING)
-//                            .addSnapshotListener(new EventListener<QuerySnapshot>() {
-//                                @Override
-//                                public void onEvent(  QuerySnapshot value, FirebaseFirestoreException e) {
-//                                    if (e != null) {
-//                                        Log.w(TAG, "listen:error", e);
-//                                        return;
-//                                    }
-//
-//                                    Log.w(TAG, "listen:error");
-//                                    for (QueryDocumentSnapshot doc : value) {
-//                                        if (doc.get("message") != null) {
-//                                            String message = doc.getString("message");
-//                                            String name = doc.getString("name");
-//                                            Timestamp time = doc.getTimestamp("time");
-//                                            String uid = doc.getString("uid");
-//
-//                                            PrivateMessageList.add(new PrivateMessageList(otherUserName,otherPersonId,new Messages(name,uid, doc.getId(), message,time), chatId));
-//
-//                                        }
-//                                    }
-//                                    adapter = new MessageAdapter(PrivateMessageList);
-//                                    recyclerView.setAdapter(adapter);
-//                                }
-//                            });
-//
-//                }
-//
-//                return null;
-//            }
-//        });
-
-    }
-
-
-    /*
-
-        Adapter Class
-
-     */
 
 
 
