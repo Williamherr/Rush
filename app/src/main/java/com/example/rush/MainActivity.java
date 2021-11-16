@@ -24,7 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener,ClassesFragment.ClassDetailFragmentListener,
-        PrivateChatFragment.PrivateChatFragmentListener,   AddPhotoFragment.UploadFragmentListener
+        PrivateChatFragment.PrivateChatFragmentListener,   AddPhotoFragment.UploadFragmentListener, AccountCreationFragment.AccountCreationFragmentListener
 
 //NotificationFragment.NotificationFragmentListener,
 
@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         setContentView(R.layout.activity_main);
         bottomNav = findViewById(R.id.bottomNavigationBar);
         bottomNav.setVisibility(View.INVISIBLE);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         //Navigation bar
         bottomNavigation();
@@ -50,10 +49,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         }
 
 
-
     }
-
-
 
 
     public void bottomNavigation() {
@@ -121,11 +117,12 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         inflater.inflate(R.menu.actionbar_menu, menu);
         return true;
     }
+
     public boolean isKeyboardOpen() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if (imm.isAcceptingText()) {
-           return true;
+            return true;
         } else {
             return false;
         }
@@ -141,13 +138,15 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
-       /*
+    /*
 
-    Home Section
+ Home Section
 
-     */
+  */
     // Goes Back to the home page when the user has login
     // This will show the navigation bar
+
+
     @Override
     public void gotoHomeFragment(FirebaseUser user) {
         this.user = user;
@@ -156,6 +155,15 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         HomeFragment();
 
     }
+    // This is implement inside of the Account Creation button
+    @Override
+    public void gotoHomeFragment(String uid) {
+        this.user = user;
+        Log.d("TAG", "gotoHomeFragment: " + user);
+        bottomNav.setVisibility(View.VISIBLE);
+        HomeFragment();
+    }
+
     // Goes to the Home Fragment
     public void HomeFragment() {
         setTitle("Rush");
@@ -166,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     }
 
     public void signout() {
-        if (user != null){
+        if (user != null) {
             setTitle("Rush");
             Log.d("TAG", "Sign out ");
             Intent intent = new Intent(this, MainActivity.class);
@@ -193,17 +201,17 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 .replace(R.id.containerView, new MessageFragment())
                 .commit();
     }
+
     // Shows a private conversations between two users
     @Override
     public void goToPrivateChatFragment(String otherUserName, String otherUserId, String messageKey) {
         setTitle("Chat");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new PrivateChatFragment(otherUserName,otherUserId,messageKey))
+                .replace(R.id.containerView, new PrivateChatFragment(otherUserName, otherUserId, messageKey))
                 .addToBackStack(null)
                 .commit();
     }
-
 
 
     // Allow users to create a new message
@@ -217,8 +225,6 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 .addToBackStack(null)
                 .commit();
     }
-
-
 
 
     public void classesFragment() {
@@ -235,7 +241,6 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     }
 
 
-
     public void notificationFragment() {
         setTitle("Notification");
         getSupportFragmentManager().beginTransaction()
@@ -244,11 +249,11 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     }
 
     /*
-    *
-    * This function add a new photo feature using the Notification to call this feature for testing.
-    * I will integrate this feature into another page,
-    * such as create account that let the user could upload the image
-    * */
+     *
+     * This function add a new photo feature using the Notification to call this feature for testing.
+     * I will integrate this feature into another page,
+     * such as create account that let the user could upload the image
+     * */
     @Override
     public void addNewPhotoFragment() {
         getSupportFragmentManager().beginTransaction()
@@ -256,7 +261,6 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 .addToBackStack(null)
                 .commit();
     }
-
 
 
     @Override
@@ -268,29 +272,24 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     }
 
 
-
     @Override
     public void goToAccountCreationFragment() {
-
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new AccountCreationFragment()).commit();
     }
 
     @Override
     public void backFragment() {
         getSupportFragmentManager().popBackStack();
     }
-    
+
     public void goToClassDetails(String name, String instructor, String description) {
         setTitle(name);
         getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
                 new ClassDetailsFragment(name, instructor, description)).addToBackStack(null).commit();
     }
 
-
-
-
-
-
-
-
 }
+
+
 
