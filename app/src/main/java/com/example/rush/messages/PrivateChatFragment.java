@@ -170,16 +170,12 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                                 String name = doc.getString("name");
                                 Timestamp time = doc.getTimestamp("time");
                                 String uid = doc.getString("uid");
-                                String img;
+                                Boolean isUrgent = doc.getBoolean("isUrgent");
+                                String img = doc.getString("img");;
 
-                                try {
-                                    img = doc.getString("img");
+                                if (isUrgent == null) {
+                                    isUrgent = false;
                                 }
-                                catch (Exception exception) {
-                                    Log.d(TAG, "onEvent: "  + exception);
-                                    img = "";
-                                }
-
 
                                 if (i == value.size() - 1) {
                                     datas = new HashMap<>();
@@ -188,7 +184,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                                     messageRef.document(messageKey).update(datas);
                                 }
                                 Log.d(TAG, "Doc ID:  " + doc.getId());
-                                messages.add(new Messages(name, uid, doc.getId(), message, time, img));
+                                messages.add(new Messages(name, uid, doc.getId(), message, time, img, isUrgent));
                             }
                             i++;
                         }

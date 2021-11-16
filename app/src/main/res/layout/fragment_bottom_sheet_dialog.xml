@@ -18,8 +18,8 @@
         >
         <ImageView
             android:layout_gravity="center"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:adjustViewBounds="true"
             android:background="@drawable/ic_plus"
             android:scaleType="fitCenter" />
@@ -31,7 +31,7 @@
 
             android:padding="5dp"
             android:text="New Messages"
-            android:textSize="30sp" />
+            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -47,8 +47,8 @@
 
         <ImageView
             android:layout_gravity="center"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:adjustViewBounds="true"
             android:background="@drawable/ic_delete"
             android:scaleType="fitCenter" />
@@ -60,7 +60,7 @@
             android:contentDescription="Add"
             android:padding="5dp"
             android:text="Delete Messages"
-            android:textSize="30sp" />
+            android:textSize="20sp" />
 
     </LinearLayout>
 
@@ -77,8 +77,8 @@
 
         <ImageView
             android:layout_gravity="center"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:adjustViewBounds="true"
             android:background="@drawable/ic_notifications"
             android:scaleType="fitCenter" />
@@ -90,7 +90,7 @@
             android:contentDescription="Add"
             android:padding="5dp"
             android:text="Notification"
-            android:textSize="30sp" />
+            android:textSize="20sp" />
 
 
     </LinearLayout>
@@ -108,8 +108,8 @@
 
         <ImageView
             android:layout_gravity="center"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:adjustViewBounds="true"
             android:background="@drawable/ic_baseline_assignment_late_24"
             android:scaleType="fitCenter" />
@@ -121,7 +121,38 @@
             android:contentDescription="Add"
             android:padding="5dp"
             android:text="Mark Text as Urgent"
-            android:textSize="30sp" />
+            android:textSize="20sp" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+    android:id="@+id/resolveMessages"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:clickable="true"
+    android:background="?android:attr/selectableItemBackground"
+        >
+
+    <ImageView
+        android:layout_gravity="center"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/ic_baseline_assignment_turned_in_24"
+        android:scaleType="fitCenter" />
+    <TextView
+
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="Add"
+        android:padding="5dp"
+        android:text="Resolve Urgent Messages"
+        android:textSize="20sp" />
     </LinearLayout>
 
 

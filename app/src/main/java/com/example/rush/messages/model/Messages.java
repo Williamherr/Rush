@@ -11,6 +11,7 @@ public class Messages {
     private com.google.firebase.Timestamp time;
     private String id;
     private String img;
+    private Boolean isUrgent;
 
     public Messages(String name, String uid,String id, String message, com.google.firebase.Timestamp time) {
         this.name = name;
@@ -20,17 +21,26 @@ public class Messages {
         this.time = time;
     }
 
-    public Messages(String name, String uid,String id, String message, com.google.firebase.Timestamp time,String img) {
+    public Messages(String name, String uid,String id, String message, com.google.firebase.Timestamp time,String img, Boolean isUrgent) {
         this.name = name;
         this.id = id;
         this.uid = uid;
         this.message = message;
         this.time = time;
         this.img = img;
+        this.isUrgent = isUrgent;
     }
 
     public Messages(){
 
+    }
+
+    public Boolean getIsUrgent() {
+        return isUrgent;
+    }
+
+    public void setIsUrgent(Boolean isUrgent) {
+        this.isUrgent = isUrgent;
     }
 
     public void setId(String id) {

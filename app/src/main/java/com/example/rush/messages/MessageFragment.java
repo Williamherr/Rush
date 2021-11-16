@@ -79,10 +79,9 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
     FloatingActionButton fabButton;
     ExtendedFloatingActionButton deleteFAB;
-    Button cancel, markAsUrgent;
+    Button cancel, submit;
 
     ArrayList<PrivateMessageList> PrivateMessageList;
-
 
     LinearLayoutManager layoutManager;
     MessageFragmentListener mListener;
@@ -100,6 +99,18 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     private Messages recentMessage;
     FirebaseUser user;
     private ArrayList<MessageList> deleteMessages;
+    private boolean isEdited = false;
+    private boolean isDeleted = false;
+    private ArrayList<String> urgentID;
+    private String option = "";
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mListener = (MessageFragmentListener) context;
+    }
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
@@ -113,9 +124,10 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         recyclerView.setLayoutManager(layoutManager);
         PrivateMessageList = new ArrayList<>();
         allMessageList = new ArrayList<>();
+        urgentID = new ArrayList<>();
         cancel = view.findViewById(R.id.cancel);
-        markAsUrgent = view.findViewById(R.id.markAsUrgent);
-         user = FirebaseAuth.getInstance().getCurrentUser();
+        submit = view.findViewById(R.id.submit);
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
             // User is signed in
@@ -129,11 +141,19 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                 super.onScrolled(recyclerView, dx, dy);
                 if (dy > 0 || dy < 0 && fabButton.isShown())
                     fabButton.hide();
+                if (dy > 0 || dy < 0 && fabButton.isShown() && isEdited == true) {
+                    submit.setVisibility(View.INVISIBLE);
+                    cancel.setVisibility(View.INVISIBLE);
+                }
             }
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && isEdited == false)
                     fabButton.show();
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && isEdited == true){
+                    submit.setVisibility(View.VISIBLE);
+                    cancel.setVisibility(View.VISIBLE);
+                }
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
@@ -144,23 +164,18 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                 showDialog();
             }
         });
-        deleteFAB = view.findViewById(R.id.messageDeleteFAB);
-        deleteFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                deleteFAB.hide();
-                fabButton.show();
-                deleteMessages(deleteMessages);
-                showRecycler();
-            }
-        });
+
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                markAsUrgent.setVisibility(View.INVISIBLE);
-                cancel.setVisibility(View.INVISIBLE);
-                fabButton.show();
-                showRecycler();
+                resetButtons();
+            }
+        });
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetsSubmit(option);
             }
         });
 
@@ -171,35 +186,69 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         return view;
     }
 
+    /*  Bottom Sheet Menu
+          - New Messages
+          - Delete Messages
+          - Notification
+          - Mark Text as Urgent
+          - Resolve Urgent Messages
 
+     */
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        mListener = (MessageFragmentListener) context;
+    // Bottom Sheet Dialog
+    void showDialog() {
+        // Create the fragment and show it as a dialog.
+        BottomSheetDialogFragment bottom =  bottomSheetDialogFragment.newInstance(this);
+        bottom.show(getParentFragmentManager(), "dialog");
     }
 
 
+    // Bottom Sheet Click
+    // This method will pass a string into a interface base on the what item was clicked
     @Override
     public void sheetClicked(String string) {
+        option = string;
         if (string == "new") {
             mListener.createNewMessages(this);
-        } else if (string == "delete") {
-            fabButton.hide();
-            deleteFAB.show();
-            deleteMessages = new ArrayList<>();
-            adapter = new AllPrivateMessageAdapter(allMessageList, true,this);
-            recyclerView.setAdapter(adapter);
-        } else if (string == "notification") {
+        }
+        else if (string == "notification") {
             mListener.createNotifications();
+        } else {
+            editList();
         }
-        else if (string == "urgent") {
-            markAsUrgent();
-        }
+
     }
-    public void markAsUrgent() {
+
+    // Submit Button on Click
+    public void bottomSheetsSubmit(String option){
+        if (option == "delete") {
+            deleteMessages(deleteMessages);
+        }
+        else if (option == "urgent") {
+            editUrgentMessages(true);
+        }
+        else if (option == "resolve") {
+            editUrgentMessages(false);
+        }
+
+        resetButtons();
+    }
+
+    public void resetButtons() {
+        submit.setVisibility(View.INVISIBLE);
+        cancel.setVisibility(View.INVISIBLE);
+        isEdited = false;
+        fabButton.show();
+        showRecycler();
+    }
+
+
+
+    // if an Item was clicked, then the list will be in edit mode
+    public void editList() {
+        isEdited = true;
         fabButton.hide();
-        markAsUrgent.setVisibility(View.VISIBLE);
+        submit.setVisibility(View.VISIBLE);
         cancel.setVisibility(View.VISIBLE);
         deleteMessages = new ArrayList<>();
         adapter = new AllPrivateMessageAdapter(allMessageList, true,this);
@@ -207,11 +256,14 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     }
 
 
-    @Override
-    public void goToPrivateChatFrag(String otherUserName, String otherUID, String messageKey) {
-        mListener.goToPrivateChatFragment(otherUserName, otherUID, messageKey);
-    }
 
+
+
+    /*
+        New Messages
+     */
+
+    // Creates new messages
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     public void createNewMessages(User otherUser) {
@@ -235,6 +287,8 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
         mListener.goToPrivateChatFragment(otherUser.getName(),otherUser.getId(),newDoc);
     }
+
+
 
 
     /*
@@ -289,7 +343,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
 
     }
-
+    // Delete messages interface
     @Override
     public void deleteMessages(Boolean isChecked, MessageList messageList) {
         if (isChecked) {
@@ -299,18 +353,38 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         }
     }
 
-    public interface MessageFragmentListener {
-        void goToPrivateChatFragment(String otherUserName,String otherUserId, String messageKey);
-        void createNewMessages(CreatePrivateMessages.iCreatePrivateMessages iListener);
-        void createNotifications();
+
+
+
+    /*
+
+      Urgent Messages
+
+    */
+
+    public void editUrgentMessages(Boolean isUrgent) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("isUrgent", isUrgent);
+        Log.d(TAG, "Urgent: ");
+
+        for (int i = 0; i < deleteMessages.size(); i++) {
+            String mid = deleteMessages.get(i).getKey();
+            messageRef.document(mid).update(data);
+        }
     }
 
-    void showDialog() {
-        // Create the fragment and show it as a dialog.
-
-        BottomSheetDialogFragment bottom =  bottomSheetDialogFragment.newInstance(this);
-        bottom.show(getParentFragmentManager(), "dialog");
+    // Mark as Urgent Interface
+    @Override
+    public void markUrgentMessages(Boolean isChecked, String mid) {
+        if (isChecked) {
+            urgentID.add(mid);
+        }else {
+            urgentID.remove(mid);
+        }
     }
+
+
+
 
 
     // Initial the values for the recycler view / List of users
@@ -340,13 +414,18 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                                               allMessageList.remove(i);
                                           }
                                       }
-
+                                      Boolean isUrgent = (Boolean) doc.getBoolean("isUrgent");
                                       String message = (String) doc.get("recentMessage");
                                       Timestamp time = (Timestamp) doc.get("time");
                                       members = new Members();
                                       recentMessage = new Messages();
                                       recentMessage.setMessage(message);
                                       recentMessage.setTime(time);
+
+                                      if (isUrgent == null) {
+                                          isUrgent = false;
+                                      }
+                                      recentMessage.setIsUrgent(isUrgent);
 
                                       ArrayList<Map<String, Object>> users = (ArrayList<Map<String, Object>>) doc.get("members");
 
@@ -399,6 +478,23 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         recyclerView.setAdapter(adapter);
     }
 
+
+
+   /*
+
+      Interfaces
+
+    */
+
+    public interface MessageFragmentListener {
+        void goToPrivateChatFragment(String otherUserName,String otherUserId, String messageKey);
+        void createNewMessages(CreatePrivateMessages.iCreatePrivateMessages iListener);
+        void createNotifications();
+    }
+    @Override
+    public void goToPrivateChatFrag(String otherUserName, String otherUID, String messageKey) {
+        mListener.goToPrivateChatFragment(otherUserName, otherUID, messageKey);
+    }
 
 
 

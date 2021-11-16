@@ -32,6 +32,7 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
     FirebaseUser user;
     final String TAG = "AllPrivateMessageAdapter";
     String uid;
+    View view;
 
     public AllPrivateMessageAdapter(ArrayList<MessageList> singleMessagesList, IMessageFragmentInterface mListener) {
         this.mListener = mListener;
@@ -49,7 +50,7 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
 
 
     public ViewMessageHolder onCreateViewHolder( ViewGroup viewGroup, int viewType) {
-        View view;
+
         if (isDelete) {
             view = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.delete_private_messages,viewGroup,false);
@@ -69,7 +70,7 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
 
         String otherUserName = "";
         String otherUserId = "";
-        Log.d(TAG, "onBindViewHolder: " + uid);
+
         Members allMembers = messagesList.get(position).getMembers();
         for (int i = 0; i < allMembers.getAllMembers().size(); i++) {
             if (!(uid.equals(allMembers.getMember(i).getUid()))) {
@@ -78,6 +79,12 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
             } else {
                 otherUserName = user.getDisplayName();
             }
+        }
+
+        boolean isUrgent = messagesList.get(position).getMessages().getIsUrgent();
+
+        if (isUrgent) {
+            holder.itemView.setBackgroundColor(view.getResources().getColor(R.color.error_message));
         }
 
         String messageKey = messagesList.get(position).getKey();
@@ -130,6 +137,7 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
         }
     }
     public interface IMessageFragmentInterface{
+        void markUrgentMessages(Boolean isChecked, String mid);
         void deleteMessages(Boolean isChecked, MessageList messsageKey);
         void goToPrivateChatFrag(String otherUserName, String otherUID, String messageKey);
     }

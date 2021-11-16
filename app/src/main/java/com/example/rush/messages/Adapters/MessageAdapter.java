@@ -3,6 +3,7 @@ package com.example.rush.messages.Adapters;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
     String TAG = "PrivateChatAdapter";
     IMessageAdapterListener mListener;
     private final int PICK_IMAGE_REQUEST = 22;
+    View view;
 
 
     public MessageAdapter(ArrayList<Messages> singleMessagesList, String userName, IMessageAdapterListener mListener) {
@@ -51,7 +53,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
 
     public MessageAdapter.ViewMessageHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
-        View view = LayoutInflater.from(viewGroup.getContext())
+        view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.user_messages_sent, viewGroup, false);
 
         MessageAdapter.ViewMessageHolder holder = new MessageAdapter.ViewMessageHolder(view);
@@ -65,9 +67,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
         String user = singleMessagesList.get(position).getName();
         String id = singleMessagesList.get(position).getId();
         String img  = singleMessagesList.get(position).getImg();
-        Log.d("img", "IMAGE: " + img);
+        boolean isUrgent = singleMessagesList.get(position).getIsUrgent();
+
+        if (isUrgent) {
+            holder.message.setBackground(view.getResources().getDrawable(R.drawable.error_message));
+        }
+
         if (img == null || img.equals("")) {
-            Log.d("img", "IMAGE : " + img);
+
         }
 
         holder.messageMenuButton.setOnClickListener(new View.OnClickListener() {

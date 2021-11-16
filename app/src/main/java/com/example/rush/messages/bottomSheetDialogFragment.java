@@ -14,7 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class bottomSheetDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener {
 
     private static IBottomSheetDialog iListener;
-    private LinearLayout newMessages, deleteMessages, urgent;
+    private LinearLayout newMessages, deleteMessages, urgent, resolve;
     private LinearLayout notificationMessages;
 
     private String TAG = "BottomSheetDialogFragment";
@@ -58,7 +58,8 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
         //Urgent messages
         urgent  = view.findViewById(R.id.urgent);
         urgent.setOnClickListener(this);
-
+        resolve = view .findViewById(R.id.resolveMessages);
+        resolve.setOnClickListener(this);
 
         return view;
     }
@@ -77,6 +78,10 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
         }
         else if (view.getId() == R.id.urgent) {
             iListener.sheetClicked("urgent");
+            getDialog().dismiss();
+        }
+        else if (view.getId() == R.id.resolveMessages) {
+            iListener.sheetClicked("resolve");
             getDialog().dismiss();
         }
     }
