@@ -31,9 +31,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +51,7 @@ public class ClassesFragment extends Fragment {
     private FirebaseFirestore database;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private String type = "";
     private ClassAdapter adapter;
     private RecyclerView recycle;
     private ArrayList<ClassInfo> listOfClasses = new ArrayList<>();
@@ -156,37 +159,49 @@ public class ClassesFragment extends Fragment {
         });
         //Check if user is not null
         if (userID != null) {
-            //Runs a query for any classes created by the current user
-            database.collection("classes")
-                    .whereEqualTo("createdBy", userID)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.d("Success", document.getId() + " => " + document.getData());
-                                    //Cast the QueryDocumentSnapshot into a ClassInfo obj
-                                    ClassInfo obj = document.toObject(ClassInfo.class);
-                                    obj.setDocID(document.getId());
-                                    //Keep track of all classes created by this user
-                                    listOfClasses.add(obj);
-                                    adapter = new ClassesFragment.ClassAdapter(listOfClasses);
-                                    //Order the classes in alphabetical order
-                                    Collections.sort(listOfClasses, new Comparator<ClassInfo>() {
-                                        public int compare(ClassInfo d1, ClassInfo d2) {
-                                            return d1.getClassName().compareTo(d2.getClassName());
+            //Get the current user's document
+            database.collection("users").document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    DocumentSnapshot document = task.getResult();
+                    //Get the current user's account type
+                    type = (String) document.getData().get("type");
+
+                    if (type.equals("Professor")) {
+                        database.collection("classes")
+                                .whereEqualTo("createdBy", userID)
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                Log.d("Success", document.getId() + " => " + document.getData());
+                                                //Cast the QueryDocumentSnapshot into a ClassInfo obj
+                                                ClassInfo obj = document.toObject(ClassInfo.class);
+                                                obj.setDocID(document.getId());
+                                                //Keep track of all classes created by this user
+                                                listOfClasses.add(obj);
+                                                adapter = new ClassesFragment.ClassAdapter(listOfClasses);
+                                                //Order the classes in alphabetical order
+                                                Collections.sort(listOfClasses, new Comparator<ClassInfo>() {
+                                                    public int compare(ClassInfo d1, ClassInfo d2) {
+                                                        return d1.getClassName().compareTo(d2.getClassName());
+                                                    }
+                                                });
+                                                recycle.setAdapter(adapter);
+
+                                            }
+                                        } else {
+                                            Log.d("Error", "Error getting documents: ", task.getException());
                                         }
-                                    });
-                                    recycle.setAdapter(adapter);
-
-                                }
-                            } else {
-                                Log.d("Error", "Error getting documents: ", task.getException());
-                            }
-                        }
-                    });
-
+                                    }
+                                });
+                    } else {
+                        Log.d("User", "This is for student queries");
+                    }
+                }
+            });
 
         }
 
@@ -204,8 +219,13 @@ public class ClassesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //Take the user to the class creation page
-                ((MainActivity) getActivity()).creationFragment();
+                if (type.equals("Professor")) {
+                    ((MainActivity) getActivity()).creationFragment();
+                } else {
+                    //Go to the join class tab since students can't create a class
+                }
                 bottom.dismiss();
+
             }
         });
         deleteClasses.setOnClickListener(new View.OnClickListener() {
