@@ -71,7 +71,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 
-public class MessageFragment extends Fragment implements bottomSheetDialogFragment.IBottomSheetDialog, AllPrivateMessageAdapter.IMessageFragmentInterface,CreatePrivateMessages.iCreatePrivateMessages {
+public class MessageFragment extends Fragment implements bottomSheetDialogFragment.IBottomSheetDialog, AllPrivateMessageAdapter.IMessageFragmentInterface, CreatePrivateMessages.iCreatePrivateMessages {
 
     public MessageFragment() {
         // Required empty public constructor
@@ -111,7 +111,6 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     }
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -146,11 +145,12 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                     cancel.setVisibility(View.INVISIBLE);
                 }
             }
+
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && isEdited == false)
                     fabButton.show();
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && isEdited == true){
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && isEdited == true) {
                     submit.setVisibility(View.VISIBLE);
                     cancel.setVisibility(View.VISIBLE);
                 }
@@ -182,7 +182,6 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         showRecyclerList();
 
 
-
         return view;
     }
 
@@ -198,7 +197,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     // Bottom Sheet Dialog
     void showDialog() {
         // Create the fragment and show it as a dialog.
-        BottomSheetDialogFragment bottom =  bottomSheetDialogFragment.newInstance(this);
+        BottomSheetDialogFragment bottom = bottomSheetDialogFragment.newInstance(this);
         bottom.show(getParentFragmentManager(), "dialog");
     }
 
@@ -210,8 +209,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         option = string;
         if (string == "new") {
             mListener.createNewMessages(this);
-        }
-        else if (string == "notification") {
+        } else if (string == "notification") {
             mListener.createNotifications();
         } else {
             editList();
@@ -220,14 +218,12 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     }
 
     // Submit Button on Click
-    public void bottomSheetsSubmit(String option){
+    public void bottomSheetsSubmit(String option) {
         if (option == "delete") {
             deleteMessages(deleteMessages);
-        }
-        else if (option == "urgent") {
+        } else if (option == "urgent") {
             editUrgentMessages(true);
-        }
-        else if (option == "resolve") {
+        } else if (option == "resolve") {
             editUrgentMessages(false);
         }
 
@@ -243,7 +239,6 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     }
 
 
-
     // if an Item was clicked, then the list will be in edit mode
     public void editList() {
         isEdited = true;
@@ -251,7 +246,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         submit.setVisibility(View.VISIBLE);
         cancel.setVisibility(View.VISIBLE);
         deleteMessages = new ArrayList<>();
-        adapter = new AllPrivateMessageAdapter(allMessageList, true,this);
+        adapter = new AllPrivateMessageAdapter(allMessageList, true, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -269,11 +264,11 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     public void createNewMessages(User otherUser) {
         // Update the user's messages id
 
-        Map<String,Object> data = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
 
-        ArrayList<Map<String,Object>> members = new ArrayList<>();
-        members.add(Map.of("uid",uid,"name",user.getDisplayName()));
-        members.add(Map.of("uid",otherUser.getId(),"name",otherUser.getName()));
+        ArrayList<Map<String, Object>> members = new ArrayList<>();
+        members.add(Map.of("uid", uid, "name", user.getDisplayName()));
+        members.add(Map.of("uid", otherUser.getId(), "name", otherUser.getName()));
         data.put("members", members);
         data.put("time", Timestamp.now());
         data.put("recentMessage", "");
@@ -285,10 +280,8 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         db.collection("users").document(uid).update("messages", FieldValue.arrayUnion(newDoc));
 
 
-        mListener.goToPrivateChatFragment(otherUser.getName(),otherUser.getId(),newDoc);
+        mListener.goToPrivateChatFragment(otherUser.getName(), otherUser.getId(), newDoc);
     }
-
-
 
 
     /*
@@ -313,6 +306,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
             return null;
         });
     }
+
     //The batch + query for the deleteCollection
     @WorkerThread
     private List<DocumentSnapshot> deleteQueryBatch(final Query query) throws Exception {
@@ -328,9 +322,9 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     }
 
     // Delete the message id inside the user and other user class
-    public void  deleteMessages(ArrayList<MessageList> list) {
+    public void deleteMessages(ArrayList<MessageList> list) {
 
-        for (int i = 0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             String mid = list.get(i).getKey();
             String otherUID = list.get(i).getMembers().getOtherMember(uid);
             Log.d(TAG, "deleteMessages: " + otherUID);
@@ -343,12 +337,13 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
 
     }
+
     // Delete messages interface
     @Override
     public void deleteMessages(Boolean isChecked, MessageList messageList) {
         if (isChecked) {
             deleteMessages.add(messageList);
-        }else {
+        } else {
             deleteMessages.remove(messageList);
         }
     }
@@ -378,78 +373,76 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     public void markUrgentMessages(Boolean isChecked, String mid) {
         if (isChecked) {
             urgentID.add(mid);
-        }else {
+        } else {
             urgentID.remove(mid);
         }
     }
 
 
-
-
-
     // Initial the values for the recycler view / List of users
-    public void showRecyclerList(){
+    public void showRecyclerList() {
 
-            // Finds the user
-           db.collection("users").document(uid)
-                    .get().addOnSuccessListener( new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
+        // Finds the user
+        db.collection("users").document(uid)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                         allMessageList = new ArrayList<>();
-                          mid = (ArrayList<String>) documentSnapshot.getData().get("messages");
+                allMessageList = new ArrayList<>();
+                mid = (ArrayList<String>) documentSnapshot.getData().get("messages");
+                if (mid != null) {
+                    // Loops through each message id found
+                    for (String id : mid) {
 
-                          // Loops through each message id found
-                          for (String id : mid) {
+                        // Finds the document for the id
+                        messageRef.document(id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot doc, @Nullable FirebaseFirestoreException error) {
+                                Log.d(TAG, "onSuccess: " + id);
+                                // Checks to see if the document already exist in the arraylist
+                                for (int i = 0; i < allMessageList.size(); i++) {
+                                    if (id == allMessageList.get(i).getKey()) {
+                                        Log.d(TAG, "onEvent: " + id);
+                                        allMessageList.remove(i);
+                                    }
+                                }
+                                Boolean isUrgent = (Boolean) doc.getBoolean("isUrgent");
+                                String message = (String) doc.get("recentMessage");
+                                Timestamp time = (Timestamp) doc.get("time");
+                                members = new Members();
+                                recentMessage = new Messages();
+                                recentMessage.setMessage(message);
+                                recentMessage.setTime(time);
 
-                              // Finds the document for the id
-                              messageRef.document(id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                  @Override
-                                  public void onEvent(@Nullable  DocumentSnapshot doc, @Nullable  FirebaseFirestoreException error) {
-                                      Log.d(TAG, "onSuccess: " + id);
-                                      // Checks to see if the document already exist in the arraylist
-                                      for (int i = 0; i < allMessageList.size(); i++) {
-                                          if (id == allMessageList.get(i).getKey()) {
-                                              Log.d(TAG, "onEvent: " + id);
-                                              allMessageList.remove(i);
-                                          }
-                                      }
-                                      Boolean isUrgent = (Boolean) doc.getBoolean("isUrgent");
-                                      String message = (String) doc.get("recentMessage");
-                                      Timestamp time = (Timestamp) doc.get("time");
-                                      members = new Members();
-                                      recentMessage = new Messages();
-                                      recentMessage.setMessage(message);
-                                      recentMessage.setTime(time);
+                                if (isUrgent == null) {
+                                    isUrgent = false;
+                                }
+                                recentMessage.setIsUrgent(isUrgent);
 
-                                      if (isUrgent == null) {
-                                          isUrgent = false;
-                                      }
-                                      recentMessage.setIsUrgent(isUrgent);
+                                ArrayList<Map<String, Object>> users = (ArrayList<Map<String, Object>>) doc.get("members");
 
-                                      ArrayList<Map<String, Object>> users = (ArrayList<Map<String, Object>>) doc.get("members");
+                                // Initializing variable for user list view
+                                try {
+                                    for (Map<String, Object> member : users) {
+                                        Member mem = new Member(member.get("name").toString(), member.get("uid").toString());
+                                        members.addMembers(mem);
+                                    }
 
-                                      // Initializing variable for user list view
-                                      try {
-                                          for (Map<String, Object> member : users) {
-                                              Member mem = new Member(member.get("name").toString(), member.get("uid").toString());
-                                              members.addMembers(mem);
-                                          }
+                                    messageList = new MessageList(members, recentMessage, id);
+                                    allMessageList.add(messageList);
+                                } catch (Exception e) {
+                                }
 
-                                          messageList = new MessageList(members, recentMessage, id);
-                                          allMessageList.add(messageList);
-                                      }
-                                      catch (Exception e) {
-                                      }
+                                showRecycler();
 
-                                      showRecycler();
-
-                                  }
-                              });
-                          }
-                      }
-                  });
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
+
     // sets the adapter and shows the recycler view
     void showRecycler() {
         // Sorts allMessageList by firebase.time
@@ -459,9 +452,9 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                 try {
                     Timestamp time1 = m1.getMessages().getTime();
                     Timestamp time2 = m2.getMessages().getTime();
-                    if (time1.compareTo(time2) > 0 ) {
+                    if (time1.compareTo(time2) > 0) {
                         return -1;
-                    } else if (time1.compareTo(time2) < 0 ){
+                    } else if (time1.compareTo(time2) < 0) {
                         return 1;
                     } else {
                         return time1.compareTo(time2);
@@ -474,7 +467,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         });
 
 
-        adapter = new AllPrivateMessageAdapter(allMessageList,this);
+        adapter = new AllPrivateMessageAdapter(allMessageList, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -487,16 +480,17 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     */
 
     public interface MessageFragmentListener {
-        void goToPrivateChatFragment(String otherUserName,String otherUserId, String messageKey);
+        void goToPrivateChatFragment(String otherUserName, String otherUserId, String messageKey);
+
         void createNewMessages(CreatePrivateMessages.iCreatePrivateMessages iListener);
+
         void createNotifications();
     }
+
     @Override
     public void goToPrivateChatFrag(String otherUserName, String otherUID, String messageKey) {
         mListener.goToPrivateChatFragment(otherUserName, otherUID, messageKey);
     }
-
-
 
 
 }

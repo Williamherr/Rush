@@ -160,46 +160,14 @@ public class ClassesFragment extends Fragment {
         //Check if user is not null
         if (userID != null) {
             //Get the current user's document
-            database.collection("users").document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            database.collection("users").document(userID).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     DocumentSnapshot document = task.getResult();
                     //Get the current user's account type
                     type = (String) document.getData().get("type");
-
-                    if (type.equals("Professor")) {
-                        database.collection("classes")
-                                .whereEqualTo("createdBy", userID)
-                                .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                Log.d("Success", document.getId() + " => " + document.getData());
-                                                //Cast the QueryDocumentSnapshot into a ClassInfo obj
-                                                ClassInfo obj = document.toObject(ClassInfo.class);
-                                                obj.setDocID(document.getId());
-                                                //Keep track of all classes created by this user
-                                                listOfClasses.add(obj);
-                                                adapter = new ClassesFragment.ClassAdapter(listOfClasses);
-                                                //Order the classes in alphabetical order
-                                                Collections.sort(listOfClasses, new Comparator<ClassInfo>() {
-                                                    public int compare(ClassInfo d1, ClassInfo d2) {
-                                                        return d1.getClassName().compareTo(d2.getClassName());
-                                                    }
-                                                });
-                                                recycle.setAdapter(adapter);
-
-                                            }
-                                        } else {
-                                            Log.d("Error", "Error getting documents: ", task.getException());
-                                        }
-                                    }
-                                });
-                    } else {
-                        Log.d("User", "This is for student queries");
-                    }
+                    getClasses(type);
                 }
             });
 
@@ -207,6 +175,36 @@ public class ClassesFragment extends Fragment {
 
 
         return view;
+    }
+
+    private void getClasses(String s) {
+        if (s.equals("Professor")) {
+            database.collection("classes")
+                    .whereEqualTo("createdBy", userID)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d("Success", document.getId() + " => " + document.getData());
+                                    //Cast the QueryDocumentSnapshot into a ClassInfo obj
+                                    ClassInfo obj = document.toObject(ClassInfo.class);
+                                    obj.setDocID(document.getId());
+                                    //Keep track of all classes created by this user
+                                    listOfClasses.add(obj);
+                                    adapter = new ClassesFragment.ClassAdapter(listOfClasses);
+                                    recycle.setAdapter(adapter);
+
+                                }
+                            } else {
+                                Log.d("Error", "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+        } else {
+            Log.d("User", "For students");
+        }
     }
 
     private void showDialog() {
