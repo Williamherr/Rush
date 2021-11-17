@@ -108,8 +108,10 @@ public class ClassesFragment extends Fragment {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                adapter.setDeletionStatus(false);
-                recycle.setAdapter(adapter);
+                if (adapter != null) {
+                    adapter.setDeletionStatus(false);
+                    recycle.setAdapter(adapter);
+                }
                 fabButton.show();
                 deleteBtn.hide();
                 cancelBtn.hide();
@@ -162,14 +164,14 @@ public class ClassesFragment extends Fragment {
             //Get the current user's document
             database.collection("users").document(userID).get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    DocumentSnapshot document = task.getResult();
-                    //Get the current user's account type
-                    type = (String) document.getData().get("type");
-                    getClasses(type);
-                }
-            });
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            DocumentSnapshot document = task.getResult();
+                            //Get the current user's account type
+                            type = (String) document.getData().get("type");
+                            getClasses(type);
+                        }
+                    });
 
         }
 
@@ -229,8 +231,10 @@ public class ClassesFragment extends Fragment {
         deleteClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                adapter.setDeletionStatus(true);
-                recycle.setAdapter(adapter);
+                if (adapter != null) {
+                    adapter.setDeletionStatus(true);
+                    recycle.setAdapter(adapter);
+                }
                 fabButton.hide();
                 deleteBtn.show();
                 cancelBtn.show();
