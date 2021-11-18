@@ -31,9 +31,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +51,7 @@ public class ClassesFragment extends Fragment {
     private FirebaseFirestore database;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private String type = "";
     private ClassAdapter adapter;
     private RecyclerView recycle;
     private ArrayList<ClassInfo> listOfClasses = new ArrayList<>();
@@ -105,8 +108,10 @@ public class ClassesFragment extends Fragment {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                adapter.setDeletionStatus(false);
-                recycle.setAdapter(adapter);
+                if (adapter != null) {
+                    adapter.setDeletionStatus(false);
+                    recycle.setAdapter(adapter);
+                }
                 fabButton.show();
                 deleteBtn.hide();
                 cancelBtn.hide();
@@ -156,7 +161,26 @@ public class ClassesFragment extends Fragment {
         });
         //Check if user is not null
         if (userID != null) {
-            //Runs a query for any classes created by the current user
+            //Get the current user's document
+            database.collection("users").document(userID).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            DocumentSnapshot document = task.getResult();
+                            //Get the current user's account type
+                            type = (String) document.getData().get("type");
+                            getClasses(type);
+                        }
+                    });
+
+        }
+
+
+        return view;
+    }
+
+    private void getClasses(String s) {
+        if (s.equals("Professor")) {
             database.collection("classes")
                     .whereEqualTo("createdBy", userID)
                     .get()
@@ -172,12 +196,6 @@ public class ClassesFragment extends Fragment {
                                     //Keep track of all classes created by this user
                                     listOfClasses.add(obj);
                                     adapter = new ClassesFragment.ClassAdapter(listOfClasses);
-                                    //Order the classes in alphabetical order
-                                    Collections.sort(listOfClasses, new Comparator<ClassInfo>() {
-                                        public int compare(ClassInfo d1, ClassInfo d2) {
-                                            return d1.getClassName().compareTo(d2.getClassName());
-                                        }
-                                    });
                                     recycle.setAdapter(adapter);
 
                                 }
@@ -186,12 +204,9 @@ public class ClassesFragment extends Fragment {
                             }
                         }
                     });
-
-
+        } else {
+            Log.d("User", "For students");
         }
-
-
-        return view;
     }
 
     private void showDialog() {
@@ -204,15 +219,22 @@ public class ClassesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //Take the user to the class creation page
-                ((MainActivity) getActivity()).creationFragment();
+                if (type.equals("Professor")) {
+                    ((MainActivity) getActivity()).creationFragment();
+                } else {
+                    //Go to the join class tab since students can't create a class
+                }
                 bottom.dismiss();
+
             }
         });
         deleteClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                adapter.setDeletionStatus(true);
-                recycle.setAdapter(adapter);
+                if (adapter != null) {
+                    adapter.setDeletionStatus(true);
+                    recycle.setAdapter(adapter);
+                }
                 fabButton.hide();
                 deleteBtn.show();
                 cancelBtn.show();
