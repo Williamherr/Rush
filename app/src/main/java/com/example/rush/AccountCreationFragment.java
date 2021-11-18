@@ -1,6 +1,8 @@
 package com.example.rush;
+
 import android.os.Bundle;
 import android.content.Intent;
+
 import androidx.fragment.app.Fragment;
 
 import android.widget.Button;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import android.widget.RadioButton;
 import android.text.TextUtils;
 
+import com.example.rush.messages.model.MessageList;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,6 +37,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -41,9 +45,8 @@ import androidx.fragment.app.Fragment;
 
 public class AccountCreationFragment extends Fragment {
     Button btnCreate;
-    EditText  inputLName, inputPassword, inputCPassword, inputEmail;
     RadioGroup radiogroup;
-    TextInputEditText inputFName;
+    TextInputEditText inputFName, inputLName, inputPassword, inputCPassword, inputEmail;
     String userID;
     private FirebaseAuth mAuth;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -73,106 +76,111 @@ public class AccountCreationFragment extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
 
-                if(id == R.id.professor){
+                if (id == R.id.professor) {
                     type = "Professor";
 
-                }
-                else if(id == R.id.student){
+                } else if (id == R.id.student) {
                     type = "Student";
                 }
             }
         });
-                btnCreate.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String fName = inputFName.getText().toString();
-                        String lName = inputLName.getText().toString();
-                        String email = inputEmail.getText().toString();
-                        String password = inputPassword.getText().toString();
-                        String confirmPassword = inputCPassword.getText().toString();
-                        if (validate()) {
-                            createAccount(fName, lName, email, password, type);
-                        }
+        btnCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String fName = inputFName.getText().toString();
+                String lName = inputLName.getText().toString();
+                String email = inputEmail.getText().toString();
+                String password = inputPassword.getText().toString();
+                String confirmPassword = inputCPassword.getText().toString();
+                if (validate()) {
+                    createAccount(fName, lName, email, password, type);
+                }
 
-                    }
-                });
+            }
+        });
 
 
         return view;
     }
 
-@Override
-public void onAttach(Context context){
+    @Override
+    public void onAttach(Context context) {
         super.onAttach(context);
         mListener = (AccountCreationFragmentListener) context;
-}
-public interface AccountCreationFragmentListener {
+    }
+
+    public interface AccountCreationFragmentListener {
         void gotoHomeFragment(String uid);
-}
-public Boolean validate() {
-    String fName = inputFName.getText().toString();
-    String lName = inputLName.getText().toString();
-    String email = inputEmail.getText().toString();
-    String password = inputPassword.getText().toString();
-    String confirmPassword = inputCPassword.getText().toString();
-    if(TextUtils.isEmpty(fName)){
-        Toast.makeText(getActivity(), "First name cannot be empty", Toast.LENGTH_SHORT).show();
-        return false;
     }
-    if(TextUtils.isEmpty(lName)){
-        Toast.makeText(getActivity(), "Last name cannot be empty", Toast.LENGTH_SHORT).show();
-        return false;
+
+    public Boolean validate() {
+        String fName = inputFName.getText().toString();
+        String lName = inputLName.getText().toString();
+        String email = inputEmail.getText().toString();
+        String password = inputPassword.getText().toString();
+        String confirmPassword = inputCPassword.getText().toString();
+        if (TextUtils.isEmpty(fName)) {
+            Toast.makeText(getActivity(), "First name cannot be empty", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (TextUtils.isEmpty(lName)) {
+            Toast.makeText(getActivity(), "Last name cannot be empty", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getActivity(), "Email cannot be empty", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getActivity(), "Password cannot be empty", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (TextUtils.isEmpty(confirmPassword)) {
+            Toast.makeText(getActivity(), "Confirm password cannot be empty", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!password.equals(confirmPassword)) {
+            Toast.makeText(getActivity(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
-    if(TextUtils.isEmpty(email)){
-        Toast.makeText(getActivity(), "Email cannot be empty", Toast.LENGTH_SHORT).show();
-        return false;
-    }
-    if(TextUtils.isEmpty(password)){
-        Toast.makeText(getActivity(), "Password cannot be empty", Toast.LENGTH_SHORT).show();
-        return false;
-    }
-    if(TextUtils.isEmpty(confirmPassword)){
-        Toast.makeText(getActivity(), "Confirm password cannot be empty", Toast.LENGTH_SHORT).show();
-        return false;
-    }
-    if(!password.equals(confirmPassword)) {
-        Toast.makeText(getActivity(), "Passwords do not match", Toast.LENGTH_SHORT).show();
-        return false;
-    }
-    return true;
-}
-private void createAccount(String fName, String lName, String email, String password, String type) {
+
+    private void createAccount(String fName, String lName, String email, String password, String type) {
         String Tag = "Register";
         mAuth = FirebaseAuth.getInstance();
         Log.d(Tag, fName + lName + email + password + type);
-//        mAuth.createUserWithEmailAndPassword(email, password)
-//                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        if(task.isSuccessful()) {
-//                            Log.d(Tag, "createUserWithEmail:success");
-//                            FirebaseUser user = mAuth.getCurrentUser();
-//                            userID = user.getUid();
-//                            if (  user.getDisplayName() == null) {
-//                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(fName + " " + lName).build();
-//                                user.updateProfile(profileUpdates);
-//                            }
-//                            Map<String, Object> useracc = new HashMap<>();
-//                            useracc.put("fname", fName);
-//                            useracc.put("lname", lName);
-//                            useracc.put("type", type);
-//                            useracc.put("name", fName + " " + lName);
-//                            db.collection("users").document(userID).set(useracc);
-//                            mListener.gotoHomeFragment(user.getUid());
-//
-//                        }
-//                        else{
-//                            Log.w(Tag, "createUserWithEmail:failure", task.getException());
-//                            Toast.makeText(getActivity(), task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
+        ArrayList<MessageList> allMessageList = new ArrayList<>();
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(Tag, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            userID = user.getUid();
+                            if (user.getDisplayName() == null) {
+                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(fName + " " + lName).build();
+                                user.updateProfile(profileUpdates);
+                            }
+                            Map<String, Object> useracc = new HashMap<>();
+                            useracc.put("fname", fName);
+                            useracc.put("lname", lName);
+                            useracc.put("messages", allMessageList);
+                            useracc.put("email", email);
+                            useracc.put("password", password);
+                            useracc.put("type", type);
+                            useracc.put("name", fName + " " + lName);
+                            db.collection("users").document(userID).set(useracc);
+                            mListener.gotoHomeFragment(user.getUid());
 
-}
+                        } else {
+                            Log.w(Tag, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(getActivity(), task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+    }
 
 }

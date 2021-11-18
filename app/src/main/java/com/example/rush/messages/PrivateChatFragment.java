@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -83,9 +84,9 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     MessageAdapter adapter;
     ArrayList<Messages> messages, searchList;
     EditText textview;
-    ImageButton sendMessageButton;
+    ImageButton sendMessageButton, urgentButton, attachmentButton;
     //Attachment Photo for private message
-    ImageButton attachmentButton;
+
     RecyclerView.SmoothScroller smoothScroller;
 
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -93,7 +94,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     int position;
     boolean scrollToBottom = true;
     Messages reportMessage;
-
+    private boolean isUrgent = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -131,7 +132,13 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         textview = view.findViewById(R.id.messageTextView);
         sendMessageButton = view.findViewById(R.id.messageSendButton);
         attachmentButton = view.findViewById(R.id.attachmentButton);
-
+        urgentButton = view.findViewById(R.id.urgent);
+        urgentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopup(view);
+            }
+        });
         addMessages();
 
         smoothScroller = new
@@ -348,6 +355,8 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                 data.put("time", time);
                 data.put("uid", uid);
                 data.put("name", userName);
+                data.put("isUrgent", isUrgent);
+
 
 
                 textview.setText("");
@@ -450,6 +459,36 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     public void closeKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+    }
+
+    // Shows Menu for priority
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(v.getContext(), v);
+        popup.inflate(R.menu.urgent_menu);
+
+
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Log.d(TAG, item.toString());
+
+                switch (item.toString()) {
+                    case "Urgent":
+                        isUrgent = true;
+                        break;
+                    default:
+                        isUrgent = false;
+                        break;
+
+                }
+
+                return false;
+            }
+        });
+
+
+        popup.show();
     }
 
 }

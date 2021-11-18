@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="Standard" android:icon="@drawable/messenger" ></item>
+    <item android:title="Urgent" android:icon="@drawable/ic_baseline_assignment_late_24"></item>
+
+</menu>

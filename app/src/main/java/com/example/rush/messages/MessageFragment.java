@@ -98,7 +98,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     private ArrayList<MessageList> allMessageList;
     private Messages recentMessage;
     FirebaseUser user;
-    private ArrayList<MessageList> deleteMessages;
+    private ArrayList<MessageList> editIdList;
     private boolean isEdited = false;
     private boolean isDeleted = false;
     private ArrayList<String> urgentID;
@@ -176,6 +176,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
             @Override
             public void onClick(View view) {
                 bottomSheetsSubmit(option);
+
             }
         });
 
@@ -222,7 +223,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     // Submit Button on Click
     public void bottomSheetsSubmit(String option){
         if (option == "delete") {
-            deleteMessages(deleteMessages);
+            deleteMessages(editIdList);
         }
         else if (option == "urgent") {
             editUrgentMessages(true);
@@ -250,7 +251,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         fabButton.hide();
         submit.setVisibility(View.VISIBLE);
         cancel.setVisibility(View.VISIBLE);
-        deleteMessages = new ArrayList<>();
+        editIdList = new ArrayList<>();
         adapter = new AllPrivateMessageAdapter(allMessageList, true,this);
         recyclerView.setAdapter(adapter);
     }
@@ -347,9 +348,9 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     @Override
     public void deleteMessages(Boolean isChecked, MessageList messageList) {
         if (isChecked) {
-            deleteMessages.add(messageList);
+            editIdList.add(messageList);
         }else {
-            deleteMessages.remove(messageList);
+            editIdList.remove(messageList);
         }
     }
 
@@ -365,12 +366,27 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     public void editUrgentMessages(Boolean isUrgent) {
         Map<String, Object> data = new HashMap<>();
         data.put("isUrgent", isUrgent);
-        Log.d(TAG, "Urgent: ");
 
-        for (int i = 0; i < deleteMessages.size(); i++) {
-            String mid = deleteMessages.get(i).getKey();
+        for (int i = 0; i < editIdList.size(); i++) {
+            String mid = editIdList.get(i).getKey();
             messageRef.document(mid).update(data);
+            if (!isUrgent) {
+                // This will make all urgent messages inside a chat false
+                messageRef.document(mid).collection("messages").whereEqualTo("isUrgent", true).get()
+                        .addOnSuccessListener( new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot value) {
+
+                                for (DocumentSnapshot doc : value) {
+                                    messageRef.document(mid).collection("messages")
+                                            .document(doc.getId())
+                                            .update("isUrgent", false);
+                                }
+                            }
+                        });
+            }
         }
+
     }
 
     // Mark as Urgent Interface
@@ -388,68 +404,81 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
 
     // Initial the values for the recycler view / List of users
-    public void showRecyclerList(){
+    public void showRecyclerList() {
 
-            // Finds the user
-           db.collection("users").document(uid)
-                    .get().addOnSuccessListener( new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
+        // Finds the user
+        db.collection("users").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable  DocumentSnapshot value, @Nullable  FirebaseFirestoreException error) {
+                Log.d(TAG, "Adding User" );
+                allMessageList = new ArrayList<>();
+                mid = (ArrayList<String>) value.getData().get("messages");
+                if (!mid.isEmpty()) {
+                    list();
+                }
+            }
 
-                         allMessageList = new ArrayList<>();
-                          mid = (ArrayList<String>) documentSnapshot.getData().get("messages");
+        });
 
-                          // Loops through each message id found
-                          for (String id : mid) {
-
-                              // Finds the document for the id
-                              messageRef.document(id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                  @Override
-                                  public void onEvent(@Nullable  DocumentSnapshot doc, @Nullable  FirebaseFirestoreException error) {
-                                      Log.d(TAG, "onSuccess: " + id);
-                                      // Checks to see if the document already exist in the arraylist
-                                      for (int i = 0; i < allMessageList.size(); i++) {
-                                          if (id == allMessageList.get(i).getKey()) {
-                                              Log.d(TAG, "onEvent: " + id);
-                                              allMessageList.remove(i);
-                                          }
-                                      }
-                                      Boolean isUrgent = (Boolean) doc.getBoolean("isUrgent");
-                                      String message = (String) doc.get("recentMessage");
-                                      Timestamp time = (Timestamp) doc.get("time");
-                                      members = new Members();
-                                      recentMessage = new Messages();
-                                      recentMessage.setMessage(message);
-                                      recentMessage.setTime(time);
-
-                                      if (isUrgent == null) {
-                                          isUrgent = false;
-                                      }
-                                      recentMessage.setIsUrgent(isUrgent);
-
-                                      ArrayList<Map<String, Object>> users = (ArrayList<Map<String, Object>>) doc.get("members");
-
-                                      // Initializing variable for user list view
-                                      try {
-                                          for (Map<String, Object> member : users) {
-                                              Member mem = new Member(member.get("name").toString(), member.get("uid").toString());
-                                              members.addMembers(mem);
-                                          }
-
-                                          messageList = new MessageList(members, recentMessage, id);
-                                          allMessageList.add(messageList);
-                                      }
-                                      catch (Exception e) {
-                                      }
-
-                                      showRecycler();
-
-                                  }
-                              });
-                          }
-                      }
-                  });
     }
+    public void list() {
+        for (String id : mid) {
+
+            // Finds the document for the id
+            messageRef.document(id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable  DocumentSnapshot doc, @Nullable  FirebaseFirestoreException error) {
+
+                    Log.d(TAG, "DOC " + doc.getId());
+                    Log.d(TAG, "Id " + id);
+                    // Checks to see if the document already exist in the arraylist
+                    for (int i = 0; i < allMessageList.size(); i++) {
+
+                        if (id == allMessageList.get(i).getKey()) {
+                            allMessageList.remove(i);
+                        }
+                    }
+
+                    Log.d(TAG, "" + allMessageList.size());
+
+                    Boolean isUrgent = (Boolean) doc.getBoolean("isUrgent");
+                    String message = (String) doc.get("recentMessage");
+                    Timestamp time = (Timestamp) doc.get("time");
+                    members = new Members();
+                    recentMessage = new Messages();
+                    recentMessage.setMessage(message);
+                    recentMessage.setTime(time);
+
+                    if (isUrgent == null) {
+                        isUrgent = false;
+                    }
+                    recentMessage.setIsUrgent(isUrgent);
+
+                    ArrayList<Map<String, Object>> users = (ArrayList<Map<String, Object>>) doc.get("members");
+
+                    // Initializing variable for user list view
+                    try {
+                        for (Map<String, Object> member : users) {
+                            Member mem = new Member(member.get("name").toString(), member.get("uid").toString());
+                            members.addMembers(mem);
+                        }
+                        messageList = new MessageList(members, recentMessage, id);
+                        allMessageList.add(messageList);
+
+                    }
+                    catch (Exception e) {
+                    }
+
+                    showRecycler();
+
+                }
+            });
+
+        }
+    }
+
+
+
     // sets the adapter and shows the recycler view
     void showRecycler() {
         // Sorts allMessageList by firebase.time
