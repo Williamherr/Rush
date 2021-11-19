@@ -183,6 +183,10 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                                 if (isUrgent == null) {
                                     isUrgent = false;
                                 }
+                                if (isUrgent) {
+                                    messageRef.document(messageKey).update("isUrgent", true);
+                                } 
+
 
                                 if (i == value.size() - 1) {
                                     datas = new HashMap<>();
