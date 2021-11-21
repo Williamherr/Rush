@@ -38,6 +38,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/Name"
+            android:maxLength="50"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -62,6 +63,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/Description"
+            android:maxLength="100"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -86,6 +88,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/Instructor"
+            android:maxLength="50"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
