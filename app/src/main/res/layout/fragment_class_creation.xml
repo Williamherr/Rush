@@ -10,7 +10,7 @@
 
     <Button
         android:id="@+id/createClassButton"
-        style="@style/Widget.Material3.FloatingActionButton.Primary"
+        style="@style/Widget.Material3.Button"
         android:layout_width="122dp"
         android:layout_height="63dp"
         android:layout_marginBottom="60dp"
