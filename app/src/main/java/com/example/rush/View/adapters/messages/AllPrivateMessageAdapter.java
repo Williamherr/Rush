@@ -1,12 +1,9 @@
-package com.example.rush.messages.Adapters;
+package com.example.rush.View.adapters.messages;
 
 import android.annotation.SuppressLint;
-import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +12,8 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.example.rush.R;
-import com.example.rush.messages.model.Member;
-import com.example.rush.messages.model.Members;
-import com.example.rush.messages.model.MessageList;
+import com.example.rush.Model.Member;
+import com.example.rush.Model.MessageList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -26,7 +22,7 @@ import java.util.ArrayList;
 
 public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMessageAdapter.ViewMessageHolder> {
     boolean isDelete = false;
-    private ArrayList<MessageList> messagesList = new ArrayList<>();
+    private ArrayList<MessageList> messagesList;
     private  IMessageFragmentInterface mListener;
     FirebaseAuth auth = FirebaseAuth.getInstance();
     FirebaseUser user;
@@ -68,18 +64,10 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
     @Override
     public void onBindViewHolder( ViewMessageHolder holder, int position) {
 
-        String otherUserName = "";
-        String otherUserId = "";
+        Member otherUser =  messagesList.get(position).getMembers().getOtherMember(uid);
+        String otherUserName = otherUser.getName();
+        String otherUserId = otherUser.getUid();
 
-        Members allMembers = messagesList.get(position).getMembers();
-        for (int i = 0; i < allMembers.getAllMembers().size(); i++) {
-            if (!(uid.equals(allMembers.getMember(i).getUid()))) {
-                otherUserName = allMembers.getMember(i).getName();
-                otherUserId = allMembers.getMember(i).getUid();
-            } else {
-                otherUserName = user.getDisplayName();
-            }
-        }
 
         boolean isUrgent = messagesList.get(position).getMessages().getIsUrgent();
 
@@ -97,18 +85,16 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
             holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                  mListener.deleteMessages(b,messagesList.get(position));
+                  mListener.editMessages(b,messagesList.get(position));
                 }
             });
 
 
         } else {
-            String finalOtherUserName = otherUserName;
-            String finalOtherUserId = otherUserId;
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.goToPrivateChatFrag(finalOtherUserName, finalOtherUserId,messageKey);
+                    mListener.goToPrivateChatFrag(otherUser,messageKey);
 
                 }
             });
@@ -137,9 +123,8 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
         }
     }
     public interface IMessageFragmentInterface{
-        void markUrgentMessages(Boolean isChecked, String mid);
-        void deleteMessages(Boolean isChecked, MessageList messsageKey);
-        void goToPrivateChatFrag(String otherUserName, String otherUID, String messageKey);
+        void editMessages(Boolean isChecked, MessageList messsageKey);
+        void goToPrivateChatFrag(Member otherUser, String messageKey);
     }
 }
 

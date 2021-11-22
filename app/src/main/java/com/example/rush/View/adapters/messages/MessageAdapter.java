@@ -1,10 +1,5 @@
-package com.example.rush.messages.Adapters;
+package com.example.rush.View.adapters.messages;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -17,31 +12,29 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.rush.Model.Messages;
 import com.example.rush.R;
-import com.example.rush.messages.model.Messages;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.io.IOException;
+import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 
-import static androidx.core.app.ActivityCompat.startActivityForResult;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMessageHolder> {
 
-    private ArrayList<Messages> singleMessagesList = new ArrayList<>();
-    private String userName;
-    String TAG = "PrivateChatAdapter";
+    private ArrayList<Messages> singleMessagesList;
+    String TAG = "MessageAdapter";
     IMessageAdapterListener mListener;
     private final int PICK_IMAGE_REQUEST = 22;
+    FirebaseUser user;
     View view;
 
 
-    public MessageAdapter(ArrayList<Messages> singleMessagesList, String userName, IMessageAdapterListener mListener) {
+    public MessageAdapter(ArrayList<Messages> singleMessagesList, FirebaseUser user, IMessageAdapterListener mListener) {
+        this.user = user;
         this.singleMessagesList = singleMessagesList;
-        this.userName = userName;
         this.mListener = mListener;
+
     }
+
 
     public void filterList(ArrayList<Messages> listFilter) {
         singleMessagesList = listFilter;
@@ -64,14 +57,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
 
     @Override
     public void onBindViewHolder(MessageAdapter.ViewMessageHolder holder, int position) {
-        String user = singleMessagesList.get(position).getName();
-        String id = singleMessagesList.get(position).getId();
+        String uid = singleMessagesList.get(position).getUid();
         String img  = singleMessagesList.get(position).getImg();
         boolean isUrgent = singleMessagesList.get(position).getIsUrgent();
-
-        if (isUrgent) {
-            holder.message.setBackground(view.getResources().getDrawable(R.drawable.error_message));
-        }
+        Log.d(TAG, "onBindViewHolder: ");
+        Log.d(TAG, "isUrgent " + isUrgent);
 
         if (img == null || img.equals("")) {
 
@@ -90,18 +80,25 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
             }
         });
 
-        if (!(user.equals(userName))) {
+
+        if (!uid.equals(user.getUid())) {
             holder.receiveUserMessage.setVisibility(View.VISIBLE);
             holder.userProfileImage.setVisibility(View.VISIBLE);
             holder.message.setVisibility(View.INVISIBLE);
             holder.receiveUserMessage.setText(singleMessagesList.get(position).getMessage());
 
+            if (isUrgent) {
+                holder.receiveUserMessage.setBackground(view.getResources().getDrawable(R.drawable.error_message));
+            }
 
         } else {
             holder.receiveUserMessage.setVisibility(View.INVISIBLE);
             holder.userProfileImage.setVisibility(View.INVISIBLE);
             holder.message.setVisibility(View.VISIBLE);
             holder.message.setText(singleMessagesList.get(position).getMessage());
+            if (isUrgent) {
+                holder.message.setBackground(view.getResources().getDrawable(R.drawable.error_message));
+            }
         }
 
 

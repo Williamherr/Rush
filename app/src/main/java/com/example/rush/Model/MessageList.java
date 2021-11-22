@@ -1,6 +1,4 @@
-package com.example.rush.messages.model;
-
-import java.util.ArrayList;
+package com.example.rush.Model;
 
 public class MessageList {
     Messages messages;

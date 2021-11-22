@@ -1,6 +1,6 @@
-package com.example.rush.messages;
+package com.example.rush.View.fragments.messages;
 
-import android.app.Notification;
+
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,26 +24,19 @@ import android.widget.Button;
 import com.example.rush.R;
 
 
-import com.example.rush.messages.Adapters.AllPrivateMessageAdapter;
-import com.example.rush.messages.model.Members;
-import com.example.rush.messages.model.Member;
-import com.example.rush.messages.model.MessageList;
-import com.example.rush.messages.model.Messages;
-import com.example.rush.messages.model.PrivateMessageList;
+import com.example.rush.View.adapters.messages.AllPrivateMessageAdapter;
+import com.example.rush.Model.Members;
+import com.example.rush.Model.Member;
+import com.example.rush.Model.MessageList;
+import com.example.rush.Model.Messages;
 
-import com.example.rush.messages.model.User;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldPath;
@@ -51,15 +44,8 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
-import com.google.type.DateTime;
-
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -68,7 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+
 
 
 public class MessageFragment extends Fragment implements bottomSheetDialogFragment.IBottomSheetDialog, AllPrivateMessageAdapter.IMessageFragmentInterface, CreatePrivateMessages.iCreatePrivateMessages {
@@ -76,32 +62,31 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     public MessageFragment() {
         // Required empty public constructor
     }
+    FirebaseUser user;
+    String uid;
+
+    public MessageFragment(FirebaseUser user) {
+        // Required empty public constructor
+        this.user = user;
+        this.uid = user.getUid();
+    }
 
     FloatingActionButton fabButton;
-    ExtendedFloatingActionButton deleteFAB;
     Button cancel, submit;
-
-    ArrayList<PrivateMessageList> PrivateMessageList;
 
     LinearLayoutManager layoutManager;
     MessageFragmentListener mListener;
     AllPrivateMessageAdapter adapter;
-    private String uid;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final CollectionReference reference = db.collection("users");
     private final CollectionReference messageRef = db.collection("chat-messages").document("private-messages").collection("all-private-messages");
     RecyclerView recyclerView;
     final String TAG = "MessageFragment";
-    private MessageList messageList;
     private ArrayList<String> mid;
     Members members;
     private ArrayList<MessageList> allMessageList;
     private Messages recentMessage;
-    FirebaseUser user;
     private ArrayList<MessageList> editIdList;
     private boolean isEdited = false;
-    private boolean isDeleted = false;
-    private ArrayList<String> urgentID;
     private String option = "";
 
     @Override
@@ -121,36 +106,29 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         recyclerView = view.findViewById(R.id.RecyclerView);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        PrivateMessageList = new ArrayList<>();
         allMessageList = new ArrayList<>();
-        urgentID = new ArrayList<>();
         cancel = view.findViewById(R.id.cancel);
         submit = view.findViewById(R.id.submit);
-        user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user != null) {
-            // User is signed in
-            uid = user.getUid();
-        } else {
-            // No user is signed in
-        }
+
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (dy > 0 || dy < 0 && fabButton.isShown())
                     fabButton.hide();
-                if (dy > 0 || dy < 0 && fabButton.isShown() && isEdited == true) {
+                if (dy > 0 || dy < 0 && fabButton.isShown() && isEdited) {
                     submit.setVisibility(View.INVISIBLE);
                     cancel.setVisibility(View.INVISIBLE);
                 }
             }
 
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && isEdited == false)
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && !isEdited)
                     fabButton.show();
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && isEdited == true) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && isEdited) {
                     submit.setVisibility(View.VISIBLE);
                     cancel.setVisibility(View.VISIBLE);
                 }
@@ -158,27 +136,11 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
             }
         });
         fabButton = view.findViewById(R.id.messageMenuButton);
-        fabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialog();
-            }
-        });
+        fabButton.setOnClickListener(view1 -> showDialog());
 
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resetButtons();
-            }
-        });
+        cancel.setOnClickListener(view1 -> resetButtons());
 
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetsSubmit(option);
-
-            }
-        });
+        submit.setOnClickListener(view1 -> bottomSheetsSubmit(option));
 
         showRecyclerList();
 
@@ -208,9 +170,9 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     @Override
     public void sheetClicked(String string) {
         option = string;
-        if (string == "new") {
+        if (string.equals("new")) {
             mListener.createNewMessages(this);
-        } else if (string == "notification") {
+        } else if (string.equals("notification")) {
             mListener.createNotifications();
         } else {
             editList();
@@ -220,12 +182,16 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
     // Submit Button on Click
     public void bottomSheetsSubmit(String option) {
-        if (option == "delete") {
-            deleteMessages(editIdList);
-        } else if (option == "urgent") {
-            editUrgentMessages(true);
-        } else if (option == "resolve") {
-            editUrgentMessages(false);
+        switch (option) {
+            case "delete":
+                deleteMessages(editIdList);
+                break;
+            case "urgent":
+                editUrgentMessages(true);
+                break;
+            case "resolve":
+                editUrgentMessages(false);
+                break;
         }
 
         resetButtons();
@@ -248,7 +214,6 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         cancel.setVisibility(View.VISIBLE);
         editIdList = new ArrayList<>();
         adapter = new AllPrivateMessageAdapter(allMessageList, true,this);
-        adapter = new AllPrivateMessageAdapter(allMessageList, true, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -263,14 +228,14 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     // Creates new messages
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
-    public void createNewMessages(User otherUser) {
+    public void createNewMessages(Member otherUser) {
         // Update the user's messages id
 
         Map<String, Object> data = new HashMap<>();
 
         ArrayList<Map<String, Object>> members = new ArrayList<>();
         members.add(Map.of("uid", uid, "name", user.getDisplayName()));
-        members.add(Map.of("uid", otherUser.getId(), "name", otherUser.getName()));
+        members.add(Map.of("uid", otherUser.getUid(), "name", otherUser.getName()));
         data.put("members", members);
         data.put("time", Timestamp.now());
         data.put("recentMessage", "");
@@ -278,11 +243,11 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         String newDoc = messageRef.document().getId();
         messageRef.document(newDoc).set(data);
 
-        db.collection("users").document(otherUser.getId()).update("messages", FieldValue.arrayUnion(newDoc));
+        db.collection("users").document(otherUser.getUid()).update("messages", FieldValue.arrayUnion(newDoc));
         db.collection("users").document(uid).update("messages", FieldValue.arrayUnion(newDoc));
 
 
-        mListener.goToPrivateChatFragment(otherUser.getName(), otherUser.getId(), newDoc);
+        mListener.goToPrivateChatFragment(otherUser, newDoc);
     }
 
 
@@ -328,7 +293,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
         for (int i = 0; i < list.size(); i++) {
             String mid = list.get(i).getKey();
-            String otherUID = list.get(i).getMembers().getOtherMember(uid);
+            String otherUID = list.get(i).getMembers().getOtherMember(uid).getUid();
             Log.d(TAG, "deleteMessages: " + otherUID);
             db.collection("users").document(uid).update("messages", FieldValue.arrayRemove(mid));
             db.collection("users").document(otherUID).update("messages", FieldValue.arrayRemove(mid));
@@ -342,7 +307,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
     // Delete messages interface
     @Override
-    public void deleteMessages(Boolean isChecked, MessageList messageList) {
+    public void editMessages(Boolean isChecked, MessageList messageList) {
         if (isChecked) {
             editIdList.add(messageList);
         }else {
@@ -365,35 +330,28 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
         for (int i = 0; i < editIdList.size(); i++) {
             String mid = editIdList.get(i).getKey();
-            messageRef.document(mid).update(data);
+
             if (!isUrgent) {
                 // This will make all urgent messages inside a chat false
                 messageRef.document(mid).collection("messages").whereEqualTo("isUrgent", true).get()
-                        .addOnSuccessListener( new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot value) {
-
-                                for (DocumentSnapshot doc : value) {
-                                    messageRef.document(mid).collection("messages")
-                                            .document(doc.getId())
-                                            .update("isUrgent", false);
-                                }
+                        .addOnSuccessListener(value -> {
+                            for (DocumentSnapshot doc : value) {
+                                messageRef.document(mid).collection("messages")
+                                        .document(doc.getId())
+                                        .update("isUrgent", false);
                             }
                         });
+
+
+            }else {
+                messageRef.document(mid).update(data);
             }
+
         }
+
 
     }
 
-    // Mark as Urgent Interface
-    @Override
-    public void markUrgentMessages(Boolean isChecked, String mid) {
-        if (isChecked) {
-            urgentID.add(mid);
-        } else {
-            urgentID.remove(mid);
-        }
-    }
 
 
     // Initial the values for the recycler view / List of users
@@ -406,7 +364,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                 Log.d(TAG, "Adding User" );
                 allMessageList = new ArrayList<>();
                 mid = (ArrayList<String>) value.getData().get("messages");
-                if (!mid.isEmpty()) {
+                if (!mid.isEmpty() && mid != null) {
                     list();
                 }
             }
@@ -455,7 +413,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                             Member mem = new Member(member.get("name").toString(), member.get("uid").toString());
                             members.addMembers(mem);
                         }
-                        messageList = new MessageList(members, recentMessage, id);
+                        MessageList messageList = new MessageList(members, recentMessage, id);
                         allMessageList.add(messageList);
 
                     }
@@ -502,6 +460,8 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
 
 
+
+
    /*
 
       Interfaces
@@ -509,16 +469,17 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     */
 
     public interface MessageFragmentListener {
-        void goToPrivateChatFragment(String otherUserName, String otherUserId, String messageKey);
 
         void createNewMessages(CreatePrivateMessages.iCreatePrivateMessages iListener);
 
         void createNotifications();
+
+        void goToPrivateChatFragment(Member otherUser, String messageKey);
     }
 
     @Override
-    public void goToPrivateChatFrag(String otherUserName, String otherUID, String messageKey) {
-        mListener.goToPrivateChatFragment(otherUserName, otherUID, messageKey);
+    public void goToPrivateChatFrag(Member otherUser, String messageKey) {
+        mListener.goToPrivateChatFragment(otherUser, messageKey);
     }
 
 

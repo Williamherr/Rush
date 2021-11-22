@@ -1,38 +1,28 @@
-package com.example.rush;
+package com.example.rush.View.fragments;
 
 import android.os.Bundle;
-import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
 
 import android.widget.Button;
-import android.widget.EditText;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-import android.widget.RadioButton;
 import android.text.TextUtils;
 
-import com.example.rush.messages.model.MessageList;
+import com.example.rush.Model.MessageList;
+import com.example.rush.R;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.api.LogDescriptor;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -40,7 +30,6 @@ import java.util.Map;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 
 public class AccountCreationFragment extends Fragment {
@@ -110,7 +99,7 @@ public class AccountCreationFragment extends Fragment {
     }
 
     public interface AccountCreationFragmentListener {
-        void gotoHomeFragment(String uid);
+        void gotoHomeFragment(FirebaseUser user);
     }
 
     public Boolean validate() {
@@ -172,7 +161,7 @@ public class AccountCreationFragment extends Fragment {
                             useracc.put("type", type);
                             useracc.put("name", fName + " " + lName);
                             db.collection("users").document(userID).set(useracc);
-                            mListener.gotoHomeFragment(user.getUid());
+                            mListener.gotoHomeFragment(user);
 
                         } else {
                             Log.w(Tag, "createUserWithEmail:failure", task.getException());

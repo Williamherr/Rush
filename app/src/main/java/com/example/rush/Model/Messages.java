@@ -1,6 +1,4 @@
-package com.example.rush.messages.model;
-
-import java.sql.Timestamp;
+package com.example.rush.Model;
 
 
 public class Messages {

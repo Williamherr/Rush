@@ -1,12 +1,10 @@
-package com.example.rush.messages.model;
-
-import android.util.Log;
+package com.example.rush.Model;
 
 import java.util.ArrayList;
 
 public class Members {
 
-    ArrayList<Member> members;
+    private ArrayList<Member> members;
 
     public Members(){
         members = new ArrayList<>();
@@ -20,15 +18,20 @@ public class Members {
         return members;
     }
 
-    public String getOtherMember(String uid) {
-
+    public Member getOtherMember(String uid) {
+        Member user = null;
         for (int i = 0; i < members.size(); i++) {
+
             if (!uid.equals(members.get(i).getUid())) {
-                return members.get(i).getUid();
+                return members.get(i);
+            }else {
+                user = members.get(i);
             }
         }
-        return uid;
+        return user;
     }
+
+
 
     public Member getMember(int index) {
         return members.get(index);
@@ -38,6 +41,7 @@ public class Members {
     public void addMembers(Member member) {
         this.members.add(member);
     }
+
 
     public String getAllMembersName() {
         String allMembers = "";

@@ -14,22 +14,30 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 
-import com.example.rush.messages.CreatePrivateMessages;
-import com.example.rush.messages.MessageFragment;
-import com.example.rush.messages.PrivateChatFragment;
+import com.example.rush.View.fragments.AccountCreationFragment;
+import com.example.rush.View.fragments.AddPhotoFragment;
+import com.example.rush.View.fragments.ClassCreationFragment;
+import com.example.rush.View.fragments.ClassDetailsFragment;
+import com.example.rush.View.fragments.ClassesFragment;
+import com.example.rush.View.fragments.HomeFragment;
+import com.example.rush.View.fragments.NotificationFragment;
+import com.example.rush.View.fragments.messages.CreatePrivateMessages;
+import com.example.rush.View.fragments.messages.MessageFragment;
+import com.example.rush.View.fragments.messages.PrivateChatFragment;
+import com.example.rush.Model.Member;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 
-public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener,LoginFragment.CreateFragmentListener,ClassesFragment.ClassDetailFragmentListener,
+public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener, LoginFragment.CreateFragmentListener, ClassesFragment.ClassDetailFragmentListener,
         PrivateChatFragment.PrivateChatFragmentListener,   AddPhotoFragment.UploadFragmentListener, AccountCreationFragment.AccountCreationFragmentListener
 
 //NotificationFragment.NotificationFragmentListener,
 
 {
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private FirebaseUser user;
     private String uid;
     private BottomNavigationView bottomNav;
 
@@ -40,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         setContentView(R.layout.activity_main);
         bottomNav = findViewById(R.id.bottomNavigationBar);
         bottomNav.setVisibility(View.INVISIBLE);
-
+        user = FirebaseAuth.getInstance().getCurrentUser();
         //Navigation bar
         bottomNavigation();
 
@@ -155,14 +163,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         HomeFragment();
 
     }
-    // This is implement inside of the Account Creation button
-    @Override
-    public void gotoHomeFragment(String uid) {
-        this.user = user;
-        Log.d("TAG", "gotoHomeFragment: " + user);
-        bottomNav.setVisibility(View.VISIBLE);
-        HomeFragment();
-    }
+
 
     // Goes to the Home Fragment
     public void HomeFragment() {
@@ -198,17 +199,17 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     public void messageFragment() {
         setTitle("Messages");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new MessageFragment())
+                .replace(R.id.containerView, new MessageFragment(user))
                 .commit();
     }
 
-    // Shows a private conversations between two users
+
     @Override
-    public void goToPrivateChatFragment(String otherUserName, String otherUserId, String messageKey) {
+    public void goToPrivateChatFragment(Member otherUser, String messageKey) {
         setTitle("Chat");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new PrivateChatFragment(otherUserName, otherUserId, messageKey))
+                .replace(R.id.containerView, new PrivateChatFragment(otherUser, messageKey))
                 .addToBackStack(null)
                 .commit();
     }
@@ -270,6 +271,8 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 .replace(R.id.containerView, new NotificationFragment()).addToBackStack(null)
                 .commit();
     }
+
+
 
 
     @Override

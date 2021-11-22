@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.example.rush.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 

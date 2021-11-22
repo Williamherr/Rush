@@ -1,4 +1,4 @@
-package com.example.rush.messages;
+package com.example.rush.View.fragments.messages;
 
 import android.os.Bundle;
 

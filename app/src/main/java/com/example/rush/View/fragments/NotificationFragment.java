@@ -1,4 +1,4 @@
-package com.example.rush;
+package com.example.rush.View.fragments;
 
 
 import android.app.NotificationManager;
@@ -18,6 +18,8 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.rush.MainActivity;
+import com.example.rush.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;

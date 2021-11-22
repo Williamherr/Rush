@@ -1,6 +1,6 @@
-package com.example.rush.messages;
+package com.example.rush.View.fragments.messages;
 
-import android.app.ActionBar;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Build;
@@ -9,15 +9,14 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NavUtils;
+
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
+
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,13 +32,14 @@ import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.example.rush.NotificationFragment;
+
 import com.example.rush.R;
-import com.example.rush.messages.Adapters.MessageAdapter;
-import com.example.rush.messages.model.Messages;
+import com.example.rush.View.adapters.messages.MessageAdapter;
+import com.example.rush.Model.Member;
+import com.example.rush.Model.Messages;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,7 +52,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -60,22 +59,26 @@ import java.util.Map;
 
 public class PrivateChatFragment extends Fragment implements MessageAdapter.IMessageAdapterListener, ReportDialogFragment.IreturnReport {
 
-    String otherUserName, otherUserId, messageKey = "";
+    String messageKey = "";
     String TAG = "PrivateChatFragment";
-    String userName, getOtherUserId = "";
+    String userName;
+    FirebaseUser user;
     String uid;
     String Report;
+    Member otherUser;
 
     public PrivateChatFragment() {
 
     }
 
 
-    public PrivateChatFragment(String otherUserName, String otherUserId, String messageKey) {
+    public PrivateChatFragment(Member otherUser, String messageKey) {
         // Required empty public constructor
-        this.otherUserId = otherUserId;
-        this.otherUserName = otherUserName;
+        this.otherUser = otherUser;
         this.messageKey = messageKey;
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        uid = user.getUid();
+        userName = user.getDisplayName();
 
     }
 
@@ -95,6 +98,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     boolean scrollToBottom = true;
     Messages reportMessage;
     private boolean isUrgent = false;
+    boolean anyUrgentMessages = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,16 +116,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         setHasOptionsMenu(true);
 
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // User is signed in
-            uid = user.getUid();
-            userName = user.getDisplayName();
 
-
-        } else {
-            // No user is signed in
-        }
 
         messages = new ArrayList<>();
         searchList = new ArrayList<>();
@@ -170,6 +165,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                         }
                         Map<String, Object> datas;
                         int i = 0;
+                        anyUrgentMessages = false;
                         messages = new ArrayList<>();
                         for (QueryDocumentSnapshot doc : value) {
                             if (doc.get("message") != null) {
@@ -177,15 +173,17 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                                 String name = doc.getString("name");
                                 Timestamp time = doc.getTimestamp("time");
                                 String uid = doc.getString("uid");
-                                Boolean isUrgent = doc.getBoolean("isUrgent");
-                                String img = doc.getString("img");;
+                                Boolean urgent = doc.getBoolean("isUrgent");
+                                String img = doc.getString("img");
 
-                                if (isUrgent == null) {
-                                    isUrgent = false;
+                                if (urgent == null) {
+                                    urgent = false;
                                 }
-                                if (isUrgent) {
-                                    messageRef.document(messageKey).update("isUrgent", true);
-                                } 
+                                if (urgent == true) {
+                                    anyUrgentMessages = true;
+                                }
+
+
 
 
                                 if (i == value.size() - 1) {
@@ -195,14 +193,23 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                                     messageRef.document(messageKey).update(datas);
                                 }
                                 Log.d(TAG, "Doc ID:  " + doc.getId());
-                                messages.add(new Messages(name, uid, doc.getId(), message, time, img, isUrgent));
+                                messages.add(new Messages(name, uid, doc.getId(), message, time, img, urgent));
                             }
                             i++;
                         }
 
+                        if (anyUrgentMessages == true) {
+                            messageRef.document(messageKey).update("isUrgent", true);
+                        } else {
+                            messageRef.document(messageKey).update("isUrgent", false);
+                        }
+
+
                         showRecycler();
                     }
                 });
+
+
     }
 
     @Override
@@ -262,7 +269,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     }
 
     public void showRecycler() {
-        adapter = new MessageAdapter(messages, userName, this);
+        adapter = new MessageAdapter(messages, user,this);
         recyclerView.setAdapter(adapter);
         // Changes the position of the recycler view
         if (scrollToBottom) {
@@ -475,16 +482,12 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Log.d(TAG, item.toString());
+                String itemName = item.toString();
 
-                switch (item.toString()) {
-                    case "Urgent":
-                        isUrgent = true;
-                        break;
-                    default:
-                        isUrgent = false;
-                        break;
-
+                if (itemName.equals("Urgent")) {
+                    isUrgent = true;
+                } else {
+                    isUrgent = false;
                 }
 
                 return false;

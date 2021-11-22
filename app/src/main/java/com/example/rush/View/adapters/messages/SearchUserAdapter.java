@@ -1,4 +1,4 @@
-package com.example.rush.messages.Adapters;
+package com.example.rush.View.adapters.messages;
 
 
 import androidx.annotation.NonNull;
@@ -11,21 +11,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.rush.R;
-import com.example.rush.messages.model.User;
+import com.example.rush.Model.Member;
 
 import java.util.ArrayList;
 
 
 public class SearchUserAdapter extends  RecyclerView.Adapter<SearchUserAdapter.ViewHolder> {
 
-    ArrayList<User> users;
+    ArrayList<Member> users;
     final String TAG = "SearchUserAdapter";
     ISearchUserInterface iListner;
 
     public SearchUserAdapter() {
         // Required empty public constructor
     }
-    public SearchUserAdapter(ArrayList<User> users,ISearchUserInterface iListner ) {
+    public SearchUserAdapter(ArrayList<Member> users,ISearchUserInterface iListner ) {
         this.users = users;
         this.iListner = iListner;
     }
@@ -73,7 +73,7 @@ public class SearchUserAdapter extends  RecyclerView.Adapter<SearchUserAdapter.V
     }
 
     public interface ISearchUserInterface {
-        void createNewMessage(User user);
+        void createNewMessage(Member user);
     }
 
 }

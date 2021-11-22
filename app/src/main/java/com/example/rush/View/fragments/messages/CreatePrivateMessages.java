@@ -1,11 +1,8 @@
-package com.example.rush.messages;
+package com.example.rush.View.fragments.messages;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,8 +16,8 @@ import android.view.ViewGroup;
 
 
 import com.example.rush.R;
-import com.example.rush.messages.Adapters.SearchUserAdapter;
-import com.example.rush.messages.model.User;
+import com.example.rush.View.adapters.messages.SearchUserAdapter;
+import com.example.rush.Model.Member;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -57,7 +54,7 @@ public class CreatePrivateMessages extends Fragment implements SearchUserAdapter
     LinearLayoutManager layoutManager;
     SearchUserAdapter searchUserAdapter;
     iCreatePrivateMessages iListener;
-    ArrayList<User> users;
+    ArrayList<Member> users;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -131,7 +128,7 @@ public class CreatePrivateMessages extends Fragment implements SearchUserAdapter
                 Log.d(TAG, "Snaps: " + queryDocumentSnapshots.size());
                 users.clear();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    User user = new User(doc.get("name").toString(), doc.getId());
+                    Member user = new Member(doc.get("name").toString(), doc.getId());
                     Log.d(TAG, "onSuccess: " + doc.getId());
                     users.add(user);
                 }
@@ -153,13 +150,13 @@ public class CreatePrivateMessages extends Fragment implements SearchUserAdapter
 
 
     @Override
-    public void createNewMessage(User user) {
+    public void createNewMessage(Member user) {
         getParentFragmentManager().popBackStack();
 
         iListener.createNewMessages(user);
     }
 
     public interface iCreatePrivateMessages{
-        void createNewMessages(User user);
+        void createNewMessages(Member user);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.rush.messages.model;
+package com.example.rush.Model;
 
 
 public class Member {

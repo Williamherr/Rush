@@ -1,4 +1,4 @@
-package com.example.rush;
+package com.example.rush.View.fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -18,11 +18,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.rush.MainActivity;
+import com.example.rush.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -35,11 +36,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 
 public class ClassesFragment extends Fragment {
@@ -250,7 +248,7 @@ public class ClassesFragment extends Fragment {
            ClassAdapter for the RecyclerView to list all classes users has created/joined
      */
 
-    public class ClassAdapter extends RecyclerView.Adapter<com.example.rush.ClassesFragment.ClassAdapter.ViewHolder> {
+    public class ClassAdapter extends RecyclerView.Adapter<ClassesFragment.ClassAdapter.ViewHolder> {
         private ArrayList<ClassInfo> classList;
         private boolean isDeleting;
 
@@ -264,14 +262,14 @@ public class ClassesFragment extends Fragment {
 
         @NonNull
         @Override
-        public com.example.rush.ClassesFragment.ClassAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public ClassesFragment.ClassAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.class_items,
                     parent, false);
-            return new com.example.rush.ClassesFragment.ClassAdapter.ViewHolder(v);
+            return new ClassesFragment.ClassAdapter.ViewHolder(v);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull com.example.rush.ClassesFragment.ClassAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ClassesFragment.ClassAdapter.ViewHolder holder, int position) {
             ClassInfo classObj = classList.get(position);
             SpannableString stringSpanner = new SpannableString(classObj.getClassName());
             stringSpanner.setSpan(new StyleSpan(Typeface.BOLD), 0, stringSpanner.length(), 0);
