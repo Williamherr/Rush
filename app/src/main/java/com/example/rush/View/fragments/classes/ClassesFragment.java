@@ -1,4 +1,4 @@
-package com.example.rush.View.fragments;
+package com.example.rush.View.fragments.classes;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.rush.MainActivity;
+import com.example.rush.Model.ClassInfo;
 import com.example.rush.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -107,9 +108,11 @@ public class ClassesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (adapter != null) {
+                    //Set the adapter deletion status for boxes to disappear
                     adapter.setDeletionStatus(false);
                     recycle.setAdapter(adapter);
                 }
+                //Hide the cancel and delete buttons
                 fabButton.show();
                 deleteBtn.hide();
                 cancelBtn.hide();
@@ -118,10 +121,16 @@ public class ClassesFragment extends Fragment {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String messageContext = "";
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setCancelable(true);
                 builder.setTitle("Warning!");
-                builder.setMessage("Classes cannot be recovered once deleted! Are you sure you want to delete?");
+                if (type.equals("Professor")) {
+                    messageContext = "Classes cannot be recovered once deleted! Are you sure you want to delete?";
+                } else {
+                    messageContext = "Are you sure you want to leave the selected class(es)?";
+                }
+                builder.setMessage(messageContext);
                 builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -129,12 +138,14 @@ public class ClassesFragment extends Fragment {
                             //Remove each deleted class from the list of classes
                             listOfClasses.remove(classesToDelete.get(j));
                             database.collection("classes")
+                                    //Find the document in the database by the classes docID and delete it
                                     .document(classesToDelete.get(j).getDocID()).delete()
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             Log.d("Success", "DocumentSnapshot successfully deleted!");
                                             dialogInterface.dismiss();
+                                            //No longer deleting, so hide the delete and cancel buttons
                                             adapter.setDeletionStatus(false);
                                             recycle.setAdapter(adapter);
                                             fabButton.show();
@@ -180,6 +191,7 @@ public class ClassesFragment extends Fragment {
     private void getClasses(String s) {
         if (s.equals("Professor")) {
             database.collection("classes")
+                    //Get any classes created by the current professor
                     .whereEqualTo("createdBy", userID)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -203,7 +215,7 @@ public class ClassesFragment extends Fragment {
                         }
                     });
         } else {
-            Log.d("User", "For students");
+            //This should get all classes the current student has joined
         }
     }
 
@@ -230,9 +242,11 @@ public class ClassesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (adapter != null) {
+                    //Now deleting so show checkboxes
                     adapter.setDeletionStatus(true);
                     recycle.setAdapter(adapter);
                 }
+                //Show the delete and cancel buttons
                 fabButton.hide();
                 deleteBtn.show();
                 cancelBtn.show();
@@ -276,8 +290,10 @@ public class ClassesFragment extends Fragment {
             String twoChars = classObj.getClassName().substring(0, 2).toUpperCase();
 
             if (isDeleting) {
+                //Show boxes only if user is deleting classes
                 holder.box.setVisibility(View.VISIBLE);
             } else {
+                //Boxes should disappear when not in use
                 holder.box.setVisibility(View.GONE);
             }
             /*
@@ -288,12 +304,10 @@ public class ClassesFragment extends Fragment {
                 public void onClick(View view) {
                     boolean isChecked = holder.box.isChecked();
                     if (isChecked) {
+                        //Add current checked object to list of classes to delete
                         classesToDelete.add(classObj);
-                        //Loop is for testing purposes
-                        for (int i = 0; i < classesToDelete.size(); i++) {
-                            Log.d("Debug", classesToDelete.get(i).getClassName());
-                        }
                     } else {
+                        //Remove current class from classes to delete if not checked
                         classesToDelete.remove(classObj);
                     }
                 }
@@ -301,13 +315,14 @@ public class ClassesFragment extends Fragment {
             holder.className.setText(stringSpanner);
             holder.classDescription.setText(classObj.getDescription());
             holder.identifier.setText(twoChars);
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+            //Below line isn't used at the moment
+        /*    holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     listener.goToClassDetails(classObj.getClassName(), classObj.getInstructor(),
                             classObj.getDescription());
                 }
-            });
+            });*/
         }
 
         @Override
@@ -321,11 +336,11 @@ public class ClassesFragment extends Fragment {
 
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View view;
-            public TextView className;
-            public TextView identifier;
-            public TextView classDescription;
-            public CheckBox box;
+            private View view;
+            private TextView className;
+            private TextView identifier;
+            private TextView classDescription;
+            private CheckBox box;
 
             public ViewHolder(View view) {
                 super(view);
