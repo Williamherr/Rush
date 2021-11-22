@@ -30,11 +30,13 @@
         android:id="@+id/classes"
         android:layout_width="wrap_content"
         android:layout_height="500dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
         app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.043"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.069">
 
     </androidx.recyclerview.widget.RecyclerView>
 
