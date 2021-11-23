@@ -178,6 +178,9 @@ public class ClassesFragment extends Fragment {
                             DocumentSnapshot document = task.getResult();
                             //Get the current user's account type
                             type = (String) document.getData().get("type");
+                            if (type == null) {
+                                type = "Student";
+                            }
                             getClasses(type);
                         }
                     });
