@@ -1,4 +1,4 @@
-package com.example.rush.View.fragments;
+package com.example.rush.Model;
 
 public class ClassInfo {
     private String className;

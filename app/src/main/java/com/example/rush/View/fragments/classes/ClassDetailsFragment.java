@@ -1,4 +1,4 @@
-package com.example.rush.View.fragments;
+package com.example.rush.View.fragments.classes;
 
 import android.os.Bundle;
 

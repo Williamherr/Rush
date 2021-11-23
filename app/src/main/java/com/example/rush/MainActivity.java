@@ -16,9 +16,9 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.example.rush.View.fragments.AccountCreationFragment;
 import com.example.rush.View.fragments.AddPhotoFragment;
-import com.example.rush.View.fragments.ClassCreationFragment;
-import com.example.rush.View.fragments.ClassDetailsFragment;
-import com.example.rush.View.fragments.ClassesFragment;
+import com.example.rush.View.fragments.classes.ClassCreationFragment;
+import com.example.rush.View.fragments.classes.ClassDetailsFragment;
+import com.example.rush.View.fragments.classes.ClassesFragment;
 import com.example.rush.View.fragments.HomeFragment;
 import com.example.rush.View.fragments.NotificationFragment;
 import com.example.rush.View.fragments.messages.CreatePrivateMessages;
