@@ -167,6 +167,7 @@ public class ClassesFragment extends Fragment {
                             DocumentSnapshot document = task.getResult();
                             //Get the current user's account type
                             type = (String) document.getData().get("type");
+
                             getClasses(type);
                         }
                     });
@@ -178,6 +179,7 @@ public class ClassesFragment extends Fragment {
     }
 
     private void getClasses(String s) {
+
         if (s.equals("Professor")) {
             database.collection("classes")
                     .whereEqualTo("createdBy", userID)
