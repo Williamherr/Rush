@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.example.rush.Model.Messages;
 import com.example.rush.R;
 import com.example.rush.Model.Member;
 import com.example.rush.Model.MessageList;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMessageAdapter.ViewMessageHolder> {
     boolean isDelete = false;
     private ArrayList<MessageList> messagesList;
-    private  IMessageFragmentInterface mListener;
+    private IMessageFragmentInterface mListener;
     FirebaseAuth auth = FirebaseAuth.getInstance();
     FirebaseUser user;
     final String TAG = "AllPrivateMessageAdapter";
@@ -36,6 +37,7 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
         user = auth.getCurrentUser();
         uid = user.getUid();
     }
+
     public AllPrivateMessageAdapter(ArrayList<MessageList> singleMessagesList, boolean isDelete, IMessageFragmentInterface mListener) {
         this.mListener = mListener;
         this.isDelete = isDelete;
@@ -44,15 +46,22 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
         uid = user.getUid();
     }
 
+    public void filterList(ArrayList<MessageList> listFilter) {
+        messagesList = listFilter;
 
-    public ViewMessageHolder onCreateViewHolder( ViewGroup viewGroup, int viewType) {
+        //Let the adapter know the data set has changed
+        notifyDataSetChanged();
+    }
+
+
+    public ViewMessageHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         if (isDelete) {
             view = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.delete_private_messages,viewGroup,false);
+                    .inflate(R.layout.delete_private_messages, viewGroup, false);
         } else {
             view = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.message_list,viewGroup,false);
+                    .inflate(R.layout.message_list, viewGroup, false);
         }
 
         ViewMessageHolder holder = new ViewMessageHolder(view);
@@ -62,9 +71,9 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
 
     @SuppressLint("LongLogTag")
     @Override
-    public void onBindViewHolder( ViewMessageHolder holder, int position) {
+    public void onBindViewHolder(ViewMessageHolder holder, int position) {
 
-        Member otherUser =  messagesList.get(position).getMembers().getOtherMember(uid);
+        Member otherUser = messagesList.get(position).getMembers().getOtherMember(uid);
         String otherUserName = otherUser.getName();
         String otherUserId = otherUser.getUid();
 
@@ -85,7 +94,7 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
             holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                  mListener.editMessages(b,messagesList.get(position));
+                    mListener.editMessages(b, messagesList.get(position));
                 }
             });
 
@@ -94,7 +103,7 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.goToPrivateChatFrag(otherUser,messageKey);
+                    mListener.goToPrivateChatFrag(otherUser, messageKey);
 
                 }
             });
@@ -122,8 +131,10 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
             }
         }
     }
-    public interface IMessageFragmentInterface{
+
+    public interface IMessageFragmentInterface {
         void editMessages(Boolean isChecked, MessageList messsageKey);
+
         void goToPrivateChatFrag(Member otherUser, String messageKey);
     }
 }

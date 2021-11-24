@@ -1,7 +1,9 @@
 package com.example.rush.View.fragments.messages;
 
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -17,10 +19,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.SearchView;
+import android.widget.Toast;
 
+import com.example.rush.MainActivity;
 import com.example.rush.R;
 
 
@@ -31,6 +42,8 @@ import com.example.rush.Model.MessageList;
 import com.example.rush.Model.Messages;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -46,6 +59,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,12 +70,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 
-
 public class MessageFragment extends Fragment implements bottomSheetDialogFragment.IBottomSheetDialog, AllPrivateMessageAdapter.IMessageFragmentInterface, CreatePrivateMessages.iCreatePrivateMessages {
 
     public MessageFragment() {
         // Required empty public constructor
     }
+
     FirebaseUser user;
     String uid;
 
@@ -85,8 +99,9 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     Members members;
     private ArrayList<MessageList> allMessageList;
     private Messages recentMessage;
-    private ArrayList<MessageList> editIdList;
+    private ArrayList<MessageList> editIdList, filterMessageUrgency;
     private boolean isEdited = false;
+    private boolean isClicked = false;
     private String option = "";
 
     @Override
@@ -107,9 +122,10 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         allMessageList = new ArrayList<>();
+        filterMessageUrgency = new ArrayList<>();
         cancel = view.findViewById(R.id.cancel);
         submit = view.findViewById(R.id.submit);
-
+        setHasOptionsMenu(true);
 
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -162,6 +178,49 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         // Create the fragment and show it as a dialog.
         BottomSheetDialogFragment bottom = bottomSheetDialogFragment.newInstance(this);
         bottom.show(getParentFragmentManager(), "dialog");
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.filter_message, menu);
+        ImageButton btn = (ImageButton) menu.findItem(R.id.filter_icon).getActionView();
+        btn.setImageResource(R.drawable.ic_filter_messages);
+        btn.setBackgroundColor(0x00000000);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isClicked) {
+                    isClicked = false;
+                    //Return button to original color
+                    btn.setBackgroundColor(0x00000000);
+                   // adapter.filterList(allMessageList);
+                } else {
+                    //Highlight button when clicked on
+                    btn.setBackgroundColor(Color.BLUE);
+                    isClicked = true;
+                    /*
+                    Filtering works somewhat, still buggy
+                    Urgent messages will duplicate
+                     */
+                    for (int i = 0; i < allMessageList.size(); i++) {
+                        if (allMessageList.get(i).getMessages().getIsUrgent()) {
+                            filterMessageUrgency.add(allMessageList.get(i));
+                        }
+                    }
+                    if (filterMessageUrgency.isEmpty()) {
+                        adapter.filterList(allMessageList);
+                        Toast.makeText(getActivity(), "No urgent messages", Toast.LENGTH_SHORT).show();
+                      //  ((MainActivity) getActivity()).messageFragment();
+                    } else {
+                        Toast.makeText(getActivity(), "Filtering urgent messages...", Toast.LENGTH_SHORT).show();
+                        adapter.filterList(filterMessageUrgency);
+                    }
+                }
+            }
+        });
+
     }
 
 
@@ -213,7 +272,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         submit.setVisibility(View.VISIBLE);
         cancel.setVisibility(View.VISIBLE);
         editIdList = new ArrayList<>();
-        adapter = new AllPrivateMessageAdapter(allMessageList, true,this);
+        adapter = new AllPrivateMessageAdapter(allMessageList, true, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -310,7 +369,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     public void editMessages(Boolean isChecked, MessageList messageList) {
         if (isChecked) {
             editIdList.add(messageList);
-        }else {
+        } else {
             editIdList.remove(messageList);
         }
     }
@@ -343,7 +402,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                         });
 
 
-            }else {
+            } else {
                 messageRef.document(mid).update(data);
             }
 
@@ -353,15 +412,14 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
     }
 
 
-
     // Initial the values for the recycler view / List of users
     public void showRecyclerList() {
 
         // Finds the user
         db.collection("users").document(uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(@Nullable  DocumentSnapshot value, @Nullable  FirebaseFirestoreException error) {
-                Log.d(TAG, "Adding User" );
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                Log.d(TAG, "Adding User");
                 allMessageList = new ArrayList<>();
                 mid = (ArrayList<String>) value.getData().get("messages");
                 if (!mid.isEmpty() && mid != null) {
@@ -372,13 +430,14 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         });
 
     }
+
     public void list() {
         for (String id : mid) {
 
             // Finds the document for the id
             messageRef.document(id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
-                public void onEvent(@Nullable  DocumentSnapshot doc, @Nullable  FirebaseFirestoreException error) {
+                public void onEvent(@Nullable DocumentSnapshot doc, @Nullable FirebaseFirestoreException error) {
 
                     Log.d(TAG, "DOC " + doc.getId());
                     Log.d(TAG, "Id " + id);
@@ -413,11 +472,20 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                             Member mem = new Member(member.get("name").toString(), member.get("uid").toString());
                             members.addMembers(mem);
                         }
+
                         MessageList messageList = new MessageList(members, recentMessage, id);
                         allMessageList.add(messageList);
 
-                    }
-                    catch (Exception e) {
+                 /*       for (int i = 0; i < allMessageList.size(); i++) {
+                            if (allMessageList.get(i).getMessages().getIsUrgent()) {
+                                filterMessageUrgency.add(allMessageList.get(i));
+
+                            }
+
+                        } */
+
+
+                    } catch (Exception e) {
                     }
 
                     showRecycler();
@@ -427,7 +495,6 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
         }
     }
-
 
 
     // sets the adapter and shows the recycler view
@@ -453,9 +520,9 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
             }
         });
 
-
         adapter = new AllPrivateMessageAdapter(allMessageList, this);
         recyclerView.setAdapter(adapter);
+
     }
 
 
@@ -475,6 +542,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         void createNotifications();
 
         void goToPrivateChatFragment(Member otherUser, String messageKey);
+
     }
 
     @Override
