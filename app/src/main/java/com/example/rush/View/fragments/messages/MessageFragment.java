@@ -193,8 +193,8 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         ImageButton btn = (ImageButton) menu.findItem(R.id.filter_icon).getActionView();
         TextView txt = (TextView) menu.findItem(R.id.filter_label).getActionView();
         SpannableString stringSpanner = new SpannableString("Filter");
-        //Change the txt label to be bigger and in bold
-        stringSpanner.setSpan(new StyleSpan(Typeface.BOLD), 0, stringSpanner.length(), 0);
+        //Change the txt label to be bigger and in bold/italics
+        stringSpanner.setSpan(new StyleSpan(Typeface.BOLD_ITALIC), 0, stringSpanner.length(), 0);
         stringSpanner.setSpan(new RelativeSizeSpan(1.1f), 0, stringSpanner.length(), 0);
         //Set the label for the imageButton
         txt.setText(stringSpanner);
@@ -205,6 +205,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Check if filter button has been clicked and switch "off" if it has
                 if (isClicked) {
                     isClicked = false;
                     //Return button to original color and icon
@@ -212,14 +213,13 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                     btn.setImageResource(R.drawable.ic_filter_messages);
                     //Set the adapter's list to all messages
                     adapter.filterList(allMessageList);
+
+                    //Filter button should now be flagged as clicked
                 } else {
                     //Highlight button when clicked on
                     btn.setImageResource(R.drawable.ic_filter_messages_selected);
                     isClicked = true;
-                    /*
-                    Filtering works somewhat, still buggy
-                    Urgent messages will duplicate
-                     */
+
                     for (int i = 0; i < allMessageList.size(); i++) {
                         if (allMessageList.get(i).getMessages().getIsUrgent()) {
                             //Get a list of all urgent messages
