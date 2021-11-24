@@ -208,8 +208,7 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                 //Check if filter button has been clicked and switch "off" if it has
                 if (isClicked) {
                     isClicked = false;
-                    //Return button to original color and icon
-                    btn.setBackgroundColor(0x00000000);
+                    //Return button to original icon
                     btn.setImageResource(R.drawable.ic_filter_messages);
                     //Set the adapter's list to all messages
                     adapter.filterList(allMessageList);
@@ -230,7 +229,6 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                     if (filterMessageUrgency.isEmpty()) {
                         adapter.filterList(allMessageList);
                         Toast.makeText(getActivity(), "No urgent messages", Toast.LENGTH_SHORT).show();
-                        //  ((MainActivity) getActivity()).messageFragment();
                     } else {
                         //Set the adapter's list to the urgent message list
                         Toast.makeText(getActivity(), "Filtering urgent messages...", Toast.LENGTH_SHORT).show();
@@ -495,13 +493,6 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                         MessageList messageList = new MessageList(members, recentMessage, id);
                         allMessageList.add(messageList);
 
-                 /*       for (int i = 0; i < allMessageList.size(); i++) {
-                            if (allMessageList.get(i).getMessages().getIsUrgent()) {
-                                filterMessageUrgency.add(allMessageList.get(i));
-
-                            }
-
-                        } */
 
 
                     } catch (Exception e) {
