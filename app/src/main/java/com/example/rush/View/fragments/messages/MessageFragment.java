@@ -4,6 +4,7 @@ package com.example.rush.View.fragments.messages;
 import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -17,6 +18,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +33,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rush.MainActivity;
@@ -186,19 +191,30 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.filter_message, menu);
         ImageButton btn = (ImageButton) menu.findItem(R.id.filter_icon).getActionView();
+        TextView txt = (TextView) menu.findItem(R.id.filter_label).getActionView();
+        SpannableString stringSpanner = new SpannableString("Filter");
+        //Change the txt label to be bigger and in bold
+        stringSpanner.setSpan(new StyleSpan(Typeface.BOLD), 0, stringSpanner.length(), 0);
+        stringSpanner.setSpan(new RelativeSizeSpan(1.1f), 0, stringSpanner.length(), 0);
+        //Set the label for the imageButton
+        txt.setText(stringSpanner);
+        //Set the icon of the button
         btn.setImageResource(R.drawable.ic_filter_messages);
+        //Make the background transparent
         btn.setBackgroundColor(0x00000000);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (isClicked) {
                     isClicked = false;
-                    //Return button to original color
+                    //Return button to original color and icon
                     btn.setBackgroundColor(0x00000000);
-                   // adapter.filterList(allMessageList);
+                    btn.setImageResource(R.drawable.ic_filter_messages);
+                    //Set the adapter's list to all messages
+                    adapter.filterList(allMessageList);
                 } else {
                     //Highlight button when clicked on
-                    btn.setBackgroundColor(Color.BLUE);
+                    btn.setImageResource(R.drawable.ic_filter_messages_selected);
                     isClicked = true;
                     /*
                     Filtering works somewhat, still buggy
@@ -206,14 +222,17 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
                      */
                     for (int i = 0; i < allMessageList.size(); i++) {
                         if (allMessageList.get(i).getMessages().getIsUrgent()) {
+                            //Get a list of all urgent messages
                             filterMessageUrgency.add(allMessageList.get(i));
                         }
                     }
+                    //Show all messages if there are no urgent ones
                     if (filterMessageUrgency.isEmpty()) {
                         adapter.filterList(allMessageList);
                         Toast.makeText(getActivity(), "No urgent messages", Toast.LENGTH_SHORT).show();
-                      //  ((MainActivity) getActivity()).messageFragment();
+                        //  ((MainActivity) getActivity()).messageFragment();
                     } else {
+                        //Set the adapter's list to the urgent message list
                         Toast.makeText(getActivity(), "Filtering urgent messages...", Toast.LENGTH_SHORT).show();
                         adapter.filterList(filterMessageUrgency);
                     }
