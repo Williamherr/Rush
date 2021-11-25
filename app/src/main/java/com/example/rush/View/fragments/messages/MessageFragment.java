@@ -221,8 +221,12 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
                     for (int i = 0; i < allMessageList.size(); i++) {
                         if (allMessageList.get(i).getMessages().getIsUrgent()) {
-                            //Get a list of all urgent messages
-                            filterMessageUrgency.add(allMessageList.get(i));
+                            //Make sure that a message list is only added once
+                            if (!filterMessageUrgency.contains(allMessageList.get(i))) {
+                                //Add the message list to the list of urgent messages
+                                filterMessageUrgency.add(allMessageList.get(i));
+                            }
+
                         }
                     }
                     //Show all messages if there are no urgent ones
@@ -492,7 +496,6 @@ public class MessageFragment extends Fragment implements bottomSheetDialogFragme
 
                         MessageList messageList = new MessageList(members, recentMessage, id);
                         allMessageList.add(messageList);
-
 
 
                     } catch (Exception e) {
