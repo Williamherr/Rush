@@ -292,10 +292,10 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         getSupportFragmentManager().popBackStack();
     }
 
-    public void goToClassDetails(String name, String instructor, String description) {
+    public void goToClassDetails(String name, String instructor, String description, String id) {
         setTitle(name);
         getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
-                new ClassDetailsFragment(name, instructor, description)).addToBackStack(null).commit();
+                new ClassDetailsFragment(name, instructor, description, id)).addToBackStack(null).commit();
     }
 
 }

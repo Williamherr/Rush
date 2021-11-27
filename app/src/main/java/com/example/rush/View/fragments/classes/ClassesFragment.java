@@ -63,7 +63,7 @@ public class ClassesFragment extends Fragment {
     private ArrayList<ClassInfo> classesToDelete = new ArrayList<>();
 
     public interface ClassDetailFragmentListener {
-        void goToClassDetails(String name, String instructor, String description);
+        void goToClassDetails(String name, String instructor, String description, String id);
     }
 
     @Override
@@ -399,7 +399,7 @@ public class ClassesFragment extends Fragment {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setCancelable(true);
                         builder.setTitle("Invitation Code");
-                        builder.setMessage("Below is the code to invite students to your class: \n"
+                        builder.setMessage("Below is the code to invite students to your class: \n\n"
                                 + classObj.getClassID());
                         builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                             @Override
@@ -421,6 +421,12 @@ public class ClassesFragment extends Fragment {
                         });
                         AlertDialog dialog = builder.create();
                         dialog.show();
+                    } else {
+                        String name = classObj.getClassName();
+                        String instructor = classObj.getInstructor();
+                        String description = classObj.getDescription();
+                        String id = classObj.getClassID();
+                        listener.goToClassDetails(name, instructor, description, id);
                     }
                 }
             });
