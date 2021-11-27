@@ -1,6 +1,8 @@
 package com.example.rush.View.fragments.classes;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
@@ -21,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.rush.MainActivity;
 import com.example.rush.Model.ClassInfo;
@@ -388,6 +391,39 @@ public class ClassesFragment extends Fragment {
             holder.className.setText(stringSpanner);
             holder.classDescription.setText(classObj.getDescription());
             holder.identifier.setText(twoChars);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Allow only professors to click on classes to get the invitation code
+                    if (type.equals("Professor")) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setCancelable(true);
+                        builder.setTitle("Invitation Code");
+                        builder.setMessage("Below is the code to invite students to your class: \n"
+                                + classObj.getClassID());
+                        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+
+                            }
+                        });
+                        builder.setNegativeButton("Copy Code", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Give the user the option to copy the link
+                                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipData clip = ClipData.newPlainText("Class ID", classObj.getClassID());
+                                clipboard.setPrimaryClip(clip);
+                                Toast.makeText(getActivity(), "Link copied to clipboard", Toast.LENGTH_SHORT).show();
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                }
+            });
             //Below line isn't used at the moment
         /*    holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
