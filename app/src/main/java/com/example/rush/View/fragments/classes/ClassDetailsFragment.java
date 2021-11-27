@@ -75,10 +75,14 @@ public class ClassDetailsFragment extends Fragment {
         recycle.setLayoutManager(manager);
         recycle.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
-        database.collection("classes").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+        //Get the professor of the class and add to list
+        Task professorRetrieval = database.collection("classes").document(id).get();
+        professorRetrieval.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
+
                     DocumentSnapshot doc = task.getResult();
                     ClassInfo obj = doc.toObject(ClassInfo.class);
                     professor = obj.getInstructor();
@@ -90,27 +94,27 @@ public class ClassDetailsFragment extends Fragment {
                 }
             }
         });
+        //Get all students in the class
+        Task studentRetrieval = database.collection("classes").document(id).collection("Students").get();
+        studentRetrieval.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String name = (String) document.getData().get("Name");
+                        String studentID = (String) document.getData().get("ID");
+                        String studentEmail = (String) document.getData().get("Email");
 
-        database.collection("classes").document(id).collection("Students").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String name = (String) document.getData().get("Name");
-                                String studentID = (String) document.getData().get("ID");
-                                String studentEmail = (String) document.getData().get("Email");
+                        Member m = new Member(name, studentID);
+                        students.add(m);
+                        adapter = new DetailsAdapter(students);
+                        recycle.setAdapter(adapter);
 
-                                Member m = new Member(name, studentID);
-                                students.add(m);
-                                adapter = new DetailsAdapter(students);
-                                recycle.setAdapter(adapter);
-
-                            }
-
-                        }
                     }
-                });
+
+                }
+            }
+        });
         return view;
     }
 
