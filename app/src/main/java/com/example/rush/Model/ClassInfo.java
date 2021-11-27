@@ -1,30 +1,42 @@
 package com.example.rush.Model;
 
+import java.util.ArrayList;
+
 public class ClassInfo {
     private String className;
     private String instructor;
     private String description;
     private String createdBy;
-    private String docID;
+    private String classID;
+    private ArrayList<Member> studentsInClass;
     //Add a structure to store Students that are in this class
 
-    public ClassInfo(String className, String instructor, String description, String createdBy) {
+    public ClassInfo(String className, String instructor, String description, String createdBy, String classID) {
         this.className = className;
         this.instructor = instructor;
         this.description = description;
         this.createdBy = createdBy;
+        this.classID = classID;
     }
 
     public ClassInfo() {
 
     }
 
-    public void setDocID(String docID) {
-        this.docID = docID;
+    public void addStudent(Member m) {
+        studentsInClass.add(m);
     }
 
-    public String getDocID() {
-        return docID;
+    public void removeStudents() {
+        studentsInClass.clear();
+    }
+
+    public void setClassID(String classID) {
+        this.classID = classID;
+    }
+
+    public String getClassID() {
+        return classID;
     }
 
     public String getClassName() {

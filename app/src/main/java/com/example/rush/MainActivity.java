@@ -18,6 +18,7 @@ import com.example.rush.View.fragments.AccountCreationFragment;
 import com.example.rush.View.fragments.AddPhotoFragment;
 import com.example.rush.View.fragments.classes.ClassCreationFragment;
 import com.example.rush.View.fragments.classes.ClassDetailsFragment;
+import com.example.rush.View.fragments.classes.ClassJoinFragment;
 import com.example.rush.View.fragments.classes.ClassesFragment;
 import com.example.rush.View.fragments.HomeFragment;
 import com.example.rush.View.fragments.NotificationFragment;
@@ -270,6 +271,11 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerView, new NotificationFragment()).addToBackStack(null)
                 .commit();
+    }
+    public void goToJoinFragment(){
+        setTitle("Join Class");
+        getSupportFragmentManager().beginTransaction().replace(R.id.containerView, new ClassJoinFragment())
+                .addToBackStack(null).commit();
     }
 
 

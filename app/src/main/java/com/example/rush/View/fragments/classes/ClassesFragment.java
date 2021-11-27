@@ -33,8 +33,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -135,26 +138,49 @@ public class ClassesFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         for (int j = 0; j < classesToDelete.size(); j++) {
+                            //Get reference to documents being deleted
+                            DocumentReference docRef = database.collection("classes")
+                                    .document(classesToDelete.get(j).getClassID());
                             //Remove each deleted class from the list of classes
                             listOfClasses.remove(classesToDelete.get(j));
-                            database.collection("classes")
-                                    //Find the document in the database by the classes docID and delete it
-                                    .document(classesToDelete.get(j).getDocID()).delete()
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            Log.d("Success", "DocumentSnapshot successfully deleted!");
-                                            dialogInterface.dismiss();
-                                            //No longer deleting, so hide the delete and cancel buttons
-                                            adapter.setDeletionStatus(false);
-                                            recycle.setAdapter(adapter);
-                                            fabButton.show();
-                                            deleteBtn.hide();
-                                            cancelBtn.hide();
+                            if (type.equals("Professor")) {
+                                docRef.delete()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Log.d("Success", "DocumentSnapshot successfully deleted!");
+                                                dialogInterface.dismiss();
+                                                //No longer deleting, so hide the delete and cancel buttons
+                                                adapter.setDeletionStatus(false);
+                                                recycle.setAdapter(adapter);
+                                                fabButton.show();
+                                                deleteBtn.hide();
+                                                cancelBtn.hide();
+                                            }
+                                        });
+                            } else {
+                                //Students can leave the class instead of the entire class being deleted
+                                DocumentReference studentRef = docRef.collection("Students")
+                                        .document(userID);
+                                studentRef.delete()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Log.d("Success", "DocumentSnapshot successfully deleted!");
+                                                dialogInterface.dismiss();
+                                                //No longer deleting, so hide the delete and cancel buttons
+                                                adapter.setDeletionStatus(false);
+                                                recycle.setAdapter(adapter);
+                                                fabButton.show();
+                                                deleteBtn.hide();
+                                                cancelBtn.hide();
+                                            }
+                                        });
+                            }
 
-                                        }
-                                    });
                         }
+
+
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -207,7 +233,6 @@ public class ClassesFragment extends Fragment {
                                     Log.d("Success", document.getId() + " => " + document.getData());
                                     //Cast the QueryDocumentSnapshot into a ClassInfo obj
                                     ClassInfo obj = document.toObject(ClassInfo.class);
-                                    obj.setDocID(document.getId());
                                     //Keep track of all classes created by this user
                                     listOfClasses.add(obj);
                                     adapter = new ClassesFragment.ClassAdapter(listOfClasses);
@@ -220,6 +245,48 @@ public class ClassesFragment extends Fragment {
                         }
                     });
         } else {
+            //Start by getting list of all classes
+            Task classes = database.collection("classes").get();
+            classes.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            //Query each class for students that have joined
+                            Task students = database.collection("classes").document(document.getId())
+                                    .collection("Students").whereEqualTo("ID", userID).get();
+                            students.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> taskTwo) {
+                                    if (taskTwo.isSuccessful()) {
+                                        for (QueryDocumentSnapshot snapshot : taskTwo.getResult()) {
+                                                    /*
+                                                    If the current student has joined any classes, get reference to the documents
+                                                    and trace its parents back to the class document
+                                                     */
+                                            DocumentReference parentRef = snapshot.getReference().getParent().getParent();
+                                            parentRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> taskThree) {
+                                                    if (taskThree.isSuccessful()) {
+                                                        ClassInfo obj = taskThree.getResult().toObject(ClassInfo.class);
+                                                        Log.d("Doc", obj.getClassID());
+                                                        //Add any joined classes to the list
+                                                        listOfClasses.add(obj);
+                                                        adapter = new ClassesFragment.ClassAdapter(listOfClasses);
+                                                        recycle.setAdapter(adapter);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
             //This should get all classes the current student has joined
         }
     }
@@ -238,6 +305,7 @@ public class ClassesFragment extends Fragment {
                     ((MainActivity) getActivity()).creationFragment();
                 } else {
                     //Go to the join class tab since students can't create a class
+                    ((MainActivity) getActivity()).goToJoinFragment();
                 }
                 bottom.dismiss();
 
