@@ -1,5 +1,6 @@
 package com.example.rush.View.fragments.classes;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,11 +19,15 @@ import android.widget.TextView;
 import com.example.rush.Model.ClassInfo;
 import com.example.rush.Model.Member;
 import com.example.rush.R;
+import com.example.rush.View.fragments.messages.MessageFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -30,6 +35,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClassDetailsFragment extends Fragment {
     private String name, description, id, userID, professor, professorID;
@@ -39,6 +46,15 @@ public class ClassDetailsFragment extends Fragment {
     private RecyclerView recycle;
     private DetailsAdapter adapter;
     private ArrayList<Member> students;
+    private CollectionReference messageRef;
+    private MessageFragment.MessageFragmentListener mListener;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mListener = (MessageFragment.MessageFragmentListener) context;
+    }
+
 
     public ClassDetailsFragment() {
 
@@ -70,6 +86,7 @@ public class ClassDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_class_details, container, false);
+        messageRef = database.collection("chat-messages").document("private-messages").collection("all-private-messages");
         students = new ArrayList<>();
         recycle = (RecyclerView) view.findViewById(R.id.studentsInClass);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
@@ -134,6 +151,29 @@ public class ClassDetailsFragment extends Fragment {
             } else {
                 holder.status.setVisibility(View.INVISIBLE);
             }
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                //Allow the user to start a new chat by clicking on any of the class's members
+                public void onClick(View view) {
+                    Map<String, Object> data = new HashMap<>();
+
+                    ArrayList<Map<String, Object>> members = new ArrayList<>();
+                    members.add(Map.of("uid", userID, "name", user.getDisplayName()));
+                    members.add(Map.of("uid", obj.getUid(), "name", obj.getName()));
+                    data.put("members", members);
+                    data.put("time", Timestamp.now());
+                    data.put("recentMessage", "");
+
+                    String newDoc = messageRef.document().getId();
+                    messageRef.document(newDoc).set(data);
+
+                    database.collection("users").document(obj.getUid()).update("messages", FieldValue.arrayUnion(newDoc));
+                    database.collection("users").document(userID).update("messages", FieldValue.arrayUnion(newDoc));
+
+
+                    mListener.goToPrivateChatFragment(obj, newDoc);
+                }
+            });
 
         }
 

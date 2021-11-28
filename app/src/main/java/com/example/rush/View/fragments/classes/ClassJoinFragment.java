@@ -89,7 +89,6 @@ public class ClassJoinFragment extends Fragment {
                 student.put("Name", user.getDisplayName());
                 student.put("ID", userID);
                 student.put("Email", user.getEmail());
-                Member tempMember = new Member(user.getDisplayName(), userID);
                 database.collection("classes").whereEqualTo("classID", userInput).get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override

@@ -289,8 +289,6 @@ public class ClassesFragment extends Fragment {
                     }
                 }
             });
-
-            //This should get all classes the current student has joined
         }
     }
 
@@ -399,7 +397,7 @@ public class ClassesFragment extends Fragment {
                     String description = classObj.getDescription();
                     String id = classObj.getClassID();
                     String createdBy = classObj.getCreatedBy();
-                    //Allow only professors to click on classes to get the invitation code
+                    //Allow only professors options when clicking on the class
                     if (type.equals("Professor")) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setCancelable(true);
@@ -424,7 +422,6 @@ public class ClassesFragment extends Fragment {
                         builder.setNeutralButton("Copy Code", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                //Give the user the option to copy the link
                                 ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                                 ClipData clip = ClipData.newPlainText("Class ID", classObj.getClassID());
                                 clipboard.setPrimaryClip(clip);
