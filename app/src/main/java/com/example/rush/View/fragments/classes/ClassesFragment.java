@@ -63,7 +63,7 @@ public class ClassesFragment extends Fragment {
     private ArrayList<ClassInfo> classesToDelete = new ArrayList<>();
 
     public interface ClassDetailFragmentListener {
-        void goToClassDetails(String name, String instructor, String description, String id);
+        void goToClassDetails(String name, String instructor, String description, String id, String createdBy);
     }
 
     @Override
@@ -408,7 +408,19 @@ public class ClassesFragment extends Fragment {
 
                             }
                         });
-                        builder.setNegativeButton("Copy Code", new DialogInterface.OnClickListener() {
+                        builder.setNegativeButton("View Class", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String name = classObj.getClassName();
+                                String instructor = classObj.getInstructor();
+                                String description = classObj.getDescription();
+                                String id = classObj.getClassID();
+                                String createdBy = classObj.getCreatedBy();
+                                listener.goToClassDetails(name, instructor, description, id, createdBy);
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        builder.setNeutralButton("Copy Code", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Give the user the option to copy the link
@@ -426,18 +438,12 @@ public class ClassesFragment extends Fragment {
                         String instructor = classObj.getInstructor();
                         String description = classObj.getDescription();
                         String id = classObj.getClassID();
-                        listener.goToClassDetails(name, instructor, description, id);
+                        String createdBy = classObj.getCreatedBy();
+                        listener.goToClassDetails(name, instructor, description, id, createdBy);
                     }
                 }
             });
-            //Below line isn't used at the moment
-        /*    holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.goToClassDetails(classObj.getClassName(), classObj.getInstructor(),
-                            classObj.getDescription());
-                }
-            });*/
+
         }
 
         @Override

@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
 import java.util.ArrayList;
 
 public class ClassDetailsFragment extends Fragment {
-    private String name, instructor, description, id, userID, professor, professorID;
+    private String name, description, id, userID, professor, professorID;
     private FirebaseFirestore database;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
@@ -44,11 +44,12 @@ public class ClassDetailsFragment extends Fragment {
 
     }
 
-    public ClassDetailsFragment(String name, String instructor, String description, String id) {
+    public ClassDetailsFragment(String name, String instructor, String description, String id, String createdBy) {
         this.name = name;
-        this.instructor = instructor;
+        professor = instructor;
         this.description = description;
         this.id = id;
+        professorID = createdBy;
     }
 
 
@@ -76,41 +77,31 @@ public class ClassDetailsFragment extends Fragment {
         recycle.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
 
-        //Get the professor of the class and add to list
-        Task professorRetrieval = database.collection("classes").document(id).get();
-        professorRetrieval.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
+        //Add the professor to the list
+        Member p = new Member(professor, professorID);
+        students.add(p);
+        adapter = new DetailsAdapter(students);
+        recycle.setAdapter(adapter);
 
-                    DocumentSnapshot doc = task.getResult();
-                    ClassInfo obj = doc.toObject(ClassInfo.class);
-                    professor = obj.getInstructor();
-                    professorID = obj.getCreatedBy();
-                    Member p = new Member(professor, professorID);
-                    students.add(p);
-                    adapter = new DetailsAdapter(students);
-                    recycle.setAdapter(adapter);
-                }
-            }
-        });
         //Get all students in the class
         Task studentRetrieval = database.collection("classes").document(id).collection("Students").get();
         studentRetrieval.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String name = (String) document.getData().get("Name");
-                        String studentID = (String) document.getData().get("ID");
-                        String studentEmail = (String) document.getData().get("Email");
+                    if (!task.getResult().isEmpty()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String name = (String) document.getData().get("Name");
+                            String studentID = (String) document.getData().get("ID");
+                            String studentEmail = (String) document.getData().get("Email");
 
-                        Member m = new Member(name, studentID);
-                        students.add(m);
-                        adapter = new DetailsAdapter(students);
-                        recycle.setAdapter(adapter);
-
+                            Member m = new Member(name, studentID);
+                            students.add(m);
+                            adapter = new DetailsAdapter(students);
+                            recycle.setAdapter(adapter);
+                        }
                     }
+
 
                 }
             }
