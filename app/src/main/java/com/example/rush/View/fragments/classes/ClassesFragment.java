@@ -394,32 +394,33 @@ public class ClassesFragment extends Fragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    String name = classObj.getClassName();
+                    String instructor = classObj.getInstructor();
+                    String description = classObj.getDescription();
+                    String id = classObj.getClassID();
+                    String createdBy = classObj.getCreatedBy();
                     //Allow only professors to click on classes to get the invitation code
                     if (type.equals("Professor")) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setCancelable(true);
                         builder.setTitle("Invitation Code");
                         builder.setMessage("Below is the code to invite students to your class: \n\n"
-                                + classObj.getClassID());
+                                + id);
+                        //Hitting this button closes the dialog
                         builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
-
                             }
                         });
+                        //Lets the professor go to the class details page
                         builder.setNegativeButton("View Class", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                String name = classObj.getClassName();
-                                String instructor = classObj.getInstructor();
-                                String description = classObj.getDescription();
-                                String id = classObj.getClassID();
-                                String createdBy = classObj.getCreatedBy();
                                 listener.goToClassDetails(name, instructor, description, id, createdBy);
-                                dialogInterface.dismiss();
                             }
                         });
+                        //Allows the professor to copy the class invitation code
                         builder.setNeutralButton("Copy Code", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -433,12 +434,8 @@ public class ClassesFragment extends Fragment {
                         });
                         AlertDialog dialog = builder.create();
                         dialog.show();
+                        //Students should only view the class
                     } else {
-                        String name = classObj.getClassName();
-                        String instructor = classObj.getInstructor();
-                        String description = classObj.getDescription();
-                        String id = classObj.getClassID();
-                        String createdBy = classObj.getCreatedBy();
                         listener.goToClassDetails(name, instructor, description, id, createdBy);
                     }
                 }
