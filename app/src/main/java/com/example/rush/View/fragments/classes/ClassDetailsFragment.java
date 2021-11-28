@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.rush.Model.ClassInfo;
 import com.example.rush.Model.Member;
@@ -151,6 +152,12 @@ public class ClassDetailsFragment extends Fragment {
             } else {
                 holder.status.setVisibility(View.INVISIBLE);
             }
+            holder.status.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getActivity(), "Professor", Toast.LENGTH_SHORT).show();
+                }
+            });
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 //Allow the user to start a new chat by clicking on any of the class's members
