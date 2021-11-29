@@ -1,6 +1,7 @@
 package com.example.rush.View.fragments.classes;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +54,7 @@ public class ClassDetailsFragment extends Fragment {
     private ArrayList<Member> students;
     private CollectionReference messageRef;
     private MessageFragment.MessageFragmentListener mListener;
+    private TextView nameOfInstructor, descriptionOfClass, label;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -94,6 +100,23 @@ public class ClassDetailsFragment extends Fragment {
         recycle.setLayoutManager(manager);
         recycle.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
+
+        String[] words = new String[]{"Professor", "Class Description"};
+        SpannableString stringSpanner = new SpannableString(words[0]);
+        stringSpanner.setSpan(new StyleSpan(Typeface.BOLD), 0, stringSpanner.length(), 0);
+        stringSpanner.setSpan(new RelativeSizeSpan(1.1f), 0, stringSpanner.length(), 0);
+        SpannableString stringSpanner2 = new SpannableString(words[1]);
+        stringSpanner2.setSpan(new StyleSpan(Typeface.BOLD), 0, stringSpanner2.length(), 0);
+        stringSpanner2.setSpan(new RelativeSizeSpan(1.1f), 0, stringSpanner2.length(), 0);
+
+        nameOfInstructor = view.findViewById(R.id.instructorOfClass);
+        nameOfInstructor.setText(stringSpanner);
+        nameOfInstructor.append("\n" + professor);
+        descriptionOfClass = view.findViewById(R.id.descriptionOfClass);
+        descriptionOfClass.setText(stringSpanner2);
+        descriptionOfClass.append("\n" + description);
+        label = view.findViewById(R.id.listLabel);
+        label.setText("Class List");
 
         //Add the professor to the list
         Member p = new Member(professor, professorID);
