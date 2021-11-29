@@ -19,6 +19,7 @@ import com.example.rush.View.fragments.AddPhotoFragment;
 import com.example.rush.View.fragments.account.AccountFragment;
 import com.example.rush.View.fragments.classes.ClassCreationFragment;
 import com.example.rush.View.fragments.classes.ClassDetailsFragment;
+import com.example.rush.View.fragments.classes.ClassJoinFragment;
 import com.example.rush.View.fragments.classes.ClassesFragment;
 import com.example.rush.View.fragments.HomeFragment;
 import com.example.rush.View.fragments.NotificationFragment;
@@ -301,16 +302,21 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 .replace(R.id.containerView, new NotificationFragment()).addToBackStack(null)
                 .commit();
     }
-
-
-
-
-
-    public void goToClassDetails(String name, String instructor, String description) {
-        setTitle(name);
-        getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
-                new ClassDetailsFragment(name, instructor, description)).addToBackStack(null).commit();
+    public void goToJoinFragment(){
+        setTitle("Join Class");
+        getSupportFragmentManager().beginTransaction().replace(R.id.containerView, new ClassJoinFragment())
+                .addToBackStack(null).commit();
     }
+
+
+
+
+
+//    public void goToClassDetails(String name, String instructor, String description) {
+//        setTitle(name);
+//        getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
+//                new ClassDetailsFragment(name, instructor, description)).addToBackStack(null).commit();
+//    }
 
 
     /*
@@ -334,6 +340,13 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerView, new AccountFragment(user))
                 .commit();
+    }
+
+
+    public void goToClassDetails(String name, String instructor, String description, String id, String createdBy) {
+        setTitle(name);
+        getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
+                new ClassDetailsFragment(name, instructor, description, id, createdBy)).addToBackStack(null).commit();
     }
 
 

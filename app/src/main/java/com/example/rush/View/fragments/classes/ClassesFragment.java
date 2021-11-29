@@ -1,6 +1,8 @@
 package com.example.rush.View.fragments.classes;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
@@ -21,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.rush.MainActivity;
 import com.example.rush.Model.ClassInfo;
@@ -33,8 +36,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -57,7 +63,7 @@ public class ClassesFragment extends Fragment {
     private ArrayList<ClassInfo> classesToDelete = new ArrayList<>();
 
     public interface ClassDetailFragmentListener {
-        void goToClassDetails(String name, String instructor, String description);
+        void goToClassDetails(String name, String instructor, String description, String id, String createdBy);
     }
 
     @Override
@@ -135,26 +141,49 @@ public class ClassesFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         for (int j = 0; j < classesToDelete.size(); j++) {
+                            //Get reference to documents being deleted
+                            DocumentReference docRef = database.collection("classes")
+                                    .document(classesToDelete.get(j).getClassID());
                             //Remove each deleted class from the list of classes
                             listOfClasses.remove(classesToDelete.get(j));
-                            database.collection("classes")
-                                    //Find the document in the database by the classes docID and delete it
-                                    .document(classesToDelete.get(j).getDocID()).delete()
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            Log.d("Success", "DocumentSnapshot successfully deleted!");
-                                            dialogInterface.dismiss();
-                                            //No longer deleting, so hide the delete and cancel buttons
-                                            adapter.setDeletionStatus(false);
-                                            recycle.setAdapter(adapter);
-                                            fabButton.show();
-                                            deleteBtn.hide();
-                                            cancelBtn.hide();
+                            if (type.equals("Professor")) {
+                                docRef.delete()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Log.d("Success", "DocumentSnapshot successfully deleted!");
+                                                dialogInterface.dismiss();
+                                                //No longer deleting, so hide the delete and cancel buttons
+                                                adapter.setDeletionStatus(false);
+                                                recycle.setAdapter(adapter);
+                                                fabButton.show();
+                                                deleteBtn.hide();
+                                                cancelBtn.hide();
+                                            }
+                                        });
+                            } else {
+                                //Students can leave the class instead of the entire class being deleted
+                                DocumentReference studentRef = docRef.collection("Students")
+                                        .document(userID);
+                                studentRef.delete()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Log.d("Success", "DocumentSnapshot successfully deleted!");
+                                                dialogInterface.dismiss();
+                                                //No longer deleting, so hide the delete and cancel buttons
+                                                adapter.setDeletionStatus(false);
+                                                recycle.setAdapter(adapter);
+                                                fabButton.show();
+                                                deleteBtn.hide();
+                                                cancelBtn.hide();
+                                            }
+                                        });
+                            }
 
-                                        }
-                                    });
                         }
+
+
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -178,6 +207,7 @@ public class ClassesFragment extends Fragment {
                             DocumentSnapshot document = task.getResult();
                             //Get the current user's account type
                             type = (String) document.getData().get("type");
+
                             if (type == null) {
                                 type = "Student";
                             }
@@ -192,6 +222,7 @@ public class ClassesFragment extends Fragment {
     }
 
     private void getClasses(String s) {
+
         if (s.equals("Professor")) {
             database.collection("classes")
                     //Get any classes created by the current professor
@@ -205,7 +236,6 @@ public class ClassesFragment extends Fragment {
                                     Log.d("Success", document.getId() + " => " + document.getData());
                                     //Cast the QueryDocumentSnapshot into a ClassInfo obj
                                     ClassInfo obj = document.toObject(ClassInfo.class);
-                                    obj.setDocID(document.getId());
                                     //Keep track of all classes created by this user
                                     listOfClasses.add(obj);
                                     adapter = new ClassesFragment.ClassAdapter(listOfClasses);
@@ -218,7 +248,47 @@ public class ClassesFragment extends Fragment {
                         }
                     });
         } else {
-            //This should get all classes the current student has joined
+            //Start by getting list of all classes
+            Task classes = database.collection("classes").get();
+            classes.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            //Query each class for students that have joined
+                            Task students = database.collection("classes").document(document.getId())
+                                    .collection("Students").whereEqualTo("ID", userID).get();
+                            students.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> taskTwo) {
+                                    if (taskTwo.isSuccessful()) {
+                                        for (QueryDocumentSnapshot snapshot : taskTwo.getResult()) {
+                                                    /*
+                                                    If the current student has joined any classes, get reference to the documents
+                                                    and trace its parents back to the class document
+                                                     */
+                                            DocumentReference parentRef = snapshot.getReference().getParent().getParent();
+                                            parentRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> taskThree) {
+                                                    if (taskThree.isSuccessful()) {
+                                                        ClassInfo obj = taskThree.getResult().toObject(ClassInfo.class);
+                                                        Log.d("Doc", obj.getClassID());
+                                                        //Add any joined classes to the list
+                                                        listOfClasses.add(obj);
+                                                        adapter = new ClassesFragment.ClassAdapter(listOfClasses);
+                                                        recycle.setAdapter(adapter);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -236,6 +306,7 @@ public class ClassesFragment extends Fragment {
                     ((MainActivity) getActivity()).creationFragment();
                 } else {
                     //Go to the join class tab since students can't create a class
+                    ((MainActivity) getActivity()).goToJoinFragment();
                 }
                 bottom.dismiss();
 
@@ -318,14 +389,55 @@ public class ClassesFragment extends Fragment {
             holder.className.setText(stringSpanner);
             holder.classDescription.setText(classObj.getDescription());
             holder.identifier.setText(twoChars);
-            //Below line isn't used at the moment
-        /*    holder.itemView.setOnClickListener(new View.OnClickListener() {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.goToClassDetails(classObj.getClassName(), classObj.getInstructor(),
-                            classObj.getDescription());
+                    String name = classObj.getClassName();
+                    String instructor = classObj.getInstructor();
+                    String description = classObj.getDescription();
+                    String id = classObj.getClassID();
+                    String createdBy = classObj.getCreatedBy();
+                    //Allow only professors options when clicking on the class
+                    if (type.equals("Professor")) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setCancelable(true);
+                        builder.setTitle("Invitation Code");
+                        builder.setMessage("Below is the code to invite students to your class: \n\n"
+                                + id);
+                        //Hitting this button closes the dialog
+                        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        //Lets the professor go to the class details page
+                        builder.setNegativeButton("View Class", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                listener.goToClassDetails(name, instructor, description, id, createdBy);
+                            }
+                        });
+                        //Allows the professor to copy the class invitation code
+                        builder.setNeutralButton("Copy Code", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipData clip = ClipData.newPlainText("Class ID", classObj.getClassID());
+                                clipboard.setPrimaryClip(clip);
+                                Toast.makeText(getActivity(), "Link copied to clipboard", Toast.LENGTH_SHORT).show();
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        //Students should only view the class
+                    } else {
+                        listener.goToClassDetails(name, instructor, description, id, createdBy);
+                    }
                 }
-            });*/
+            });
+
         }
 
         @Override
