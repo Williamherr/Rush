@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.example.rush.View.fragments.AccountCreationFragment;
 import com.example.rush.View.fragments.AddPhotoFragment;
+import com.example.rush.View.fragments.account.AccountFragment;
 import com.example.rush.View.fragments.classes.ClassCreationFragment;
 import com.example.rush.View.fragments.classes.ClassDetailsFragment;
 import com.example.rush.View.fragments.classes.ClassesFragment;
@@ -38,8 +39,8 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
 
 {
     private FirebaseUser user;
-    private String uid;
     private BottomNavigationView bottomNav;
+    private boolean status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_main);
         bottomNav = findViewById(R.id.bottomNavigationBar);
-        bottomNav.setVisibility(View.INVISIBLE);
+        bottomNav.setVisibility(View.GONE);
         user = FirebaseAuth.getInstance().getCurrentUser();
         //Navigation bar
         bottomNavigation();
@@ -58,6 +59,21 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
 
 
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        status = true;
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        status = false;
+
+    }
+
 
 
     public void bottomNavigation() {
@@ -84,8 +100,9 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                         Log.d("navBar", "Messages");
                         messageFragment();
                         break;
-                    case "Activity": // Activity
-                        Log.d("navBar", "Activity");
+                    case "Account": // Activity
+                        Log.d("navBar", "Account");
+                        goToAccount();
                         break;
                     default:
                         break;
@@ -250,17 +267,30 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     }
 
     /*
+
+    Notification Section (Private Messages)
+
+     */
+
+    /*
      *
      * This function add a new photo feature using the Notification to call this feature for testing.
      * I will integrate this feature into another page,
      * such as create account that let the user could upload the image
      * */
     @Override
-    public void addNewPhotoFragment() {
+    public void addNewPhotoFragment(String messageKey) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new AddPhotoFragment(), "UploadFragment")
+                .replace(R.id.containerView, new AddPhotoFragment(user, messageKey), "UploadFragment")
                 .addToBackStack(null)
                 .commit();
+    }
+
+
+
+    @Override
+    public void backFragment() {
+        getSupportFragmentManager().popBackStack();
     }
 
 
@@ -275,22 +305,37 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
 
 
 
-    @Override
-    public void goToAccountCreationFragment() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new AccountCreationFragment()).commit();
-    }
-
-    @Override
-    public void backFragment() {
-        getSupportFragmentManager().popBackStack();
-    }
 
     public void goToClassDetails(String name, String instructor, String description) {
         setTitle(name);
         getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
                 new ClassDetailsFragment(name, instructor, description)).addToBackStack(null).commit();
     }
+
+
+    /*
+
+ Account Section
+
+  */
+
+
+    @Override
+    public void goToAccountCreationFragment() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new AccountCreationFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void goToAccount() {
+        setTitle("Account");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new AccountFragment(user))
+                .commit();
+    }
+
 
 }
 

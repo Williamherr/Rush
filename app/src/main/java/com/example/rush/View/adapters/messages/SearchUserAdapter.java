@@ -4,6 +4,7 @@ package com.example.rush.View.adapters.messages;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +46,7 @@ public class SearchUserAdapter extends  RecyclerView.Adapter<SearchUserAdapter.V
 
 
     @Override
-    public void onBindViewHolder(@NonNull  SearchUserAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull  SearchUserAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.name.setText(users.get(position).getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

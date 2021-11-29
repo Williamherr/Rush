@@ -40,10 +40,12 @@ import com.example.rush.Model.Messages;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -57,7 +59,7 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class PrivateChatFragment extends Fragment implements MessageAdapter.IMessageAdapterListener, ReportDialogFragment.IreturnReport {
+public class PrivateChatFragment extends Fragment implements MessageAdapter.IMessageAdapterListener, ReportDialogFragment.IreturnReport, PrivateChatBottomSheetMenu.IBottomSheetDialogMenu  {
 
     String messageKey = "";
     String TAG = "PrivateChatFragment";
@@ -88,6 +90,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     ArrayList<Messages> messages, searchList;
     EditText textview;
     ImageButton sendMessageButton, urgentButton, attachmentButton;
+    private Messages message;
     //Attachment Photo for private message
 
     RecyclerView.SmoothScroller smoothScroller;
@@ -134,6 +137,17 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                 showPopup(view);
             }
         });
+
+        attachmentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(getActivity(), "Please select an image", Toast.LENGTH_SHORT).show();
+                mListener.addNewPhotoFragment(messageKey);
+            }
+        });
+
+
         addMessages();
 
         smoothScroller = new
@@ -182,7 +196,11 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
                                 if (urgent == true) {
                                     anyUrgentMessages = true;
                                 }
-
+                                if (img == null) {
+                                    img = "";
+                                } else {
+                                    message = name + " sent a picture";
+                                }
 
 
 
@@ -285,7 +303,6 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     }
 
 
-    @Override
     public void delete(Messages message) {
         messageRef.document(messageKey).collection("messages").document(message.getId())
                 .delete()
@@ -304,9 +321,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
     }
 
 
-    @Override
-    public void update(Messages message, int position) {
-        this.position = position;
+    public void update(Messages message) {
         this.scrollToBottom = false;
 
         textview.requestFocus();
@@ -323,17 +338,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
             }
         });
 
-        attachmentButton.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.R)
-            @Override
-            public void onClick(View v) {
-//                updateMessages(message);
-//                closeKeyboard();
-//                addMessages();
-                Toast.makeText(getActivity(), "Please select an image", Toast.LENGTH_SHORT).show();
 
-            }
-        });
     }
 
 
@@ -377,32 +382,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
             }
         });
 
-        //add attachment photo for this message
-        attachmentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "TAG");
-                if (textview.getText().toString().trim().equals("")) {
-                    return;
-                }
-                Toast.makeText(getActivity(), "attachmentButton clicked", Toast.LENGTH_SHORT).show();
-                //call the upload photo fragment
-                mListener.addNewPhotoFragment();
-//                Map<String, Object> data = new HashMap<>();
-//                data.put("message", textview.getText().toString());
-//                Timestamp time = Timestamp.now();
-//                data.put("time", time);
-//                data.put("uid", uid);
-//                data.put("name", userName);
-//
-//
-//                textview.setText("");
-//                Task task = messageRef.document(messageKey).collection("messages")
-//                        .add(data);
-//                closeKeyboard();
 
-            }
-        });
     }
 
     @Override
@@ -413,8 +393,43 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
 
     PrivateChatFragmentListener mListener;
 
+
+    @Override
+    public void sheetClicked(String item) {
+
+        switch (item) {
+            case "edit":
+                update(message);
+                break;
+            case "report":
+                Log.d(TAG, "onMenuItemClick: Report ");
+                report(message);
+                break;
+            case "delete":
+                Log.d(TAG, "onMenuItemClick: Delete");
+                delete(message);
+                break;
+            case "resolve":
+                Log.d(TAG, "onMenuItemClick: Resolve");
+                resolve(message);
+                break;
+
+
+        }
+    }
+
+
+
+
     public interface PrivateChatFragmentListener{
-        void addNewPhotoFragment();
+        void addNewPhotoFragment(String messageKey);
+    }
+
+    // This will make the urgent messages inside a chat false
+    public void resolve(Messages message) {
+        messageRef.document(messageKey).collection("messages")
+                .document(message.getId())
+                .update("isUrgent", false);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.R)
@@ -422,8 +437,8 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         Messages message = this.reportMessage;
 
         Map<String, Object> data = new HashMap<>();
-        ArrayList<Map> user = new ArrayList<>();
-        ArrayList<Map> reportedUser = new ArrayList<>();
+        ArrayList< Map<String, Object>> user = new ArrayList<>();
+        ArrayList< Map<String, Object>> reportedUser = new ArrayList<>();
 
         user.add(Map.of("name", userName, "uid", uid));
         reportedUser.add(Map.of("name", message.getName(), "uid", message.getUid()));
@@ -445,8 +460,19 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         newFragment.show(getParentFragmentManager(), "dialog");
     }
 
-    //send message and show ReportDialogFragment from message adapter
     @Override
+    public void showBottomMenu(Messages message, int position,boolean isOtherUser) {
+        // Create the fragment and show it as a dialog.
+        this.position = position;
+        this.message = message;
+        BottomSheetDialogFragment bottom = PrivateChatBottomSheetMenu.newInstance(this,isOtherUser);
+        bottom.show(getParentFragmentManager(), "Bottom menu");
+    }
+
+
+
+    //send message and show ReportDialogFragment from message adapter
+
     public void report(Messages message) {
         this.Report = "";
         showDialog();

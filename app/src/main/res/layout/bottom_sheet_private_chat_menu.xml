@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/newClasses"
+        android:id="@+id/edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -34,12 +34,12 @@
             android:contentDescription="Add"
 
             android:padding="5dp"
-            android:text="New Messages"
+            android:text="Edit"
             android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/deleteClasses"
+        android:id="@+id/delete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -64,13 +64,14 @@
             android:layout_marginLeft="20dp"
             android:contentDescription="Add"
             android:padding="5dp"
-            android:text="Delete Messages"
+            android:text="Delete"
             android:textSize="20sp" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/notificationClasses"
+        android:visibility="visible"
+        android:id="@+id/report"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -85,7 +86,7 @@
             android:layout_height="35dp"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
-            android:background="@drawable/ic_notifications"
+            android:background="@drawable/ic_baseline_priority_high_24"
             android:scaleType="fitCenter" />
 
         <TextView
@@ -95,44 +96,14 @@
             android:layout_marginLeft="20dp"
             android:contentDescription="Add"
             android:padding="5dp"
-            android:text="Notification"
+            android:text="Report"
             android:textSize="20sp" />
-
-
     </LinearLayout>
 
-<!--    <LinearLayout-->
-<!--        android:id="@+id/urgent"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:paddingLeft="20dp"-->
-<!--        android:paddingRight="20dp"-->
-<!--        android:clickable="true"-->
-<!--        android:background="?android:attr/selectableItemBackground"-->
-<!--        >-->
-
-<!--        <ImageView-->
-<!--            android:layout_gravity="center"-->
-<!--            android:layout_width="35dp"-->
-<!--            android:layout_height="35dp"-->
-<!--            android:adjustViewBounds="true"-->
-<!--            android:background="@drawable/ic_baseline_assignment_late_24"-->
-<!--            android:scaleType="fitCenter" />-->
-<!--        <TextView-->
-
-<!--            android:layout_marginLeft="20dp"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:contentDescription="Add"-->
-<!--            android:padding="5dp"-->
-<!--            android:text="Mark Text as Urgent"-->
-<!--            android:textSize="20sp" />-->
-<!--    </LinearLayout>-->
 
 
     <LinearLayout
-        android:id="@+id/resolveMessages"
+        android:id="@+id/resolve"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -157,7 +128,7 @@
             android:layout_marginLeft="20dp"
             android:contentDescription="Add"
             android:padding="5dp"
-            android:text="Resolve Urgent Messages"
+            android:text="Resolve"
             android:textSize="20sp" />
     </LinearLayout>
 

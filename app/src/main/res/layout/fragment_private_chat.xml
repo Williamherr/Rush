@@ -43,55 +43,60 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <EditText
-
             android:id="@+id/messageTextView"
             style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/attachmentButton"
             android:autofillHints="@string/messagePlaceHolder"
-            android:background="@null"
+            android:background="@android:color/transparent"
             android:hint="@string/messagePlaceHolder"
             android:inputType="textCapSentences|textNoSuggestions|textMultiLine"
             android:maxWidth="300dp"
             android:padding="20dp"
-            android:text="" />
+            android:text=""
+            tools:ignore="TextContrastCheck" />
 
         <ImageButton
-            android:padding="5dp"
-            android:layout_alignBottom="@+id/messageTextView"
             android:id="@+id/attachmentButton"
             android:layout_width="wrap_content"
             android:layout_height="62dp"
+            android:layout_alignBottom="@+id/messageTextView"
             android:layout_marginEnd="0dp"
             android:layout_toStartOf="@+id/urgent"
             android:background="@null"
-            android:contentDescription="@string/sendMessageDes"
-            app:srcCompat="@drawable/ic_attachment" />
-
-        <ImageButton
+            android:minWidth="48dp"
             android:padding="5dp"
-            android:id="@+id/urgent"
-            android:layout_width="wrap_content"
-            android:layout_height="62dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_alignBottom="@+id/messageTextView"
-            android:layout_toStartOf="@+id/messageSendButton"
-            android:background="@null"
-            android:contentDescription="@string/sendMessageDes"
-            app:srcCompat="@drawable/ic_baseline_priority_high_24"
+            app:srcCompat="@drawable/ic_attachment"
+            android:contentDescription="upload"
             />
 
         <ImageButton
-            android:paddingLeft="15dp"
-            android:paddingRight="10dp"
+            android:id="@+id/urgent"
+            android:layout_width="wrap_content"
+            android:layout_height="62dp"
             android:layout_alignBottom="@+id/messageTextView"
-            android:layout_alignParentRight="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_toStartOf="@+id/messageSendButton"
+            android:background="@null"
+            android:contentDescription="Sends Urgent Messages"
+            android:minWidth="48dp"
+            android:padding="5dp"
+            app:srcCompat="@drawable/ic_baseline_priority_high_24"
+            tools:ignore="DuplicateSpeakableTextCheck" />
+
+        <ImageButton
             android:id="@+id/messageSendButton"
             android:layout_width="wrap_content"
             android:layout_height="62dp"
+            android:layout_alignBottom="@+id/messageTextView"
+            android:layout_alignParentEnd="true"
             android:background="@null"
             android:contentDescription="@string/sendMessageDes"
+            android:paddingStart="15dp"
+            android:paddingEnd="10dp"
             app:srcCompat="@drawable/send" />
     </RelativeLayout>
 

@@ -21,9 +21,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.rush.Model.Member;
 import com.example.rush.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -55,13 +57,22 @@ public class AddPhotoFragment extends Fragment {
     final String TAG = "UploadFragment";
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference reference = db.collection("users");
+    private String messageKey;
+    private boolean isPhotoAdded = false;
+    private FirebaseUser user;
+
+    public AddPhotoFragment( FirebaseUser user,String messageKey) {
+        this.user = user;
+        this.messageKey = messageKey;
+        isPhotoAdded = true;
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
-
     }
 
     @Override
@@ -108,6 +119,8 @@ public class AddPhotoFragment extends Fragment {
                 mListener.backFragment();
             }
         });
+
+
         return view;
 
 
@@ -120,6 +133,8 @@ public class AddPhotoFragment extends Fragment {
 
     public interface UploadFragmentListener{
         void backFragment();
+
+
 
     }
 
@@ -167,6 +182,7 @@ public class AddPhotoFragment extends Fragment {
                         .getBitmap(
                                 getActivity().getContentResolver(),
                                 filePath);
+                Log.d("TAG", "onActivityResult: " + filePath);
                 imageView.setImageBitmap(bitmap);
                 imageView.setTag("Done");
             }
@@ -220,6 +236,9 @@ public class AddPhotoFragment extends Fragment {
                                             //Uri downloadUri = taskSnapshot.getMetadata().getDownloadUrl();
                                             //generatedFilePath = downloadUri.toString(); /// The string(file link) that you need
                                             Log.d("testImageUrl", uri.toString());
+                                            if (isPhotoAdded) {
+                                                addImagesToMessage(uri.toString());
+                                            }
                                             mListener.backFragment();
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
@@ -285,6 +304,22 @@ public class AddPhotoFragment extends Fragment {
                                 }
                             });
         }
+    }
+
+    public void addImagesToMessage(String img) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("message", "");
+        Timestamp time = Timestamp.now();
+        data.put("time", time);
+        data.put("uid", user.getUid());
+        data.put("name", user.getDisplayName());
+        data.put("isUrgent", false);
+        data.put("img", img);
+
+        db.collection("chat-messages")
+                .document("private-messages")
+                .collection("all-private-messages")
+                .document(messageKey).collection("messages").add(data);
     }
 
 

@@ -10,4 +10,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="error">#F08080</color>
     <color name="error_message">#fdecec</color>
+    <color name="status_available">#29d658</color>
+    <color name="status_away">#e1343e</color>
+    <color name="status_gone">#a7b6aa</color>
+
 </resources>

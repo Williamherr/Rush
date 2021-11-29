@@ -9,6 +9,37 @@
         <entry key="..\:/Uncc Courses/2021-Fall/Capstone Project 4155/RushApp/ITCS4155-Capstone/app/src/main/res/layout/user_messages_sent.xml" value="0.2" />
         <entry key="..\:/Uncc Courses/2021-Fall/Capstone Project 4155/RushApp/ITCS4155-Capstone/app/src/main/res/menu/bottom_navigation.xml" value="0.2" />
         <entry key="..\:/Uncc Courses/2021-Fall/Capstone Project 4155/RushApp/ITCS4155-Capstone/app/src/main/res/menu/top_app_bar.xml" value="0.2" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.5703125" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable-v24/ic_notifications.xml" value="0.4296875" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/circle.xml" value="0.3484375" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/empty_account.xml" value="0.5697916666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/error_message.xml" value="0.4296875" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/home.xml" value="0.5697916666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_baseline_arrow.xml" value="0.4296875" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_baseline_priority_high_24.xml" value="0.4296875" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_delete.xml" value="0.5703125" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_logout_black_24dp.xml" value="0.5703125" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_plus.xml" value="0.4296875" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_search_icon.xml" value="0.4296875" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_status.xml" value="0.3484375" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/activity_main.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/bottom_sheet_private_chat_menu.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_account.xml" value="0.67" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_account_creation.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_bottom_sheet_dialog.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_classes_bottom_dialog.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_home.xml" value="0.29375" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_login.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_private_chat.xml" value="0.29375" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/message_list.xml" value="0.29375" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/search_user_adapter.xml" value="0.3307291666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/user_messages_sent.xml" value="0.3307291666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/menu/actionbar_menu.xml" value="0.36354166666666665" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/menu/bottom_navigation.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/menu/left_message_menu.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/menu/message_menu.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/menu/search_menu.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/menu/urgent_menu.xml" value="0.36354166666666665" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/borders.xml" value="0.2703125" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/colors.xml" value="0.2703125" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/rectangle.xml" value="0.2703125" />
@@ -62,7 +93,7 @@
     </option>
     <option name="myNotNulls">
       <value>
-        <list size="13">
+        <list size="14">
           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
           <item index="1" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
           <item index="2" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
@@ -76,6 +107,7 @@
           <item index="10" class="java.lang.String" itemvalue="org.eclipse.jdt.annotation.NonNull" />
           <item index="11" class="java.lang.String" itemvalue="io.reactivex.annotations.NonNull" />
           <item index="12" class="java.lang.String" itemvalue="io.reactivex.rxjava3.annotations.NonNull" />
+          <item index="13" class="java.lang.String" itemvalue="lombok.NonNull" />
         </list>
       </value>
     </option>

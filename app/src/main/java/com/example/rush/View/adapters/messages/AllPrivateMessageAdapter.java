@@ -60,9 +60,9 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
         return holder;
     }
 
-    @SuppressLint("LongLogTag")
+
     @Override
-    public void onBindViewHolder( ViewMessageHolder holder, int position) {
+    public void onBindViewHolder(ViewMessageHolder holder, @SuppressLint("RecyclerView") int position) {
 
         Member otherUser =  messagesList.get(position).getMembers().getOtherMember(uid);
         String otherUserName = otherUser.getName();
