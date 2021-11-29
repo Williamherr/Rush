@@ -71,7 +71,9 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
     }
 
     @Override
+
     public void onBindViewHolder(ViewMessageHolder holder, @SuppressLint("RecyclerView") int position) {
+
 
         Member otherUser = messagesList.get(position).getMembers().getOtherMember(uid);
         String otherUserName = otherUser.getName();

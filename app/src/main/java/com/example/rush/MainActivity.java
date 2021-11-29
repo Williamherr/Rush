@@ -1,5 +1,6 @@
 package com.example.rush;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -27,10 +28,16 @@ import com.example.rush.View.fragments.messages.CreatePrivateMessages;
 import com.example.rush.View.fragments.messages.MessageFragment;
 import com.example.rush.View.fragments.messages.PrivateChatFragment;
 import com.example.rush.Model.Member;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener, LoginFragment.CreateFragmentListener, ClassesFragment.ClassDetailFragmentListener,
@@ -40,9 +47,10 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
 
 {
     private FirebaseUser user;
+    private FirebaseFirestore db;
     private BottomNavigationView bottomNav;
     private boolean status;
-
+    private final String TAG = "Main";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         bottomNav = findViewById(R.id.bottomNavigationBar);
         bottomNav.setVisibility(View.GONE);
         user = FirebaseAuth.getInstance().getCurrentUser();
+
+
         //Navigation bar
         bottomNavigation();
 
@@ -308,15 +318,13 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 .addToBackStack(null).commit();
     }
 
+    public void goToClassDetails(String name, String instructor, String description, String id, String createdBy) {
+        setTitle(name);
+        getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
+                new ClassDetailsFragment(name, instructor, description, id, createdBy)).addToBackStack(null).commit();
+    }
 
 
-
-
-//    public void goToClassDetails(String name, String instructor, String description) {
-//        setTitle(name);
-//        getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
-//                new ClassDetailsFragment(name, instructor, description)).addToBackStack(null).commit();
-//    }
 
 
     /*
@@ -343,11 +351,6 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     }
 
 
-    public void goToClassDetails(String name, String instructor, String description, String id, String createdBy) {
-        setTitle(name);
-        getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
-                new ClassDetailsFragment(name, instructor, description, id, createdBy)).addToBackStack(null).commit();
-    }
 
 
 }
