@@ -41,15 +41,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener, LoginFragment.CreateFragmentListener, ClassesFragment.ClassDetailFragmentListener,
-        PrivateChatFragment.PrivateChatFragmentListener,   AddPhotoFragment.UploadFragmentListener, AccountCreationFragment.AccountCreationFragmentListener
+        PrivateChatFragment.PrivateChatFragmentListener,   AddPhotoFragment.UploadFragmentListener, AccountCreationFragment.AccountCreationFragmentListener, AccountFragment.IAccountSettingInterface
 
 //NotificationFragment.NotificationFragmentListener,
 
 {
     private FirebaseUser user;
-    private FirebaseFirestore db;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private BottomNavigationView bottomNav;
-    private boolean status;
     private final String TAG = "Main";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,14 +73,43 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     @Override
     public void onStart() {
         super.onStart();
-        status = true;
+        Log.d(TAG, "onStart: ");
+        if (user != null) {
+            setStatus(true);
+        }
     }
 
 
     @Override
     public void onStop() {
         super.onStop();
-        status = false;
+        if (user != null) {
+            setStatus(false);
+        }
+    }
+
+    public void setStatus(boolean start) {
+        if (start){
+            db.collection("users").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        String status = (String) task.getResult().get("lastStatus");
+                        if (status == null) {
+                            status = "available";
+                            db.collection("users").document(user.getUid()).update("lastStatus",status);
+                        }
+                        db.collection("users").document(user.getUid()).update("status",status);
+
+                    }
+                    
+                }
+            });
+
+        }
+        else {
+            db.collection("users").document(user.getUid()).update("status","offline");
+        }
 
     }
 
@@ -137,22 +165,14 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 return true;
 
-            case R.id.sign_out:
-                Log.d("TAG", "Sign out ");
-                FirebaseAuth.getInstance().signOut();
-                signout();
 
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.actionbar_menu, menu);
-        return true;
-    }
+
+
 
     public boolean isKeyboardOpen() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -203,16 +223,15 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     }
 
     public void signout() {
+        user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             setTitle("Rush");
-            Log.d("TAG", "Sign out ");
+            FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("finish", true);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
             startActivity(intent);
             finish();
-        } else {
-            Log.d("TAG", "null ");
         }
     }
 
@@ -346,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     public void goToAccount() {
         setTitle("Account");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new AccountFragment(user))
+                .replace(R.id.containerView, new AccountFragment(user,db))
                 .commit();
     }
 

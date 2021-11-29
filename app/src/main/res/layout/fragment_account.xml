@@ -33,14 +33,13 @@
         app:tint="@color/white" />
 
     <ImageView
-        android:id="@+id/statusImg"
+        android:id="@+id/statusColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/circle"
         app:layout_constraintBottom_toBottomOf="@+id/profilePic"
         app:layout_constraintEnd_toEndOf="@+id/profilePic"
         app:layout_constraintHorizontal_bias="0.89"
-
 
         app:layout_constraintStart_toStartOf="@+id/profilePic"
         app:layout_constraintTop_toTopOf="@+id/profilePic"
@@ -111,7 +110,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/edit"
+            android:id="@+id/setStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
@@ -128,7 +127,7 @@
                 android:layout_height="35dp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
-                android:background="@drawable/ic_plus"
+                android:background="@drawable/empty_account"
                 android:scaleType="fitCenter" />
 
             <TextView
@@ -143,7 +142,7 @@
                 android:textSize="20sp" />
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/editProfile"
+            android:id="@+id/accountInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
@@ -160,7 +159,7 @@
                 android:layout_height="35dp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
-                android:background="@drawable/ic_plus"
+                android:background="@drawable/ic_baseline_account_box_24"
                 android:scaleType="fitCenter" />
 
             <TextView
@@ -174,7 +173,7 @@
                 android:textSize="20sp" />
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/logout"
+            android:id="@+id/sign_out"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
