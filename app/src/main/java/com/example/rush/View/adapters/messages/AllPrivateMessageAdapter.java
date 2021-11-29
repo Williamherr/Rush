@@ -2,6 +2,7 @@ package com.example.rush.View.adapters.messages;
 
 import android.annotation.SuppressLint;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -69,7 +70,6 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
         return holder;
     }
 
-
     @Override
 
     public void onBindViewHolder(ViewMessageHolder holder, @SuppressLint("RecyclerView") int position) {
@@ -117,6 +117,7 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
         return messagesList.size();
     }
 
+
     public class ViewMessageHolder extends RecyclerView.ViewHolder {
 
         private TextView name;
@@ -139,6 +140,6 @@ public class AllPrivateMessageAdapter extends RecyclerView.Adapter<AllPrivateMes
 
         void goToPrivateChatFrag(Member otherUser, String messageKey);
     }
+
+
 }
-
-

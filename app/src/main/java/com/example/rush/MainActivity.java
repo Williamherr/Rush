@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         bottomNav = findViewById(R.id.bottomNavigationBar);
         bottomNav.setVisibility(View.GONE);
         user = FirebaseAuth.getInstance().getCurrentUser();
-       
+
 
         //Navigation bar
         bottomNavigation();
