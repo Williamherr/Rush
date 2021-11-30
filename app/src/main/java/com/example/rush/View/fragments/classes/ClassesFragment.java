@@ -416,6 +416,8 @@ public class ClassesFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 listener.goToClassDetails(name, instructor, description, id, createdBy);
+                                //Clear the list to prevent classes from duplicating
+                                listOfClasses.clear();
                             }
                         });
                         //Allows the professor to copy the class invitation code
@@ -434,6 +436,8 @@ public class ClassesFragment extends Fragment {
                         //Students should only view the class
                     } else {
                         listener.goToClassDetails(name, instructor, description, id, createdBy);
+                        //Clear the list to prevent classes from duplicating
+                        listOfClasses.clear();
                     }
                 }
             });
