@@ -248,43 +248,36 @@ public class ClassesFragment extends Fragment {
                         }
                     });
         } else {
-            //Start by getting list of all classes
-            Task classes = database.collection("classes").get();
-            classes.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+            //Get all classes that have students
+            database.collectionGroup("Students")
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            //Query each class for students that have joined
-                            Task students = database.collection("classes").document(document.getId())
-                                    .collection("Students").whereEqualTo("ID", userID).get();
-                            students.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> taskTwo) {
-                                    if (taskTwo.isSuccessful()) {
-                                        for (QueryDocumentSnapshot snapshot : taskTwo.getResult()) {
-                                                    /*
-                                                    If the current student has joined any classes, get reference to the documents
-                                                    and trace its parents back to the class document
-                                                     */
-                                            DocumentReference parentRef = snapshot.getReference().getParent().getParent();
-                                            parentRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> taskThree) {
-                                                    if (taskThree.isSuccessful()) {
-                                                        ClassInfo obj = taskThree.getResult().toObject(ClassInfo.class);
-                                                        Log.d("Doc", obj.getClassID());
-                                                        //Add any joined classes to the list
-                                                        listOfClasses.add(obj);
-                                                        adapter = new ClassesFragment.ClassAdapter(listOfClasses);
-                                                        recycle.setAdapter(adapter);
-                                                    }
-                                                }
-                                            });
+                            if (document.exists()) {
+                                //Get the student id
+                                String id = (String) document.getData().get("ID");
+                                //Only need classes for the current student
+                                if (userID.equals(id) && id != null) {
+                                    //Backtrack to get the class itself
+                                    DocumentReference parentRef = document.getReference().getParent().getParent();
+                                    parentRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                //Cast task result into a ClassInfo object
+                                                ClassInfo obj = task.getResult().toObject(ClassInfo.class);
+                                                //Add to list of classes
+                                                listOfClasses.add(obj);
+                                                adapter = new ClassesFragment.ClassAdapter(listOfClasses);
+                                                recycle.setAdapter(adapter);
+                                            }
                                         }
-                                    }
+                                    });
                                 }
-                            });
+                            }
                         }
                     }
                 }
