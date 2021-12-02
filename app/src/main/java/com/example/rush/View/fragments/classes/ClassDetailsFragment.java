@@ -142,8 +142,6 @@ public class ClassDetailsFragment extends Fragment {
                             recycle.setAdapter(adapter);
                         }
                     }
-
-
                 }
             }
         });

@@ -64,6 +64,8 @@ public class ClassesFragment extends Fragment {
 
     public interface ClassDetailFragmentListener {
         void goToClassDetails(String name, String instructor, String description, String id, String createdBy);
+
+        void goToClassChat(String id);
     }
 
     @Override
@@ -390,17 +392,18 @@ public class ClassesFragment extends Fragment {
                     String description = classObj.getDescription();
                     String id = classObj.getClassID();
                     String createdBy = classObj.getCreatedBy();
-                    //Allow only professors options when clicking on the class
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setCancelable(true);
                     if (type.equals("Professor")) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setCancelable(true);
                         builder.setTitle("Invitation Code");
                         builder.setMessage("Below is the code to invite students to your class: \n\n"
                                 + id);
                         //Hitting this button closes the dialog
-                        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton("View Class Chat", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                listener.goToClassChat(id);
+                                listOfClasses.clear();
                                 dialogInterface.dismiss();
                             }
                         });
@@ -428,7 +431,25 @@ public class ClassesFragment extends Fragment {
                         dialog.show();
                         //Students should only view the class
                     } else {
-                        listener.goToClassDetails(name, instructor, description, id, createdBy);
+                        builder.setTitle(name);
+                        builder.setMessage("Use the below buttons to view class information or view the " +
+                                "class group chat");
+                        builder.setPositiveButton("View Class Chat", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                listener.goToClassChat(id);
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        builder.setNegativeButton("View Class", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                listener.goToClassDetails(name, instructor, description, id, createdBy);
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
                         //Clear the list to prevent classes from duplicating
                         listOfClasses.clear();
                     }

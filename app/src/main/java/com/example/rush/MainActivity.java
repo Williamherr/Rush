@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import com.example.rush.View.fragments.AccountCreationFragment;
 import com.example.rush.View.fragments.AddPhotoFragment;
 import com.example.rush.View.fragments.account.AccountFragment;
+import com.example.rush.View.fragments.classes.ClassChatFragment;
 import com.example.rush.View.fragments.classes.ClassCreationFragment;
 import com.example.rush.View.fragments.classes.ClassDetailsFragment;
 import com.example.rush.View.fragments.classes.ClassJoinFragment;
@@ -41,7 +42,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener, LoginFragment.CreateFragmentListener, ClassesFragment.ClassDetailFragmentListener,
-        PrivateChatFragment.PrivateChatFragmentListener,   AddPhotoFragment.UploadFragmentListener, AccountCreationFragment.AccountCreationFragmentListener, AccountFragment.IAccountSettingInterface
+        PrivateChatFragment.PrivateChatFragmentListener, AddPhotoFragment.UploadFragmentListener, AccountCreationFragment.AccountCreationFragmentListener, AccountFragment.IAccountSettingInterface
 
 //NotificationFragment.NotificationFragmentListener,
 
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private BottomNavigationView bottomNav;
     private final String TAG = "Main";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     }
 
     public void setStatus(boolean start) {
-        if (start){
+        if (start) {
             db.collection("users").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -97,22 +99,20 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                         String status = (String) task.getResult().get("lastStatus");
                         if (status == null) {
                             status = "available";
-                            db.collection("users").document(user.getUid()).update("lastStatus",status);
+                            db.collection("users").document(user.getUid()).update("lastStatus", status);
                         }
-                        db.collection("users").document(user.getUid()).update("status",status);
+                        db.collection("users").document(user.getUid()).update("status", status);
 
                     }
-                    
+
                 }
             });
 
-        }
-        else {
-            db.collection("users").document(user.getUid()).update("status","offline");
+        } else {
+            db.collection("users").document(user.getUid()).update("status", "offline");
         }
 
     }
-
 
 
     public void bottomNavigation() {
@@ -170,8 +170,6 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
 
 
     public boolean isKeyboardOpen() {
@@ -317,7 +315,6 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     }
 
 
-
     @Override
     public void backFragment() {
         getSupportFragmentManager().popBackStack();
@@ -331,7 +328,8 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 .replace(R.id.containerView, new NotificationFragment()).addToBackStack(null)
                 .commit();
     }
-    public void goToJoinFragment(){
+
+    public void goToJoinFragment() {
         setTitle("Join Class");
         getSupportFragmentManager().beginTransaction().replace(R.id.containerView, new ClassJoinFragment())
                 .addToBackStack(null).commit();
@@ -341,6 +339,11 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
         setTitle(name);
         getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
                 new ClassDetailsFragment(name, instructor, description, id, createdBy)).addToBackStack(null).commit();
+    }
+
+    public void goToClassChat(String id) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
+                new ClassChatFragment(id)).addToBackStack(null).commit();
     }
 
 
@@ -365,11 +368,9 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     public void goToAccount() {
         setTitle("Account");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new AccountFragment(user,db))
+                .replace(R.id.containerView, new AccountFragment(user, db))
                 .commit();
     }
-
-
 
 
 }

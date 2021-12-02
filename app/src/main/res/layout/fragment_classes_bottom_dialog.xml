@@ -26,11 +26,12 @@
             android:scaleType="fitCenter" />
 
         <TextView
+            android:id="@+id/dialogNew"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:contentDescription="Add"
 
+            android:contentDescription="Add"
             android:padding="5dp"
             android:text="New Classes"
             android:textSize="35sp" />
@@ -58,6 +59,7 @@
 
         <TextView
 
+            android:id="@+id/dialogDelete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
