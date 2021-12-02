@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/activity_main.xml" value="0.41394927536231885" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_account.xml" value="0.4288949275362319" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_account_creation.xml" value="0.40625" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_account_edit.xml" value="0.4288949275362319" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_add_photo.xml" value="0.4216485507246377" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_bottom_sheet_dialog.xml" value="0.40625" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_class_creation.xml" value="0.41394927536231885" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_class_details.xml" value="0.40625" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_class_join.xml" value="0.40625" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_classes.xml" value="0.4216485507246377" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_login.xml" value="0.41394927536231885" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_message.xml" value="0.41394927536231885" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/fragment_private_chat.xml" value="0.40625" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/message_list.xml" value="0.40625" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/search_user_adapter.xml" value="0.40625" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/students_list.xml" value="0.40625" />
+        <entry key="..\:/Android Studio/ITCS4155-Capstone/app/src/main/res/layout/user_messages_sent.xml" value="0.40625" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
