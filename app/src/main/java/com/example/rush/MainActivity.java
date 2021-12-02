@@ -314,6 +314,13 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 .commit();
     }
 
+    public void addNewPhotoFragment(String messageKey, String docID) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new AddPhotoFragment(user, messageKey, docID), "UploadFragment")
+                .addToBackStack(null)
+                .commit();
+    }
+
 
     @Override
     public void backFragment() {

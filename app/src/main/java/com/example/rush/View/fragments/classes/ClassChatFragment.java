@@ -27,7 +27,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.rush.MainActivity;
 import com.example.rush.Model.Messages;
 import com.example.rush.R;
 import com.example.rush.View.adapters.messages.MessageAdapter;
@@ -229,8 +232,14 @@ public class ClassChatFragment extends Fragment {
                         String name = doc.getString("name");
                         Timestamp time = doc.getTimestamp("time");
                         String uid = doc.getString("uid");
+                        String img = doc.getString("img");
+                        if (img == null) {
+                            img = "";
+                        } else {
+                            message = name + " sent a picture";
+                        }
 
-                        messages.add(new Messages(name, uid, doc.getId(), message, time));
+                        messages.add(new Messages(name, uid, doc.getId(), message, time, img));
                         Log.d("ClassChat", message);
 
                     }
@@ -243,6 +252,16 @@ public class ClassChatFragment extends Fragment {
 
     public class ClassChatAdapter extends RecyclerView.Adapter<ClassChatFragment.ClassChatAdapter.ViewHolder> {
         private ArrayList<Messages> messagesList;
+
+        private void SelectImage(ImageView imageView, String imgPath) {
+            // Reference to an image file in Cloud Storage
+
+            Glide.with(getContext())
+                    .load(imgPath)
+                    .into(imageView);
+
+
+        }
 
 
         public ClassChatAdapter(ArrayList<Messages> messagesList) {
@@ -262,8 +281,20 @@ public class ClassChatFragment extends Fragment {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             String uid = messagesList.get(position).getUid();
             String name = messagesList.get(position).getName();
+            String img = messagesList.get(position).getImg();
             SpannableString stringSpanner = new SpannableString(name);
             stringSpanner.setSpan(new StyleSpan(Typeface.BOLD), 0, stringSpanner.length(), 0);
+
+
+            attachmentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getActivity(), "Please select an image", Toast.LENGTH_SHORT).show();
+                    ((MainActivity) getActivity()).addNewPhotoFragment(id, messagesList.get(position).getId());
+
+                }
+            });
 
 
             if (!uid.equals(user.getUid())) {
@@ -273,12 +304,27 @@ public class ClassChatFragment extends Fragment {
                 holder.message.setVisibility(View.GONE);
                 holder.name.setVisibility(View.VISIBLE);
                 holder.name.setText(stringSpanner);
+
+
+                if (img != null && img != "") {
+                    holder.receiveUserMessage.setVisibility(View.GONE);
+                    holder.rightImage.setVisibility(View.GONE);
+                    holder.leftImage.setVisibility(View.VISIBLE);
+                    SelectImage(holder.leftImage, img);
+                }
             } else {
                 holder.receiveUserMessage.setVisibility(View.GONE);
                 holder.userProfileImage.setVisibility(View.GONE);
                 holder.message.setVisibility(View.VISIBLE);
                 holder.message.setText(messagesList.get(position).getMessage());
                 holder.name.setVisibility(View.GONE);
+                holder.rightImage.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        showBottomMenu(messagesList.get(position));
+                        return false;
+                    }
+                });
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
@@ -286,6 +332,12 @@ public class ClassChatFragment extends Fragment {
                         return false;
                     }
                 });
+                if (img != null && img != "") {
+                    holder.message.setVisibility(View.GONE);
+                    holder.leftImage.setVisibility(View.GONE);
+                    holder.rightImage.setVisibility(View.VISIBLE);
+                    SelectImage(holder.rightImage, img);
+                }
             }
 
 
@@ -308,6 +360,8 @@ public class ClassChatFragment extends Fragment {
             private TextView name;
             private ImageButton messageMenuButton;
             private ImageButton leftMessageMenuButton;
+            private ImageView leftImage;
+            private ImageView rightImage;
 
             public ViewHolder(View view) {
                 super(view);
@@ -318,9 +372,12 @@ public class ClassChatFragment extends Fragment {
                 messageMenuButton = view.findViewById(R.id.messageMenu);
                 leftMessageMenuButton = view.findViewById(R.id.leftMessageMenu);
                 name = view.findViewById(R.id.displayName);
+                leftImage = view.findViewById(R.id.leftImage);
+                rightImage = view.findViewById(R.id.rightImage);
 
             }
         }
 
     }
+
 }

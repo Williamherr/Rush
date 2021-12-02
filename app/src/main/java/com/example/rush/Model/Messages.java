@@ -1,6 +1,8 @@
 package com.example.rush.Model;
 
 
+import com.google.firebase.Timestamp;
+
 public class Messages {
 
     private String name;
@@ -11,7 +13,7 @@ public class Messages {
     private String img;
     private Boolean isUrgent;
 
-    public Messages(String name, String uid,String id, String message, com.google.firebase.Timestamp time) {
+    public Messages(String name, String uid, String id, String message, com.google.firebase.Timestamp time) {
         this.name = name;
         this.id = id;
         this.uid = uid;
@@ -19,7 +21,7 @@ public class Messages {
         this.time = time;
     }
 
-    public Messages(String name, String uid,String id, String message, com.google.firebase.Timestamp time,String img, Boolean isUrgent) {
+    public Messages(String name, String uid, String id, String message, com.google.firebase.Timestamp time, String img, Boolean isUrgent) {
         this.name = name;
         this.id = id;
         this.uid = uid;
@@ -29,8 +31,17 @@ public class Messages {
         this.isUrgent = isUrgent;
     }
 
-    public Messages(){
+    public Messages() {
 
+    }
+
+    public Messages(String name, String uid, String id, String message, Timestamp time, String img) {
+        this.name = name;
+        this.id = id;
+        this.uid = uid;
+        this.message = message;
+        this.time = time;
+        this.img = img;
     }
 
     public Boolean getIsUrgent() {

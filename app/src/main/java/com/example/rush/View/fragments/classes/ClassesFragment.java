@@ -394,12 +394,13 @@ public class ClassesFragment extends Fragment {
                     String createdBy = classObj.getCreatedBy();
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setCancelable(true);
+
                     if (type.equals("Professor")) {
                         builder.setTitle("Invitation Code");
                         builder.setMessage("Below is the code to invite students to your class: \n\n"
                                 + id);
                         //Hitting this button closes the dialog
-                        builder.setPositiveButton("View Class Chat", new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton("Class Chat", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 listener.goToClassChat(id);
@@ -430,12 +431,12 @@ public class ClassesFragment extends Fragment {
                         });
                         AlertDialog dialog = builder.create();
                         dialog.show();
-                        //Students should only view the class
                     } else {
-                        builder.setTitle(name);
+                        builder.setTitle("Class information");
                         builder.setMessage("Use the below buttons to view class information or view the " +
                                 "class group chat");
-                        builder.setPositiveButton("View Class Chat", new DialogInterface.OnClickListener() {
+                        //Take the student to the class chat
+                        builder.setNegativeButton("Class Chat", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 listener.goToClassChat(id);
@@ -443,7 +444,15 @@ public class ClassesFragment extends Fragment {
                                 dialogInterface.dismiss();
                             }
                         });
-                        builder.setNegativeButton("View Class", new DialogInterface.OnClickListener() {
+                        //Close the dialog
+                        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        //Take student to class details page
+                        builder.setNeutralButton("View Class", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 listener.goToClassDetails(name, instructor, description, id, createdBy);

@@ -60,11 +60,17 @@ public class AddPhotoFragment extends Fragment {
     private String messageKey;
     private boolean isPhotoAdded = false;
     private FirebaseUser user;
+    private String docID;
 
-    public AddPhotoFragment( FirebaseUser user,String messageKey) {
+    public AddPhotoFragment(FirebaseUser user, String messageKey) {
         this.user = user;
         this.messageKey = messageKey;
         isPhotoAdded = true;
+    }
+    public AddPhotoFragment(FirebaseUser user, String messageKey, String docID){
+        this.user = user;
+        this.messageKey = messageKey;
+        this.docID = docID;
     }
 
 
@@ -102,7 +108,7 @@ public class AddPhotoFragment extends Fragment {
         });
         btnUpload.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                if(imageView.getTag() != null) {
+                if (imageView.getTag() != null) {
                     uploadImage();
                 } else {
                     Toast.makeText(getActivity(), "Please select an image", Toast.LENGTH_SHORT).show();
@@ -125,21 +131,20 @@ public class AddPhotoFragment extends Fragment {
 
 
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mListener = (UploadFragmentListener) context;
     }
 
-    public interface UploadFragmentListener{
+    public interface UploadFragmentListener {
         void backFragment();
-
 
 
     }
 
-    private void SelectImage()
-    {
+    private void SelectImage() {
 
         // Defining Implicit Intent to mobile gallery
         Intent intent = new Intent();
@@ -155,8 +160,7 @@ public class AddPhotoFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode,
                                  int resultCode,
-                                 Intent data)
-    {
+                                 Intent data) {
 
         super.onActivityResult(requestCode,
                 resultCode,
@@ -185,9 +189,7 @@ public class AddPhotoFragment extends Fragment {
                 Log.d("TAG", "onActivityResult: " + filePath);
                 imageView.setImageBitmap(bitmap);
                 imageView.setTag("Done");
-            }
-
-            catch (IOException e) {
+            } catch (IOException e) {
                 // Log the exception
                 e.printStackTrace();
             }
@@ -236,8 +238,10 @@ public class AddPhotoFragment extends Fragment {
                                             //Uri downloadUri = taskSnapshot.getMetadata().getDownloadUrl();
                                             //generatedFilePath = downloadUri.toString(); /// The string(file link) that you need
                                             Log.d("testImageUrl", uri.toString());
-                                            if (isPhotoAdded) {
+                                            if (isPhotoAdded && docID == null) {
                                                 addImagesToMessage(uri.toString());
+                                            }else{
+                                                addImagesToClassMessage(uri.toString());
                                             }
                                             mListener.backFragment();
                                         }
@@ -267,7 +271,6 @@ public class AddPhotoFragment extends Fragment {
                                                     Log.w(TAG, "Error adding document", e);
                                                 }
                                             });
-
 
 
                                 }
@@ -304,6 +307,19 @@ public class AddPhotoFragment extends Fragment {
                                 }
                             });
         }
+    }
+
+    public void addImagesToClassMessage(String img) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("message", "");
+        Timestamp time = Timestamp.now();
+        data.put("time", time);
+        data.put("uid", user.getUid());
+        data.put("name", user.getDisplayName());
+        data.put("img", img);
+
+        db.collection("chat-messages").document("class-messages")
+                .collection(messageKey).document(docID).set(data);
     }
 
     public void addImagesToMessage(String img) {
