@@ -65,10 +65,6 @@ public class ClassChatFragment extends Fragment {
     private ArrayList<Messages> messages;
     private RecyclerView recycle;
     private ClassChatAdapter adapter;
-    private RecyclerView.SmoothScroller smoothScroller;
-    private boolean scrollToBottom = true;
-    private LinearLayoutManager manager;
-    private int position;
 
 
     public ClassChatFragment() {
@@ -99,7 +95,6 @@ public class ClassChatFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_class_chat, container, false);
 
-        position = 0;
         messages = new ArrayList<>();
 
         messageText = view.findViewById(R.id.messageTextView);
@@ -107,16 +102,8 @@ public class ClassChatFragment extends Fragment {
         attachmentButton = view.findViewById(R.id.attachmentButton);
 
         recycle = (RecyclerView) view.findViewById(R.id.classMessagesRecycler);
-        manager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
         recycle.setLayoutManager(manager);
-
-        smoothScroller = new
-                LinearSmoothScroller(getContext()) {
-                    @Override
-                    protected int getVerticalSnapPreference() {
-                        return LinearSmoothScroller.SNAP_TO_START;
-                    }
-                };
 
 
         addMessages();
@@ -150,7 +137,6 @@ public class ClassChatFragment extends Fragment {
     }
 
     public void update(Messages message) {
-        scrollToBottom = false;
 
         messageText.requestFocus();
         messageText.setText(message.getMessage());
@@ -251,14 +237,6 @@ public class ClassChatFragment extends Fragment {
                 }
                 adapter = new ClassChatAdapter(messages);
                 recycle.setAdapter(adapter);
-                if (scrollToBottom) {
-                    //Scroll to the bottom if the page is onloaded
-                    manager.scrollToPosition(adapter.getItemCount() - 1);
-                } else {
-                    //Scroll to the specific position if the page is edited
-                    manager.scrollToPosition(position);
-                    scrollToBottom = true;
-                }
             }
         });
     }

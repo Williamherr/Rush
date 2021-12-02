@@ -414,6 +414,7 @@ public class ClassesFragment extends Fragment {
                                 listener.goToClassDetails(name, instructor, description, id, createdBy);
                                 //Clear the list to prevent classes from duplicating
                                 listOfClasses.clear();
+                                dialogInterface.dismiss();
                             }
                         });
                         //Allows the professor to copy the class invitation code
@@ -438,6 +439,7 @@ public class ClassesFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 listener.goToClassChat(id);
+                                listOfClasses.clear();
                                 dialogInterface.dismiss();
                             }
                         });
@@ -445,13 +447,12 @@ public class ClassesFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 listener.goToClassDetails(name, instructor, description, id, createdBy);
+                                listOfClasses.clear();
                                 dialogInterface.dismiss();
                             }
                         });
                         AlertDialog dialog = builder.create();
                         dialog.show();
-                        //Clear the list to prevent classes from duplicating
-                        listOfClasses.clear();
                     }
                 }
             });

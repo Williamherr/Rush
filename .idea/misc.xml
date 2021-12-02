@@ -62,7 +62,7 @@
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_account_creation.xml" value="0.176" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_bottom_sheet_dialog.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_chat_search.xml" value="0.20833333333333334" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_class_chat.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_class_chat.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_class_creation.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_class_details.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_class_join.xml" value="0.264" />
@@ -73,7 +73,7 @@
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_home.xml" value="0.40884718498659517" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_login.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_message.xml" value="0.17889492753623187" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_private_chat.xml" value="0.264" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_private_chat.xml" value="0.4643196955280685" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/message_list.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/students_list.xml" value="0.4" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/user_messages_sent.xml" value="0.4" />
