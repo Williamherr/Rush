@@ -67,10 +67,12 @@ public class AddPhotoFragment extends Fragment {
         this.messageKey = messageKey;
         isPhotoAdded = true;
     }
-    public AddPhotoFragment(FirebaseUser user, String messageKey, String docID){
+
+    public AddPhotoFragment(FirebaseUser user, String messageKey, String docID) {
         this.user = user;
         this.messageKey = messageKey;
         this.docID = docID;
+        isPhotoAdded = true;
     }
 
 
@@ -240,7 +242,8 @@ public class AddPhotoFragment extends Fragment {
                                             Log.d("testImageUrl", uri.toString());
                                             if (isPhotoAdded && docID == null) {
                                                 addImagesToMessage(uri.toString());
-                                            }else{
+                                             //If docID is not null, adding image to class chat
+                                            } else if (isPhotoAdded && docID != null) {
                                                 addImagesToClassMessage(uri.toString());
                                             }
                                             mListener.backFragment();

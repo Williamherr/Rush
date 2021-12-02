@@ -254,13 +254,9 @@ public class ClassChatFragment extends Fragment {
         private ArrayList<Messages> messagesList;
 
         private void SelectImage(ImageView imageView, String imgPath) {
-            // Reference to an image file in Cloud Storage
-
             Glide.with(getContext())
                     .load(imgPath)
                     .into(imageView);
-
-
         }
 
 
