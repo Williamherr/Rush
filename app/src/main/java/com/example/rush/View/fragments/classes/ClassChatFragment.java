@@ -175,12 +175,13 @@ public class ClassChatFragment extends Fragment {
         bottom.setContentView(R.layout.fragment_classes_bottom_dialog);
         LinearLayout edit = bottom.findViewById(R.id.newClasses);
         LinearLayout delete = bottom.findViewById(R.id.deleteClasses);
+        //Change the text to show the edit and delete options
         TextView editMessage = ((TextView) edit.findViewById(R.id.dialogNew));
         editMessage.setText("Edit");
         TextView deleteMessage = ((TextView) delete.findViewById(R.id.dialogDelete));
         deleteMessage.setText("Delete");
         bottom.show();
-
+        //ALlow the user to edit messages
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -188,6 +189,7 @@ public class ClassChatFragment extends Fragment {
                 bottom.dismiss();
             }
         });
+        //Allow the user to delete messages
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

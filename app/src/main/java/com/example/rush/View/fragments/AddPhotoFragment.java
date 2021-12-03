@@ -240,11 +240,8 @@ public class AddPhotoFragment extends Fragment {
                                             //Uri downloadUri = taskSnapshot.getMetadata().getDownloadUrl();
                                             //generatedFilePath = downloadUri.toString(); /// The string(file link) that you need
                                             Log.d("testImageUrl", uri.toString());
-                                            if (isPhotoAdded && docID == null) {
+                                            if (isPhotoAdded) {
                                                 addImagesToMessage(uri.toString());
-                                             //If docID is not null, adding image to class chat
-                                            } else if (isPhotoAdded && docID != null) {
-                                                addImagesToClassMessage(uri.toString());
                                             }
                                             mListener.backFragment();
                                         }
@@ -312,19 +309,6 @@ public class AddPhotoFragment extends Fragment {
         }
     }
 
-    public void addImagesToClassMessage(String img) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("message", "");
-        Timestamp time = Timestamp.now();
-        data.put("time", time);
-        data.put("uid", user.getUid());
-        data.put("name", user.getDisplayName());
-        data.put("img", img);
-
-        db.collection("chat-messages").document("class-messages")
-                .collection(messageKey).document(docID).set(data);
-    }
-
     public void addImagesToMessage(String img) {
         Map<String, Object> data = new HashMap<>();
         data.put("message", "");
@@ -334,11 +318,19 @@ public class AddPhotoFragment extends Fragment {
         data.put("name", user.getDisplayName());
         data.put("isUrgent", false);
         data.put("img", img);
+        //If doc is null, add photo to private chat
+        if (docID == null) {
+            db.collection("chat-messages")
+                    .document("private-messages")
+                    .collection("all-private-messages")
+                    .document(messageKey).collection("messages").add(data);
+            //If doc is not null, photo should be added to the class chat
+        } else {
+            db.collection("chat-messages").document("class-messages")
+                    .collection(messageKey).document(docID).set(data);
+        }
 
-        db.collection("chat-messages")
-                .document("private-messages")
-                .collection("all-private-messages")
-                .document(messageKey).collection("messages").add(data);
+
     }
 
 
