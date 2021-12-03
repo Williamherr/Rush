@@ -368,11 +368,6 @@ public class ClassChatFragment extends Fragment {
             }
         }
 
-        public void filterList(ArrayList<Messages> messages) {
-            this.messagesList = messages;
-            notifyDataSetChanged();
-        }
-
         public class ViewHolder extends RecyclerView.ViewHolder {
             private View view;
             private ImageView userProfileImage;

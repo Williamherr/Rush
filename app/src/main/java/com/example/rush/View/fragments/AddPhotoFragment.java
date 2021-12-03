@@ -316,10 +316,10 @@ public class AddPhotoFragment extends Fragment {
         data.put("time", time);
         data.put("uid", user.getUid());
         data.put("name", user.getDisplayName());
-        data.put("isUrgent", false);
         data.put("img", img);
         //If doc is null, add photo to private chat
         if (docID == null) {
+            data.put("isUrgent", false);
             db.collection("chat-messages")
                     .document("private-messages")
                     .collection("all-private-messages")
