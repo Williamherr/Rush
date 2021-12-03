@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <menu xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <item
-            android:id="@+id/backNavigation"
-            android:contentDescription="@string/backNavigationButton"
-            app:showAsAction="ifRoom"
-            android:title="@string/backNavigationButton" />
+    <item
+        android:id="@+id/backNavigation"
+        android:contentDescription="@string/backNavigationButton"
+        app:showAsAction="ifRoom"
+        android:title="@string/backNavigationButton" />
 
-
-    </menu>
 </menu>

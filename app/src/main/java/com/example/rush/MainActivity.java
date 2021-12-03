@@ -349,7 +349,8 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 new ClassDetailsFragment(name, instructor, description, id, createdBy)).addToBackStack(null).commit();
     }
 
-    public void goToClassChat(String id) {
+    public void goToClassChat(String id, String name) {
+        setTitle(name);
         getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
                 new ClassChatFragment(id)).addToBackStack(null).commit();
     }

@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,6 +16,9 @@ import android.text.TextPaint;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -22,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rush.MainActivity;
 import com.example.rush.Model.ClassInfo;
 import com.example.rush.Model.Member;
 import com.example.rush.R;
@@ -101,6 +106,11 @@ public class ClassDetailsFragment extends Fragment {
         recycle.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
 
+        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+
         String[] words = new String[]{"Professor", "Class Description"};
         SpannableString stringSpanner = new SpannableString(words[0]);
         stringSpanner.setSpan(new StyleSpan(Typeface.BOLD), 0, stringSpanner.length(), 0);
@@ -147,6 +157,13 @@ public class ClassDetailsFragment extends Fragment {
         });
         return view;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        ((MainActivity) getActivity()).backFragment();
+        return true;
+    }
+
 
     public class DetailsAdapter extends RecyclerView.Adapter<ClassDetailsFragment.DetailsAdapter.ViewHolder> {
         private ArrayList<Member> students;

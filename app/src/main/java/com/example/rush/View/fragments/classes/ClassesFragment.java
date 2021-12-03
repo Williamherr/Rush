@@ -18,6 +18,9 @@ import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -65,7 +68,7 @@ public class ClassesFragment extends Fragment {
     public interface ClassDetailFragmentListener {
         void goToClassDetails(String name, String instructor, String description, String id, String createdBy);
 
-        void goToClassChat(String id);
+        void goToClassChat(String id, String name);
     }
 
     @Override
@@ -222,6 +225,7 @@ public class ClassesFragment extends Fragment {
 
         return view;
     }
+
 
     private void getClasses(String s) {
 
@@ -403,7 +407,7 @@ public class ClassesFragment extends Fragment {
                         builder.setPositiveButton("Class Chat", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                listener.goToClassChat(id);
+                                listener.goToClassChat(id, name);
                                 listOfClasses.clear();
                                 dialogInterface.dismiss();
                             }
@@ -439,7 +443,7 @@ public class ClassesFragment extends Fragment {
                         builder.setNegativeButton("Class Chat", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                listener.goToClassChat(id);
+                                listener.goToClassChat(id, name);
                                 listOfClasses.clear();
                                 dialogInterface.dismiss();
                             }
