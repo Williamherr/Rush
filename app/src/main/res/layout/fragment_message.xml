@@ -38,7 +38,6 @@
         app:tint="@color/white" />
 
     <Button
-        android:padding="20dp"
         android:id="@+id/submit"
         style="@style/Widget.Material3.Button"
         android:layout_width="wrap_content"
@@ -46,20 +45,20 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription=""
+        android:padding="20dp"
         android:text="Submit"
         android:textColor="@color/white"
         android:visibility="gone"
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.871"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.941"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/ic_plus" />
 
     <Button
-        android:padding="20dp"
         android:id="@+id/cancel"
         style="@style/Widget.Material3.Button"
         android:layout_width="wrap_content"
@@ -67,16 +66,17 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription=""
+        android:padding="20dp"
         android:text="Cancel"
         android:textColor="@color/white"
         android:visibility="gone"
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.188"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.941"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/ic_plus" />
 
 
