@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -64,6 +65,7 @@ public class ClassesFragment extends Fragment {
     private RecyclerView recycle;
     private ArrayList<ClassInfo> listOfClasses = new ArrayList<>();
     private ArrayList<ClassInfo> classesToDelete = new ArrayList<>();
+    private ActionBar actionBar;
 
     public interface ClassDetailFragmentListener {
         void goToClassDetails(String name, String instructor, String description, String id, String createdBy);
@@ -103,6 +105,8 @@ public class ClassesFragment extends Fragment {
         recycle.setLayoutManager(manager);
         recycle.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
+        actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle("Classes");
         //Button for opening the bottom dialog
         fabButton = view.findViewById(R.id.classOptionsButton);
         deleteBtn = view.findViewById(R.id.deleteButton);

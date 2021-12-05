@@ -271,9 +271,8 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
 
 
     public void classesFragment() {
-        setTitle("Classes");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerView, new ClassesFragment())
+                .replace(R.id.containerView, new ClassesFragment()).addToBackStack(null)
                 .commit();
     }
 
@@ -310,8 +309,9 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 .addToBackStack(null)
                 .commit();
     }
-/*This is for adding photos to class chat
- */
+
+    /*This is for adding photos to class chat
+     */
     public void addNewPhotoFragment(String messageKey, String docID) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerView, new AddPhotoFragment(user, messageKey, docID), "UploadFragment")
@@ -324,7 +324,6 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     public void backFragment() {
         getSupportFragmentManager().popBackStack();
     }
-
 
     @Override
     public void createNotifications() {
@@ -347,9 +346,8 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
     }
 
     public void goToClassChat(String id, String name) {
-        setTitle(name);
         getSupportFragmentManager().beginTransaction().replace(R.id.containerView,
-                new ClassChatFragment(id)).addToBackStack(null).commit();
+                new ClassChatFragment(id, name)).addToBackStack(null).commit();
     }
 
 

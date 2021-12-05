@@ -60,6 +60,7 @@ public class ClassDetailsFragment extends Fragment {
     private CollectionReference messageRef;
     private MessageFragment.MessageFragmentListener mListener;
     private TextView nameOfInstructor, descriptionOfClass, label;
+    private  ActionBar actionBar;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -106,9 +107,10 @@ public class ClassDetailsFragment extends Fragment {
         recycle.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
 
-        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+        actionBar = ((MainActivity) getActivity()).getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(name);
 
 
         String[] words = new String[]{"Professor", "Class Description"};

@@ -66,7 +66,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ClassChatFragment extends Fragment {
-    private String id, userName;
+    private String id, userName, className;
     private String userID;
     private FirebaseFirestore database;
     private FirebaseAuth mAuth;
@@ -83,8 +83,9 @@ public class ClassChatFragment extends Fragment {
 
     }
 
-    public ClassChatFragment(String id) {
+    public ClassChatFragment(String id, String className) {
         this.id = id;
+        this.className = className;
     }
 
     @Override
@@ -120,6 +121,7 @@ public class ClassChatFragment extends Fragment {
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(className);
 
 
         addMessages();
