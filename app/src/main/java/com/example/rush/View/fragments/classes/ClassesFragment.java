@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -165,7 +168,8 @@ public class ClassesFragment extends Fragment {
                 String messageContext = "";
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setCancelable(true);
-                builder.setTitle("Warning!");
+                builder.setTitle("Warning");
+                builder.setIcon(R.drawable.ic_warning);
                 if (type.equals("Professor")) {
                     messageContext = "Classes cannot be recovered once deleted! Are you sure you want to delete?";
                 } else {
@@ -423,6 +427,7 @@ public class ClassesFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     CharSequence[] options;
+                    SpannableString[] formatOptions;
                     String name = classObj.getClassName();
                     String instructor = classObj.getInstructor();
                     String description = classObj.getDescription();
@@ -436,7 +441,20 @@ public class ClassesFragment extends Fragment {
                         builder.setTitle("Class invite code " + id);
                         options = new CharSequence[]{"Copy Code", "View Class", "Class Chat",
                                 "Close"};
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                        formatOptions = new SpannableString[options.length];
+                        //Format the options text
+                        for (int i = 0; i < formatOptions.length; i++) {
+                            formatOptions[i] = new SpannableString(options[i]);
+                            formatOptions[i].setSpan(new StyleSpan(Typeface.ITALIC), 0, formatOptions[i].length(), 0);
+                            formatOptions[i].setSpan(new ForegroundColorSpan(Color.rgb(39, 109, 190)), 0, formatOptions[i].length(), 0);
+                            //Make the lost option "Close" red
+                            if (i == formatOptions.length - 1) {
+                                formatOptions[i].setSpan(new StyleSpan(Typeface.ITALIC), 0, formatOptions[i].length(), 0);
+                                formatOptions[i].setSpan(new ForegroundColorSpan(Color.rgb(255, 0, 0)), 0, formatOptions[i].length(), 0);
+                            }
+
+                        }
+                        builder.setItems(formatOptions, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 switch (i) {
@@ -470,7 +488,19 @@ public class ClassesFragment extends Fragment {
                     } else {
                         builder.setTitle(name);
                         options = new CharSequence[]{"View Class", "Class Chat", "Close"};
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                        formatOptions = new SpannableString[options.length];
+                        //Format the options text
+                        for (int i = 0; i < formatOptions.length; i++) {
+                            formatOptions[i] = new SpannableString(options[i]);
+                            formatOptions[i].setSpan(new StyleSpan(Typeface.ITALIC), 0, formatOptions[i].length(), 0);
+                            formatOptions[i].setSpan(new ForegroundColorSpan(Color.rgb(39, 109, 190)), 0, formatOptions[i].length(), 0);
+                            //Make the lost option "Close" red
+                            if (i == formatOptions.length - 1) {
+                                formatOptions[i].setSpan(new StyleSpan(Typeface.ITALIC), 0, formatOptions[i].length(), 0);
+                                formatOptions[i].setSpan(new ForegroundColorSpan(Color.rgb(255, 0, 0)), 0, formatOptions[i].length(), 0);
+                            }
+                        }
+                        builder.setItems(formatOptions, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 switch (i) {
