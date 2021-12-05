@@ -1,4 +1,4 @@
-package com.example.rush.View.fragments;
+package com.example.rush.View.fragments.account;
 
 import android.os.Bundle;
 

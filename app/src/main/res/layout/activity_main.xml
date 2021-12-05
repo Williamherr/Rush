@@ -19,7 +19,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/containerView"
-        android:name="com.example.rush.LoginFragment"
+        android:name="com.example.rush.View.fragments.account.LoginFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottomNavigationBar"

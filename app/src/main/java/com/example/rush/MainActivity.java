@@ -8,16 +8,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 
-import com.example.rush.View.fragments.AccountCreationFragment;
+import com.example.rush.View.fragments.account.AccountCreationFragment;
 import com.example.rush.View.fragments.AddPhotoFragment;
 import com.example.rush.View.fragments.account.AccountFragment;
+import com.example.rush.View.fragments.account.LoginFragment;
 import com.example.rush.View.fragments.classes.ClassChatFragment;
 import com.example.rush.View.fragments.classes.ClassCreationFragment;
 import com.example.rush.View.fragments.classes.ClassDetailsFragment;
@@ -29,14 +28,12 @@ import com.example.rush.View.fragments.messages.CreatePrivateMessages;
 import com.example.rush.View.fragments.messages.MessageFragment;
 import com.example.rush.View.fragments.messages.PrivateChatFragment;
 import com.example.rush.Model.Member;
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
