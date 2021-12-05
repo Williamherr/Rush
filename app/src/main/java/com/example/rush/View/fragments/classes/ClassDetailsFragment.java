@@ -46,6 +46,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,7 +62,7 @@ public class ClassDetailsFragment extends Fragment {
     private CollectionReference messageRef;
     private MessageFragment.MessageFragmentListener mListener;
     private TextView nameOfInstructor, descriptionOfClass, label;
-    private  ActionBar actionBar;
+    private ActionBar actionBar;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -150,6 +152,7 @@ public class ClassDetailsFragment extends Fragment {
 
                             Member m = new Member(name, studentID);
                             students.add(m);
+                            sortStudents();
                             adapter = new DetailsAdapter(students);
                             recycle.setAdapter(adapter);
                         }
@@ -158,6 +161,23 @@ public class ClassDetailsFragment extends Fragment {
             }
         });
         return view;
+    }
+//Sort students alphabetically by name
+    private void sortStudents() {
+        //Professor should always be first, so create a sublist from index 1
+        Collections.sort(students.subList(1, students.size()), new Comparator<Member>() {
+            @Override
+            public int compare(Member m1, Member m2) {
+                int comparison = m1.getName().compareTo(m2.getName());
+                if (comparison < 0) {
+                    return -1;
+                } else if (comparison == 0) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+        });
     }
 
     @Override

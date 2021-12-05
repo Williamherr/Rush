@@ -1,6 +1,7 @@
 package com.example.rush.View.fragments.classes;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,11 +28,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rush.MainActivity;
 import com.example.rush.Model.ClassInfo;
+import com.example.rush.Model.Messages;
 import com.example.rush.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -49,6 +53,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Locale;
+import java.util.zip.Inflater;
 
 
 public class ClassesFragment extends Fragment {
@@ -90,6 +98,24 @@ public class ClassesFragment extends Fragment {
             userID = user.getUid();
         }
 
+    }
+
+    //Sorts classes alphabetically by name
+    private void sortClasses() {
+        Collections.sort(listOfClasses, new Comparator<ClassInfo>() {
+            @Override
+            public int compare(ClassInfo c1, ClassInfo c2) {
+                int comparison = c1.getClassName().compareTo(c2.getClassName());
+
+                if (comparison < 0) {
+                    return -1;
+                } else if (comparison == 0) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+        });
     }
 
     @Override
@@ -230,7 +256,6 @@ public class ClassesFragment extends Fragment {
         return view;
     }
 
-
     private void getClasses(String s) {
 
         if (s.equals("Professor")) {
@@ -248,6 +273,7 @@ public class ClassesFragment extends Fragment {
                                     ClassInfo obj = document.toObject(ClassInfo.class);
                                     //Keep track of all classes created by this user
                                     listOfClasses.add(obj);
+                                    sortClasses();
                                     adapter = new ClassesFragment.ClassAdapter(listOfClasses);
                                     recycle.setAdapter(adapter);
 
@@ -281,6 +307,7 @@ public class ClassesFragment extends Fragment {
                                                 ClassInfo obj = task.getResult().toObject(ClassInfo.class);
                                                 //Add to list of classes
                                                 listOfClasses.add(obj);
+                                                sortClasses();
                                                 adapter = new ClassesFragment.ClassAdapter(listOfClasses);
                                                 recycle.setAdapter(adapter);
                                             }
@@ -395,6 +422,7 @@ public class ClassesFragment extends Fragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    CharSequence[] options;
                     String name = classObj.getClassName();
                     String instructor = classObj.getInstructor();
                     String description = classObj.getDescription();
@@ -402,70 +430,66 @@ public class ClassesFragment extends Fragment {
                     String createdBy = classObj.getCreatedBy();
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setCancelable(true);
+                    builder.setIcon(R.drawable.book);
 
                     if (type.equals("Professor")) {
-                        builder.setTitle("Invitation Code");
-                        builder.setMessage("Below is the code to invite students to your class: \n\n"
-                                + id);
-                        //Hitting this button closes the dialog
-                        builder.setPositiveButton("Class Chat", new DialogInterface.OnClickListener() {
+                        builder.setTitle("Class invite code " + id);
+                        options = new CharSequence[]{"Copy Code", "View Class", "Class Chat",
+                                "Close"};
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                listener.goToClassChat(id, name);
-                                listOfClasses.clear();
-                                dialogInterface.dismiss();
-                            }
-                        });
-                        //Lets the professor go to the class details page
-                        builder.setNegativeButton("View Class", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                listener.goToClassDetails(name, instructor, description, id, createdBy);
-                                //Clear the list to prevent classes from duplicating
-                                listOfClasses.clear();
-                                dialogInterface.dismiss();
-                            }
-                        });
-                        //Allows the professor to copy the class invitation code
-                        builder.setNeutralButton("Copy Code", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                                ClipData clip = ClipData.newPlainText("Class ID", classObj.getClassID());
-                                clipboard.setPrimaryClip(clip);
-                                Toast.makeText(getActivity(), "Link copied to clipboard", Toast.LENGTH_SHORT).show();
-                                dialogInterface.dismiss();
+                                switch (i) {
+                                    case 0:
+                                        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                                        ClipData clip = ClipData.newPlainText("Class ID", classObj.getClassID());
+                                        clipboard.setPrimaryClip(clip);
+                                        Toast.makeText(getActivity(), "Link copied to clipboard", Toast.LENGTH_SHORT).show();
+                                        dialogInterface.dismiss();
+                                        break;
+                                    case 1:
+                                        listener.goToClassDetails(name, instructor, description, id, createdBy);
+                                        listOfClasses.clear();
+                                        dialogInterface.dismiss();
+                                        break;
+                                    case 2:
+                                        listener.goToClassChat(id, name);
+                                        listOfClasses.clear();
+                                        dialogInterface.dismiss();
+                                        break;
+                                    case 3:
+                                        dialogInterface.dismiss();
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         });
                         AlertDialog dialog = builder.create();
                         dialog.show();
                     } else {
-                        builder.setTitle("Class information");
-                        builder.setMessage("Use the below buttons to view class information or view the " +
-                                "class group chat");
-                        //Take the student to the class chat
-                        builder.setNegativeButton("Class Chat", new DialogInterface.OnClickListener() {
+                        builder.setTitle(name);
+                        options = new CharSequence[]{"View Class", "Class Chat", "Close"};
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                listener.goToClassChat(id, name);
-                                listOfClasses.clear();
-                                dialogInterface.dismiss();
-                            }
-                        });
-                        //Close the dialog
-                        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        });
-                        //Take student to class details page
-                        builder.setNeutralButton("View Class", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                listener.goToClassDetails(name, instructor, description, id, createdBy);
-                                listOfClasses.clear();
-                                dialogInterface.dismiss();
+                                switch (i) {
+                                    case 0:
+                                        listener.goToClassDetails(name, instructor, description, id, createdBy);
+                                        listOfClasses.clear();
+                                        dialogInterface.dismiss();
+                                        break;
+                                    case 1:
+                                        listener.goToClassChat(id, name);
+                                        listOfClasses.clear();
+                                        dialogInterface.dismiss();
+                                        break;
+                                    case 2:
+                                        dialogInterface.dismiss();
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         });
                         AlertDialog dialog = builder.create();
