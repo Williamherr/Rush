@@ -108,7 +108,7 @@ public class ClassesFragment extends Fragment {
         Collections.sort(listOfClasses, new Comparator<ClassInfo>() {
             @Override
             public int compare(ClassInfo c1, ClassInfo c2) {
-                int comparison = c1.getClassName().compareTo(c2.getClassName());
+                int comparison = c1.getClassName().compareToIgnoreCase(c2.getClassName());
 
                 if (comparison < 0) {
                     return -1;

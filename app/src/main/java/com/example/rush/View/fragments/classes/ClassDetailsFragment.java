@@ -168,7 +168,7 @@ public class ClassDetailsFragment extends Fragment {
         Collections.sort(students.subList(1, students.size()), new Comparator<Member>() {
             @Override
             public int compare(Member m1, Member m2) {
-                int comparison = m1.getName().compareTo(m2.getName());
+                int comparison = m1.getName().compareToIgnoreCase(m2.getName());
                 if (comparison < 0) {
                     return -1;
                 } else if (comparison == 0) {
