@@ -67,7 +67,7 @@ public class ClassesFragment extends Fragment {
     private FloatingActionButton fabButton;
     private ExtendedFloatingActionButton deleteBtn, cancelBtn;
     private ClassDetailFragmentListener listener;
-    private String userID;
+    private String userID, title;
     private FirebaseFirestore database;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
@@ -134,8 +134,11 @@ public class ClassesFragment extends Fragment {
         recycle.setLayoutManager(manager);
         recycle.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
-        actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        actionBar.setTitle("Classes");
+        title = (String) getActivity().getTitle();
+        //Set title back to Classes if it has changed
+        if (!title.equals("Classes")) {
+            getActivity().setTitle("Classes");
+        }
         //Button for opening the bottom dialog
         fabButton = view.findViewById(R.id.classOptionsButton);
         deleteBtn = view.findViewById(R.id.deleteButton);

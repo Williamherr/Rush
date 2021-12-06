@@ -1,15 +1,11 @@
 package com.example.rush.Model;
 
-import java.util.ArrayList;
-
 public class ClassInfo {
     private String className;
     private String instructor;
     private String description;
     private String createdBy;
     private String classID;
-    private ArrayList<Member> studentsInClass;
-    //Add a structure to store Students that are in this class
 
     public ClassInfo(String className, String instructor, String description, String createdBy, String classID) {
         this.className = className;
@@ -21,14 +17,6 @@ public class ClassInfo {
 
     public ClassInfo() {
 
-    }
-
-    public void addStudent(Member m) {
-        studentsInClass.add(m);
-    }
-
-    public void removeStudents() {
-        studentsInClass.clear();
     }
 
     public void setClassID(String classID) {

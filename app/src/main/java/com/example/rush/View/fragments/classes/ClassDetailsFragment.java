@@ -110,9 +110,8 @@ public class ClassDetailsFragment extends Fragment {
                 DividerItemDecoration.VERTICAL));
 
         actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(name);
 
 
         String[] words = new String[]{"Professor", "Class Description"};

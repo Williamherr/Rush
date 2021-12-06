@@ -119,10 +119,8 @@ public class ClassChatFragment extends Fragment {
         recycle.setLayoutManager(manager);
 
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(className);
-
 
         addMessages();
         getChat();
@@ -133,8 +131,10 @@ public class ClassChatFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         ((MainActivity) getActivity()).backFragment();
+
         return true;
     }
+
     private void addMessages() {
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
