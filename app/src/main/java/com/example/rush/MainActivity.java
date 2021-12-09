@@ -24,6 +24,8 @@ import com.example.rush.View.fragments.classes.ClassJoinFragment;
 import com.example.rush.View.fragments.classes.ClassesFragment;
 import com.example.rush.View.fragments.HomeFragment;
 import com.example.rush.View.fragments.NotificationFragment;
+import com.example.rush.View.fragments.groups.GroupCreationFragment;
+import com.example.rush.View.fragments.groups.GroupsFragment;
 import com.example.rush.View.fragments.messages.CreatePrivateMessages;
 import com.example.rush.View.fragments.messages.MessageFragment;
 import com.example.rush.View.fragments.messages.PrivateChatFragment;
@@ -39,7 +41,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class MainActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener, LoginFragment.CreateFragmentListener, ClassesFragment.ClassDetailFragmentListener,
-        PrivateChatFragment.PrivateChatFragmentListener, AddPhotoFragment.UploadFragmentListener, AccountCreationFragment.AccountCreationFragmentListener, AccountFragment.IAccountSettingInterface
+        PrivateChatFragment.PrivateChatFragmentListener, AddPhotoFragment.UploadFragmentListener, AccountCreationFragment.AccountCreationFragmentListener, AccountFragment.IAccountSettingInterface,
+        GroupsFragment.GroupDetailFragmentListener
 
 //NotificationFragment.NotificationFragmentListener,
 
@@ -127,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                         break;
                     case "Groups": // Groups
                         Log.d("navBar", "Groups");
+                        groupsFragment();
                         break;
                     case "Classes": // Classes
                         Log.d("navBar", "Classes");
@@ -378,7 +382,24 @@ public class MainActivity extends AppCompatActivity implements MessageFragment.M
                 .commit();
     }
 
+    public void groupsFragment() {
+        setTitle("Groups");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new GroupsFragment())
+                .commit();
+    }
 
+    public void createFragment() {
+        setTitle("Create Group");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerView, new GroupCreationFragment()).addToBackStack(null).commit();
+    }
+
+
+    @Override
+    public void goToGroupDetails(String name, String instructor, String description, String id, String createdBy) {
+
+    }
 }
 
 

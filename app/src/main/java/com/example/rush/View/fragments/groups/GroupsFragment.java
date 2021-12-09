@@ -248,7 +248,7 @@ public class GroupsFragment extends Fragment {
                     //Go to the join Group tab since students can't create a class
              //   }
                 Log.d("TAG", "onClick: ");
-             //  bottom.dismiss();
+               bottom.dismiss();
 
             }
         });
