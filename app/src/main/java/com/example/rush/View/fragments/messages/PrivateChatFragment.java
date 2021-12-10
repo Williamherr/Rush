@@ -118,9 +118,6 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         Log.d(TAG, "Private Chat Fragment");
         setHasOptionsMenu(true);
 
-
-
-
         messages = new ArrayList<>();
         searchList = new ArrayList<>();
         recyclerView = view.findViewById(R.id.messagesRecyclerView);
@@ -235,6 +232,8 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.search_menu, menu);
         //Get the device's screen width
+
+
         DisplayMetrics metrics = new DisplayMetrics();
         (getActivity()).getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int width = metrics.widthPixels;
@@ -266,6 +265,19 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
             Toast.makeText(getActivity(), "Sorry, something went wrong!", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.video_icon:
+                mListener.singleCallFragment(otherUser, messageKey);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return false;
     }
 
     private void filter(String text) {
@@ -423,6 +435,7 @@ public class PrivateChatFragment extends Fragment implements MessageAdapter.IMes
 
     public interface PrivateChatFragmentListener{
         void addNewPhotoFragment(String messageKey);
+        void singleCallFragment(Member otherUser, String mid);
     }
 
     // This will make the urgent messages inside a chat false

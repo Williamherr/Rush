@@ -97,13 +97,13 @@ public class AccountFragment extends Fragment implements View.OnClickListener,Bo
         }
         statusView.setText(status);
         if (status.equals("available")) {
-            statusColor.setColorFilter(getResources().getColor(R.color.status_available), PorterDuff.Mode.SRC_ATOP);
+            statusColor.setColorFilter(getContext().getResources().getColor(R.color.status_available), PorterDuff.Mode.SRC_ATOP);
         } else if (status.equals("away")) {
             Log.d(TAG, "onCreateView: aw" );
-            statusColor.setColorFilter(getResources().getColor(R.color.status_away), PorterDuff.Mode.SRC_ATOP);
+            statusColor.setColorFilter(getContext().getResources().getColor(R.color.status_away), PorterDuff.Mode.SRC_ATOP);
         }else {
             Log.d(TAG, "onCreateView: e" );
-            statusColor.setColorFilter(getResources().getColor(R.color.status_offline), PorterDuff.Mode.SRC_ATOP);
+            statusColor.setColorFilter(getContext().getResources().getColor(R.color.status_offline), PorterDuff.Mode.SRC_ATOP);
         }
     }
 

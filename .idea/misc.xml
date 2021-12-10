@@ -15,8 +15,15 @@
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/empty_account.xml" value="0.5697916666666667" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/error_message.xml" value="0.4296875" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/home.xml" value="0.5697916666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_baseline_account_box_24.xml" value="0.3411458333333333" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_baseline_add_circle_24.xml" value="0.3411458333333333" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_baseline_arrow.xml" value="0.4296875" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_baseline_assignment_late_24.xml" value="0.3411458333333333" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_baseline_assignment_turned_in_24.xml" value="0.3411458333333333" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_baseline_more_vert_24.xml" value="0.3411458333333333" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_baseline_perm_identity_24.xml" value="0.3411458333333333" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_baseline_priority_high_24.xml" value="0.4296875" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_baseline_video_call_24.xml" value="0.3328125" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_delete.xml" value="0.5703125" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_logout_black_24dp.xml" value="0.5703125" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/drawable/ic_plus.xml" value="0.4296875" />
@@ -28,9 +35,13 @@
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_account_creation.xml" value="0.5541666666666667" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_bottom_sheet_dialog.xml" value="0.5541666666666667" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_classes_bottom_dialog.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_create_private_messages.xml" value="0.31666666666666665" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_home.xml" value="0.29375" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_login.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_message.xml" value="0.31666666666666665" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_private_chat.xml" value="0.29375" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_single_call.xml" value="0.31666666666666665" />
+        <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/fragment_testing.xml" value="0.5541666666666667" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/message_list.xml" value="0.29375" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/search_user_adapter.xml" value="0.3307291666666667" />
         <entry key="..\:/Users/pengw/Desktop/New folder/ITCS4155-Capstone/app/src/main/res/layout/user_messages_sent.xml" value="0.3307291666666667" />
@@ -44,53 +55,40 @@
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/borders.xml" value="0.2703125" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/colors.xml" value="0.2703125" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/empty_account.xml" value="0.2703125" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/error_message.xml" value="0.1" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/filter_button.xml" value="0.2703125" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/home.xml" value="0.2703125" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/ic_attachment.xml" value="0.1" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/ic_baseline_arrow.xml" value="0.1" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/ic_baseline_assignment_late_24.xml" value="0.1" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/ic_baseline_assignment_turned_in_24.xml" value="0.1" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/ic_baseline_more_vert_24.xml" value="0.1" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/ic_filter_icons_selected.xml" value="0.2703125" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/ic_filter_messages.xml" value="0.2703125" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/ic_filter_messages_selected.xml" value="0.21203703703703702" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/ic_plus.xml" value="0.1" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/ic_warning.xml" value="0.1" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/line.xml" value="0.1" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/drawable/rectangle.xml" value="0.2703125" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/class_items.xml" value="0.4" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/class_messages_sent.xml" value="0.4" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/delete_private_messages.xml" value="0.12360688956433637" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fab_open.xml" value="0.22916666666666666" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_account.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_account_creation.xml" value="0.176" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_bottom_sheet_dialog.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_chat_search.xml" value="0.20833333333333334" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_class_chat.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_class_creation.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_class_details.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_class_join.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_classes.xml" value="0.264" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_classes_bottom_dialog.xml" value="0.12360688956433637" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_create_class.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_create_private_messages.xml" value="0.4" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_create_private_messages.xml" value="0.12360688956433637" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_home.xml" value="0.40884718498659517" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_login.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_message.xml" value="0.264" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_private_chat.xml" value="0.4643196955280685" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_message.xml" value="0.17889492753623187" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_private_chat.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/message_list.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/students_list.xml" value="0.4" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/user_messages_sent.xml" value="0.4" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/user_messages_sent.xml" value="0.2128623188405797" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/menu/actionbar_menu.xml" value="0.20925925925925926" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/menu/bottom_navigation.xml" value="0.536" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/menu/fab_open.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/menu/filter_message.xml" value="0.25025641025641027" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/menu/options_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/menu/search_menu.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/menu/top_app_bar.xml" value="0.6" />
-        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/menu/urgent_menu.xml" value="0.24259259259259258" />
       </map>
     </option>
   </component>

@@ -74,12 +74,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewMess
         String uid = singleMessagesList.get(position).getUid();
         String img  = singleMessagesList.get(position).getImg();
         boolean isUrgent = singleMessagesList.get(position).getIsUrgent();
-        Log.d(TAG, "onBindViewHolder: ");
-        Log.d(TAG, "isUrgent " + isUrgent);
         holder.setIsRecyclable(false);
-
-
-
 
         // Other User
         if (!uid.equals(user.getUid())) {

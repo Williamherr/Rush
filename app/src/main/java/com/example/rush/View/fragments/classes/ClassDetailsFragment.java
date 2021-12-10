@@ -2,9 +2,11 @@ package com.example.rush.View.fragments.classes;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -218,6 +220,7 @@ public class ClassDetailsFragment extends Fragment {
                 }
             });
             holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.R)
                 @Override
                 //Allow the user to start a new chat by clicking on any of the class's members
                 public void onClick(View view) {
