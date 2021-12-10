@@ -75,7 +75,12 @@
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_class_join.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_classes.xml" value="0.264" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_create_class.xml" value="0.25416666666666665" />
+<<<<<<< HEAD
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_create_private_messages.xml" value="0.12360688956433637" />
+=======
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_create_private_messages.xml" value="0.4" />
+        <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_group_details.xml" value="0.12360688956433637" />
+>>>>>>> fec404346bb2e8388643207ee95d985a16330971
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_home.xml" value="0.40884718498659517" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_login.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/tgtho/Documents/UNCC/ITCS 4155 Capstone/RushProject/app/src/main/res/layout/fragment_message.xml" value="0.17889492753623187" />

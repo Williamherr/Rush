@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/create_group_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.fragments.groups.GroupCreationFragment">
+
+
+    <Button
+        android:id="@+id/createGroupButton"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="122dp"
+        android:layout_height="63dp"
+        android:layout_marginBottom="60dp"
+        android:text="@string/create"
+        app:backgroundTint="#276DBE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/GroupName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="45dp"
+        android:hint="Enter Group Name"
+        app:endIconCheckable="true"
+        app:endIconDrawable="@android:drawable/ic_delete"
+        app:endIconMode="custom"
+
+        app:endIconTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/InstructorName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLength="50" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/GroupDescription"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+        android:hint="Group Description"
+        app:endIconCheckable="true"
+        app:endIconDrawable="@android:drawable/ic_delete"
+
+        app:endIconMode="custom"
+        app:endIconTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/createGroupButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/Description"
+            android:maxLength="100"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/InstructorName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="45dp"
+        android:hint="Instructor Name"
+        app:endIconCheckable="true"
+        app:endIconDrawable="@android:drawable/ic_delete"
+
+        app:endIconMode="custom"
+        app:endIconTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/GroupDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/Instructor"
+            android:maxLength="50"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

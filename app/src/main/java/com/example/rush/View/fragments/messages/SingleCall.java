@@ -1,6 +1,7 @@
 package com.example.rush.View.fragments.messages;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -90,12 +91,18 @@ public class SingleCall extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("TAG", "run: " + uid);
                     // Call setupRemoteVideo to set the remote video view after getting uid from the onUserJoined callback.
                     SurfaceView surfaceView = RtcEngine.CreateRendererView(getContext());
-                    FrameLayout container = view.findViewById(R.id.remote_video_view_container);
+                    FrameLayout container = view.findViewById(R.id.local_video_view_container);
                     container.addView(surfaceView);
                     mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_FIT, uid));
+
+                    FrameLayout containers = view.findViewById(R.id.remote_video_view_container);
+                    // Call CreateRendererView to create a SurfaceView object and add it as a child to the FrameLayout.
+                    SurfaceView surfaceViews = RtcEngine.CreateRendererView(getContext());
+                    containers.addView(surfaceViews);
+                    // Pass the SurfaceView object to Agora so that it renders the local video.
+                    mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceViews, VideoCanvas.RENDER_MODE_FIT, 0));
                 }
             });
         }
@@ -140,6 +147,7 @@ public class SingleCall extends Fragment {
             @Override
             public void onClick(View view) {
                 iListener.endCall(otherUser,mid);
+                endCall.setColorFilter(Color.GRAY);
             }
         });
 
@@ -196,6 +204,11 @@ public class SingleCall extends Fragment {
         mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_FIT, 0));
         // Join the channel with a token.
         mRtcEngine.joinChannel(token, channelName, "", 0);
+    }
+
+    public void changeView(){
+
+
     }
 
 

@@ -15,11 +15,9 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
 
     private static IBottomSheetDialog iListener;
     private LinearLayout newMessages, deleteMessages, resolve;
-    private LinearLayout notificationMessages;
 
     private String TAG = "BottomSheetDialogFragment";
     private int newMessageId, deleteMessageId;
-    private int notificationMessageId;
     public bottomSheetDialogFragment() {
         // Required empty public constructor
     }
@@ -52,9 +50,7 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
         deleteMessages.setOnClickListener(this);
         deleteMessageId = deleteMessages.getId();
         //add important Notifications
-        notificationMessages  = view.findViewById(R.id.notificationClasses);
-        notificationMessages.setOnClickListener(this);
-        notificationMessageId = notificationMessages.getId();
+
         //Urgent messages
 
         resolve = view .findViewById(R.id.resolveMessages);
@@ -70,9 +66,6 @@ public class bottomSheetDialogFragment extends BottomSheetDialogFragment impleme
             getDialog().dismiss();
         } else if (view.getId() == deleteMessageId) {
             iListener.sheetClicked("delete");
-            getDialog().dismiss();
-        } else if (view.getId() == notificationMessageId) {
-            iListener.sheetClicked("notification");
             getDialog().dismiss();
         }
         else if (view.getId() == R.id.resolveMessages) {
